@@ -1,0 +1,50 @@
+{
+    "name": "yiisoft/yii2-app-advanced",
+    "description": "Yii 2 Advanced Application Template",
+    "keywords": ["yii2", "framework", "advanced", "application template"],
+    "homepage": "http://www.yiiframework.com/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "http://www.yiiframework.com/wiki/",
+        "irc": "irc://irc.freenode.net/yii",
+        "source": "https://github.com/yiisoft/yii2"
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "*",
+        "yiisoft/yii2-swiftmailer": "*",
+        "yiisoft/yii2-imagine": "~2.0.0",
+        "2amigos/yii2-date-time-picker-widget" : "~1.0",
+        "creocoder/yii2-nested-sets": "0.9.0",
+        "kartik-v/yii2-money": "*",
+        "kartik-v/yii2-widget-activeform": "*",
+        "kartik-v/yii2-widget-affix": "*",
+        "kartik-v/yii2-widget-depdrop": "*",
+        "kartik-v/yii2-widget-fileinput": "*",
+        "kartik-v/yii2-widget-spinner": "*",
+        "mihaildev/yii2-ckeditor": "*",
+        "mihaildev/yii2-elfinder": "*",
+        "newerton/yii2-fancybox": "dev-master",
+        "zelenin/yii2-slug-behavior": "~0.2@stable"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "*",
+        "yiisoft/yii2-gii": "*",
+        "yiisoft/yii2-faker": "*",
+        "bower-asset/bootbox": "~4.4.0"
+    },
+    "config": {
+        "process-timeout": 1800
+    },
+    "extra": {
+        "asset-installer-paths": {
+            "npm-asset-library": "vendor/npm",
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}

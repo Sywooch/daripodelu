@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /search?
+Disallow: /login
+Disallow: /register
+Disallow: /admin
+Disallow: /backend
+Disallow: /common
+Disallow: /frontend
+Disallow: /data
+Disallow: /tests
+Host: www.daripodelu.ru
