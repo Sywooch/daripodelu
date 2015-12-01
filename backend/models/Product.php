@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "{{%product}}".
  *
  * @property integer $id
- * @property integer $main_product_id
  * @property integer $catalogue_id
  * @property integer $group_id
  * @property string $code
@@ -60,7 +59,7 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['main_product_id', 'catalogue_id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
+            [['catalogue_id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
             [['catalogue_id', 'group_id', 'name', 'product_size', 'matherial', 'status_id', 'status_caption', 'brand', 'weight'], 'required'],
             [['content'], 'string'],
             [['weight', 'pack_weigh', 'pack_volume', 'pack_sizex', 'pack_sizey', 'pack_sizez', 'enduserprice'], 'number'],
@@ -78,7 +77,6 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID товара'),
-            'main_product_id' => Yii::t('app', 'ID родительского товара'),
             'catalogue_id' => Yii::t('app', 'ID категории'),
             'group_id' => Yii::t('app', 'ID группы'),
             'code' => Yii::t('app', 'Артикул'),

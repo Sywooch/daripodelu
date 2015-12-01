@@ -115,7 +115,6 @@ class LoadController extends \yii\console\Controller
                             $productId = (int) $product->product_id;
                             $valuesRow = [
                                 $productId,
-                                0,
                                 (isset($productCategoryPairs[$productId])? $productCategoryPairs[$productId]: 1),
                                 (isset($product->group)? (int) $product->group: null),
                                 (isset($product->code)? (string) $product->code: ''),
@@ -158,7 +157,6 @@ class LoadController extends \yii\console\Controller
                                 '{{%product}}',
                                 [
                                     'id',
-                                    'main_product_id',
                                     'catalogue_id',
                                     'group_id',
                                     'code',
