@@ -44,6 +44,43 @@ class LoadController extends \yii\console\Controller
         return $arr;
     }
 
+    protected function makeArrFromFilterTree(\SimpleXMLElement $elements)
+    {
+        $arr = [];
+        foreach ($elements as $element)
+        {
+            $filtersArr = [];
+            if (isset($element->filters->filter))
+            {
+                if (count($element->filters->filter) > 1)
+                {
+                    foreach ($element->filters->filter as $filter)
+                    {
+                        $filtersArr[] = [
+                            'filterid' => (int) $filter->filterid,
+                            'filterid' => (string) $filter->filtername,
+                        ];
+                    }
+                }
+                else
+                {
+                    $filtersArr[] = [
+                        'filterid' => (int) $element->filters->filter->filterid,
+                        'filterid' => (string) $element->filters->filter->filtername,
+                    ];
+                }
+            }
+
+            $arr[] = [
+                'filtertypeid' => (int) $element->filtertypeid,
+                'filtertypename' => (string) $element->filtertypename,
+                'filters' => $filtersArr,
+            ];
+        }
+
+        return $arr;
+    }
+
     public function actionIndex()
     {
         //Создание объекта для загрузки файлов
@@ -92,11 +129,16 @@ class LoadController extends \yii\console\Controller
                 if (count($valuesArr) > 0)
                 {
                     //Запись категорий в соответствующую таблицу БД
-                    yii::beginProfile('CatalogueInserIntoDB');
+                    yii::$app->db->createCommand()->delete('{{%product_filter}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%product_attachment}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%slave_product}}')->execute();
                     yii::$app->db->createCommand()->delete('{{%product}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%filter}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%filter_type}}')->execute();
                     yii::$app->db->createCommand()->delete('{{%catalogue}}')->execute();
+                    yii::beginProfile('CatalogueInsertIntoDB');
                     yii::$app->db->createCommand()->batchInsert('{{%catalogue}}',['id', 'parent_id', 'name', 'uri'], $valuesArr)->execute();
-                    yii::endProfile('CatalogueInserIntoDB');
+                    yii::endProfile('CatalogueInsertIntoDB');
 
                     //Формирование таблицы с товарами в БД
                     try
@@ -108,6 +150,10 @@ class LoadController extends \yii\console\Controller
 
                         yii::beginProfile('ProductsFileAnalyze');
                         $valuesArr = [];
+                        $slaveProductsArr = [];
+                        $productPrintsArr=[];
+                        $prodAttachesArr = [];
+                        $prodFilterssArr = [];
                         $valuesRow = [];
                         $iterationCounter = 0;
                         foreach($productsXML->product as $key => $product)
@@ -144,6 +190,69 @@ class LoadController extends \yii\console\Controller
                             ];
                             $valuesArr[] = $valuesRow;
 
+                            if (isset($product->product))
+                            {
+                                $cnt = count($product->product);
+                                if(count($product->product) > 1)
+                                {
+                                    foreach ($product->product as $item)
+                                    {
+                                        $slaveProductsArr[] = [
+                                            (int) $item->product_id,
+                                            $productId,
+                                            (isset($item->code)? (string) $item->code: ''),
+                                            (isset($item->name)? (string) $item->name: ''),
+                                            (isset($item->size_code)? (string) $item->size_code: ''),
+                                            (isset($item->weight)? (float) $item->weight: 0.00),
+                                            (isset($item->price->price)? (float) $item->price->price: 0.00),
+                                            (isset($item->price->currency)? (string) $item->price->currency: ''),
+                                            (isset($item->price->name)? (string) $item->price->name: ''),
+                                        ];
+                                    }
+                                }
+                                else
+                                {
+                                    $slaveProductsArr[] = [
+                                        (int) $product->product->product_id,
+                                        $productId,
+                                        (isset($product->product->code)? (string) $product->product->code: ''),
+                                        (isset($product->product->name)? (string) $product->product->name: ''),
+                                        (isset($product->product->size_code)? (string) $product->product->size_code: ''),
+                                        (isset($product->product->weight)? (float) $product->product->weight: 0.00),
+                                        (isset($product->product->price->price)? (float) $product->product->price->price: 0.00),
+                                        (isset($product->product->price->currency)? (string) $product->product->price->currency: ''),
+                                        (isset($product->product->price->name)? (string) $product->product->price->name: ''),
+                                    ];
+                                }
+                            }
+
+                            if (isset($product->product_attachment))
+                            {
+                                if(count($product->product_attachment) > 1)
+                                {
+                                    foreach ($product->product_attachment as $item)
+                                    {
+                                        $prodAttachesArr[] = [
+                                            $productId,
+                                            (int) $item->meaning,
+                                            (isset($item->file )? (string) $item->file : null),
+                                            (isset($item->image)? (string) $item->image: null),
+                                            (isset($item->name)? (string) $item->name: null),
+                                        ];
+                                    }
+                                }
+                                else
+                                {
+                                    $prodAttachesArr[] = [
+                                        $productId,
+                                        (int) $product->product_attachment->meaning,
+                                        (isset($product->product_attachment->file )? (string) $product->product_attachment->file : null),
+                                        (isset($product->product_attachment->image)? (string) $product->product_attachment->image: null),
+                                        (isset($product->product_attachment->name)? (string) $product->product_attachment->name: null),
+                                    ];
+                                }
+                            }
+
 //                            $iterationCounter++;
 
 //                            if($iterationCounter > 3) break;
@@ -152,7 +261,7 @@ class LoadController extends \yii\console\Controller
 
                         if (count($valuesArr) > 0)
                         {
-                            yii::beginProfile('ProductsInserIntoDB');
+                            yii::beginProfile('ProductsInsertIntoDB');
                             yii::$app->db->createCommand()->batchInsert(
                                 '{{%product}}',
                                 [
@@ -186,13 +295,36 @@ class LoadController extends \yii\console\Controller
                                 ],
                                 $valuesArr
                             )->execute();
-                            yii::endProfile('ProductsInserIntoDB');
+                            yii::endProfile('ProductsInsertIntoDB');
+                        }
+
+                        if (count($slaveProductsArr) > 0)
+                        {
+                            yii::beginProfile('SlaveProductsInsertIntoDB');
+                            yii::$app->db->createCommand()->batchInsert(
+                                '{{%slave_product}}',
+                                ['id', 'parent_product_id', 'code', 'name', 'size_code', 'weight', 'price', 'price_currency', 'price_name'],
+                                $slaveProductsArr
+                            )->execute();
+                            yii::endProfile('SlaveProductsInsertIntoDB');
+                        }
+
+                        if (count($prodAttachesArr) > 0)
+                        {
+                            yii::beginProfile('ProductAttachInsertIntoDB');
+                            yii::$app->db->createCommand()->batchInsert(
+                                '{{%product_attachment}}',
+                                ['product_id', 'meaning', 'file', 'image', 'name'],
+                                $prodAttachesArr
+                            )->execute();
+                            yii::endProfile('ProductAttachInsertIntoDB');
                         }
 
                     }
                     catch(\Exception $e)
                     {
-                        yii::endProfile('ProductsInserIntoDB');
+                        yii::endProfile('SlaveProductsInsertIntoDB');
+                        yii::endProfile('ProductsInsertIntoDB');
                         yii::endProfile('ProductsFileDownload');
                         echo $e->getMessage() . "\n";
                     }
