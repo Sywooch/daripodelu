@@ -20,5 +20,9 @@ return [
     'maxImgFileSize' => 2048000,
     'supportEmail' => 'support@example.com',
     'uploadPath' => dirname(__DIR__) . '/../uploads',
+    'xmlUploadPath' => [
+        'current' => dirname(__DIR__) . '/../downloads/current',
+        'archive' => dirname(__DIR__) . '/../downloads/archive',
+    ],
     'user.passwordResetTokenExpire' => 3600,
 ];
