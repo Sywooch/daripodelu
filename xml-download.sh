@@ -20,3 +20,9 @@ yii load/insertattach
 
 # анализ products.xml и запись методов печати товаров в БД
 yii load/insertprint
+
+# анализ filters.xml и запись фильтров в БД
+yii load/insertfilters
+
+# анализ filters.xml и запись фильтров в БД
+yii load/insertprodfilters

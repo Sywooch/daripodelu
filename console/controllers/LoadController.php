@@ -641,6 +641,148 @@ class LoadController extends \yii\console\Controller
         }
     }
 
+    public function actionInsertfilters()
+    {
+        //Формирование таблиц с типами фильтров и фильтрами
+        try
+        {
+            yii::beginProfile('FiltersPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml')) {
+                throw new \Exception('File product.xml not found. The slave products were not inserted in DB.');
+            }
+
+            $filtersXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml')
+            );
+
+            if ($filtersXML === false) {
+                throw new \Exception('File product.xml was not processed. The slave products were not inserted in DB.');
+            }
+            yii::endProfile('FiltersPrepare');
+
+            //Формирование массива из типов фильтров
+            yii::beginProfile('FiltersFileAnalyze');
+            $filterTypesArr = $this->makeArrFromFilterTree($filtersXML);
+            yii::endProfile('FiltersFileAnalyze');
+
+            if (count($filterTypesArr) > 0)
+            {
+                $typesArrForInsert = [];
+                $filtersArrForInsert = [];
+                foreach ($filterTypesArr as $type)
+                {
+                    $typesArrForInsert[] = [$type['filtertypeid'], $type['filtertypename']];
+                    if (count($type['filters']) > 0)
+                    {
+                        foreach ($type['filters'] as $filter)
+                        {
+                            $filtersArrForInsert[] = [$filter['filterid'], $filter['filtername'], $type['filtertypeid']];
+                        }
+                    }
+                }
+
+                if (count($typesArrForInsert) > 0)
+                {
+                    yii::beginProfile('FilterTypesInsertIntoDB');
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%filter_type}}',
+                        ['id', 'name'],
+                        $typesArrForInsert
+                    )->execute();
+                    yii::endProfile('FilterTypesInsertIntoDB');
+                }
+
+                if (count($filtersArrForInsert) > 0)
+                {
+                    //Запись фильтров в БД
+                    yii::beginProfile('FiltersInsertIntoDB');
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%filter}}',
+                        ['id', 'name', 'type_id'],
+                        $filtersArrForInsert
+                    )->execute();
+                    yii::endProfile('FiltersInsertIntoDB');
+                }
+            }
+        }
+        catch(\Exception $e)
+        {
+            yii::endProfile('FiltersFileAnalyze');
+            yii::endProfile('FilterTypesInsertIntoDB');
+            yii::endProfile('FiltersInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+    }
+
+    public function actionInsertprodfilters()
+    {
+        try
+        {
+            yii::beginProfile('ProductFiltersPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found. The product attachments were not inserted in DB.');
+            }
+
+            $productsXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
+            );
+
+            if ($productsXML === false) {
+                throw new \Exception('File product.xml was not processed. The product attachments were not inserted in DB.');
+            }
+
+            //Парсирование xml файла с продуктами
+            $prodFiltersArr = [];
+            foreach($productsXML->product as $key => $product)
+            {
+                $productId = (int)$product->product_id;
+
+                //Формирование массива с фильтрами, которые можно применять к товару
+                if (isset($product->filters->filter))
+                {
+                    if (count($product->filters->filter) > 1) //Если к товару можно применить только один фильтр
+                    {
+                        foreach ($product->filters->filter as $filter)
+                        {
+                            $prodFiltersArr[] = [
+                                $productId,
+                                (int) $filter->filterid,
+                                (int) $filter->filtertypeid,
+                            ];
+                        }
+                    }
+                    else //Если к товару можно применить несколько фильтров
+                    {
+                        $prodFiltersArr[] = [
+                            $productId,
+                            (int) $product->filters->filter->filterid,
+                            (int) $product->filters->filter->filtertypeid,
+                        ];
+                    }
+                }
+            }
+            yii::endProfile('ProductFiltersPrepare');
+
+            //Запись связей товар-фильтр в БД
+            if (count($prodFiltersArr) > 0)
+            {
+                yii::beginProfile('ProductFiltersInsertIntoDB');
+                yii::$app->db->createCommand()->batchInsert(
+                    '{{%product_filter}}',
+                    ['product_id', 'filter_id', 'type_id'],
+                    $prodFiltersArr
+                )->execute();
+                yii::endProfile('ProductFiltersInsertIntoDB');
+            }
+        }
+        catch(\Exception $e)
+        {
+            yii::endProfile('ProductFiltersPrepare');
+            yii::endProfile('ProductFiltersInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+    }
+
     public function actionIndex()
     {
         //Создание объекта для загрузки файлов
