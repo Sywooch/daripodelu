@@ -197,6 +197,11 @@ class LoadController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Запись категорий товаров в БД
+     *
+     * @throws \Exception
+     */
     public function actionInsertctg()
     {
         try
@@ -258,6 +263,40 @@ class LoadController extends \yii\console\Controller
     {
         try
         {
+            //Формирование массива категорий
+            yii::beginProfile('ProductsPrepare');
+            if (! file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml'))
+            {
+                throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
+            }
+
+            $treeXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')
+            );
+
+            if($treeXML === false)
+            {
+                throw new \Exception('File tree.xml was not processed. Products were not inserted in DB.');
+            }
+
+            $treeArr = $this->makeArrFromTree($treeXML);
+
+            $productCategoryPairs = [];
+            if (count($treeArr) > 0)
+            {
+                foreach ($treeArr as $row)
+                {
+                    //Формирование массива из пар 'id товара' => 'id родительской категории'
+                    if(isset($row['product']) && is_array($row['product']))
+                    {
+                        foreach ($row['product'] as $prod)
+                        {
+                            $productCategoryPairs[$prod['product_id']] = $prod['parent_id'];
+                        }
+                    }
+                }
+            }
+
             if (! file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml'))
             {
                 throw new \Exception('File product.xml not found.');
@@ -307,6 +346,7 @@ class LoadController extends \yii\console\Controller
                     0,
                 ];
             }
+            yii::endProfile('ProductsPrepare');
 
             //Запись информации о товарах в БД
             if (count($valuesArr) > 0)
@@ -350,7 +390,253 @@ class LoadController extends \yii\console\Controller
         }
         catch (\Exception $e)
         {
+            yii::endProfile('ProductsPrepare');
             yii::endProfile('ProductsInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+    }
+
+    public function actionInsertslaveprod()
+    {
+        try
+        {
+            yii::beginProfile('SlaveProductsPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found. The slave products were not inserted in DB.');
+            }
+
+            $productsXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
+            );
+
+            if ($productsXML === false) {
+                throw new \Exception('File product.xml was not processed. The slave products were not inserted in DB.');
+            }
+
+            //Парсирование xml файла с продуктами
+            $slaveProductsArr = [];
+            foreach($productsXML->product as $key => $product)
+            {
+                $productId = (int)$product->product_id;
+
+                //Формирование массива подчиненных товаров
+                if (isset($product->product))
+                {
+                    if(count($product->product) > 1)  //Если у товара несколько подчиненных товаров
+                    {
+                        foreach ($product->product as $item)
+                        {
+                            $slaveProductsArr[] = [
+                                (int) $item->product_id,
+                                $productId,
+                                (isset($item->code)? (string) $item->code: ''),
+                                (isset($item->name)? (string) $item->name: ''),
+                                (isset($item->size_code)? (string) $item->size_code: ''),
+                                (isset($item->weight)? (float) $item->weight: 0.00),
+                                (isset($item->price->price)? (float) $item->price->price: 0.00),
+                                (isset($item->price->currency)? (string) $item->price->currency: ''),
+                                (isset($item->price->name)? (string) $item->price->name: ''),
+                            ];
+                        }
+                    }
+                    else  //Если у товара один подчиненный товар
+                    {
+                        $slaveProductsArr[] = [
+                            (int) $product->product->product_id,
+                            $productId,
+                            (isset($product->product->code)? (string) $product->product->code: ''),
+                            (isset($product->product->name)? (string) $product->product->name: ''),
+                            (isset($product->product->size_code)? (string) $product->product->size_code: ''),
+                            (isset($product->product->weight)? (float) $product->product->weight: 0.00),
+                            (isset($product->product->price->price)? (float) $product->product->price->price: 0.00),
+                            (isset($product->product->price->currency)? (string) $product->product->price->currency: ''),
+                            (isset($product->product->price->name)? (string) $product->product->price->name: ''),
+                        ];
+                    }
+                }
+            }
+            yii::endProfile('SlaveProductsPrepare');
+
+            //Запись информации о подчиненных товарах в БД
+            if (count($slaveProductsArr) > 0)
+            {
+                yii::beginProfile('SlaveProductsInsertIntoDB');
+                yii::$app->db->createCommand()->batchInsert(
+                    '{{%slave_product}}',
+                    ['id', 'parent_product_id', 'code', 'name', 'size_code', 'weight', 'price', 'price_currency', 'price_name'],
+                    $slaveProductsArr
+                )->execute();
+                yii::endProfile('SlaveProductsInsertIntoDB');
+            }
+        }
+        catch (\Exception $e)
+        {
+            yii::endProfile('SlaveProductsPrepare');
+            yii::endProfile('SlaveProductsInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+
+    }
+
+    public function actionInsertattach()
+    {
+        try
+        {
+            yii::beginProfile('ProductAttachmentsPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found. The product attachments were not inserted in DB.');
+            }
+
+            $productsXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
+            );
+
+            if ($productsXML === false) {
+                throw new \Exception('File product.xml was not processed. The product attachments were not inserted in DB.');
+            }
+
+            //Парсирование xml файла с продуктами
+            $prodAttachesArr = [];
+            foreach($productsXML->product as $key => $product)
+            {
+                $productId = (int)$product->product_id;
+
+                //Формирование массива с дополнительными файлами товаров
+                if (isset($product->product_attachment))
+                {
+                    if(count($product->product_attachment) > 1)
+                    {
+                        foreach ($product->product_attachment as $item) //Если у товара несколько дополнительных файлов
+                        {
+                            $prodAttachesArr[] = [
+                                $productId,
+                                (int) $item->meaning,
+                                (isset($item->file )? (string) $item->file : null),
+                                (isset($item->image)? (string) $item->image: null),
+                                (isset($item->name)? (string) $item->name: null),
+                            ];
+                        }
+                    }
+                    else //Если у товара только один дополнительный файл
+                    {
+                        $prodAttachesArr[] = [
+                            $productId,
+                            (int) $product->product_attachment->meaning,
+                            (isset($product->product_attachment->file )? (string) $product->product_attachment->file : null),
+                            (isset($product->product_attachment->image)? (string) $product->product_attachment->image: null),
+                            (isset($product->product_attachment->name)? (string) $product->product_attachment->name: null),
+                        ];
+                    }
+                }
+            }
+            yii::endProfile('ProductAttachmentsPrepare');
+
+            //Запись информации о дополнительных файлах товара в БД
+            if (count($prodAttachesArr) > 0)
+            {
+                yii::beginProfile('ProductAttachInsertIntoDB');
+                yii::$app->db->createCommand()->batchInsert(
+                    '{{%product_attachment}}',
+                    ['product_id', 'meaning', 'file', 'image', 'name'],
+                    $prodAttachesArr
+                )->execute();
+                yii::endProfile('ProductAttachInsertIntoDB');
+            }
+        }
+        catch (\Exception $e)
+        {
+            yii::endProfile('ProductAttachmentsPrepare');
+            yii::endProfile('ProductAttachInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+    }
+
+    public function actionInsertprint()
+    {
+        try
+        {
+            yii::beginProfile('ProductPrintsPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found. The product prints were not inserted in DB.');
+            }
+
+            $productsXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
+            );
+
+            if ($productsXML === false) {
+                throw new \Exception('File product.xml was not processed. The product prints were not inserted in DB.');
+            }
+
+            //Парсирование xml файла с продуктами
+            $printsArr = [];
+            $productPrintsArr = [];
+            foreach($productsXML->product as $key => $product)
+            {
+                $productId = (int)$product->product_id;
+
+                //Формирование массива с методами печати товаров и масива с парами "метод печати -  Id товара"
+                if (isset($product->print))
+                {
+                    if (count($product->print) > 1) //Если у товара несколько методов печати
+                    {
+                        foreach ($product->print as $print)
+                        {
+                            $printId = (string) $print->name;
+                            $printDescription = (string) $print->description;
+                            if( ! array_key_exists($printId, $printsArr))
+                            {
+                                $printsArr[$printId] = [$printId, $printDescription];
+                            }
+                            $productPrintsArr[] = [
+                                $productId,
+                                $printId,
+                            ];
+                        }
+                    }
+                    else //Если у товара только один метод печати
+                    {
+                        $printId = (string) $product->print->name;
+                        $printDescription = (string) $product->print->description;
+                        if( ! array_key_exists($printId, $printsArr))
+                        {
+                            $printsArr[$printId] = [$printId, $printDescription];
+                        }
+                        $productPrintsArr[] = [
+                            $productId,
+                            $printId,
+                        ];
+                    }
+                }
+            }
+            yii::endProfile('ProductPrintsPrepare');
+
+            if (count($printsArr) > 0)
+            {
+                yii::beginProfile('PrintsInsertIntoDB');
+                yii::$app->db->createCommand()->batchInsert(
+                    '{{%print}}',
+                    ['name', 'description'],
+                    $printsArr
+                )->execute();
+                yii::endProfile('PrintsInsertIntoDB');
+
+                if (count($productPrintsArr) > 0)
+                {
+                    yii::beginProfile('ProductPrintsInsertIntoDB');
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product_print}}',
+                        ['product_id', 'print_id'],
+                        $productPrintsArr
+                    )->execute();
+                    yii::endProfile('ProductPrintsInsertIntoDB');
+                }
+            }
+        }
+        catch (\Exception $e)
+        {
+            yii::endProfile('ProductPrintsPrepare');
+            yii::endProfile('ProductPrintsInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
     }
