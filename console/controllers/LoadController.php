@@ -311,6 +311,33 @@ class LoadController extends \yii\console\Controller
                 throw new \Exception('File product.xml was not processed.');
             }
 
+            $stockArr = [];
+            try
+            {
+                //Закгрузка файла stock.xml
+                yii::beginProfile('StockFilePrepare');
+                $stockXML = new \SimpleXMLElement(
+                    file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')
+                );
+                yii::endProfile('StockFilePrepare');
+
+                if($stockXML === false)
+                {
+                    throw new \Exception('File stock.xml was not processed.');
+                }
+
+                //Формирование массива с количеством товаров и их ценами
+                yii::beginProfile('StockFileAnalyze');
+                $stockArr = $this->makeArrFromStockTree($stockXML);
+                yii::endProfile('StockFileAnalyze');
+            }
+            catch (Exception $e)
+            {
+                yii::endProfile('StockFilePrepare');
+                yii::endProfile('StockFileAnalyze');
+                echo $e->getMessage() . "\n";
+            }
+
             //Парсирование xml файла с продуктами
             $valuesArr = [];
             foreach($productsXML->product as $key => $product)
@@ -413,6 +440,33 @@ class LoadController extends \yii\console\Controller
                 throw new \Exception('File product.xml was not processed. The slave products were not inserted in DB.');
             }
 
+            $stockArr = [];
+            try
+            {
+                //Закгрузка файла stock.xml
+                yii::beginProfile('StockFilePrepare');
+                $stockXML = new \SimpleXMLElement(
+                    file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')
+                );
+                yii::endProfile('StockFilePrepare');
+
+                if($stockXML === false)
+                {
+                    throw new \Exception('File stock.xml was not processed.');
+                }
+
+                //Формирование массива с количеством товаров и их ценами
+                yii::beginProfile('StockFileAnalyze');
+                $stockArr = $this->makeArrFromStockTree($stockXML);
+                yii::endProfile('StockFileAnalyze');
+            }
+            catch (Exception $e)
+            {
+                yii::endProfile('StockFilePrepare');
+                yii::endProfile('StockFileAnalyze');
+                echo $e->getMessage() . "\n";
+            }
+
             //Парсирование xml файла с продуктами
             $slaveProductsArr = [];
             foreach($productsXML->product as $key => $product)
@@ -426,8 +480,9 @@ class LoadController extends \yii\console\Controller
                     {
                         foreach ($product->product as $item)
                         {
+                            $slaveProductId = (int) $item->product_id;
                             $slaveProductsArr[] = [
-                                (int) $item->product_id,
+                                $slaveProductId,
                                 $productId,
                                 (isset($item->code)? (string) $item->code: ''),
                                 (isset($item->name)? (string) $item->name: ''),
@@ -436,13 +491,19 @@ class LoadController extends \yii\console\Controller
                                 (isset($item->price->price)? (float) $item->price->price: 0.00),
                                 (isset($item->price->currency)? (string) $item->price->currency: ''),
                                 (isset($item->price->name)? (string) $item->price->name: ''),
+                                (isset($stockArr[$slaveProductId]['amount']) ? $stockArr[$slaveProductId]['amount'] : 0),
+                                (isset($stockArr[$slaveProductId]['free']) ? $stockArr[$slaveProductId]['free'] : 0),
+                                (isset($stockArr[$slaveProductId]['inwayamount']) ? $stockArr[$slaveProductId]['inwayamount'] : 0),
+                                (isset($stockArr[$slaveProductId]['inwayfree']) ? $stockArr[$slaveProductId]['inwayfree'] : 0),
+                                (isset($stockArr[$slaveProductId]['enduserprice']) ? $stockArr[$slaveProductId]['enduserprice'] : 0.00),
                             ];
                         }
                     }
                     else  //Если у товара один подчиненный товар
                     {
+                        $slaveProductId = (int) $product->product->product_id;
                         $slaveProductsArr[] = [
-                            (int) $product->product->product_id,
+                            $slaveProductId,
                             $productId,
                             (isset($product->product->code)? (string) $product->product->code: ''),
                             (isset($product->product->name)? (string) $product->product->name: ''),
@@ -451,6 +512,11 @@ class LoadController extends \yii\console\Controller
                             (isset($product->product->price->price)? (float) $product->product->price->price: 0.00),
                             (isset($product->product->price->currency)? (string) $product->product->price->currency: ''),
                             (isset($product->product->price->name)? (string) $product->product->price->name: ''),
+                            (isset($stockArr[$slaveProductId]['amount']) ? $stockArr[$slaveProductId]['amount'] : 0),
+                            (isset($stockArr[$slaveProductId]['free']) ? $stockArr[$slaveProductId]['free'] : 0),
+                            (isset($stockArr[$slaveProductId]['inwayamount']) ? $stockArr[$slaveProductId]['inwayamount'] : 0),
+                            (isset($stockArr[$slaveProductId]['inwayfree']) ? $stockArr[$slaveProductId]['inwayfree'] : 0),
+                            (isset($stockArr[$slaveProductId]['enduserprice']) ? $stockArr[$slaveProductId]['enduserprice'] : 0.00),
                         ];
                     }
                 }
@@ -463,7 +529,22 @@ class LoadController extends \yii\console\Controller
                 yii::beginProfile('SlaveProductsInsertIntoDB');
                 yii::$app->db->createCommand()->batchInsert(
                     '{{%slave_product}}',
-                    ['id', 'parent_product_id', 'code', 'name', 'size_code', 'weight', 'price', 'price_currency', 'price_name'],
+                    [
+                        'id',
+                        'parent_product_id',
+                        'code',
+                        'name',
+                        'size_code',
+                        'weight',
+                        'price',
+                        'price_currency',
+                        'price_name',
+                        'amount',
+                        'free',
+                        'inwayamount',
+                        'inwayfree',
+                        'enduserprice'
+                    ],
                     $slaveProductsArr
                 )->execute();
                 yii::endProfile('SlaveProductsInsertIntoDB');
@@ -648,7 +729,7 @@ class LoadController extends \yii\console\Controller
         {
             yii::beginProfile('FiltersPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml')) {
-                throw new \Exception('File product.xml not found. The slave products were not inserted in DB.');
+                throw new \Exception('File filters.xml not found.');
             }
 
             $filtersXML = new \SimpleXMLElement(
@@ -656,7 +737,7 @@ class LoadController extends \yii\console\Controller
             );
 
             if ($filtersXML === false) {
-                throw new \Exception('File product.xml was not processed. The slave products were not inserted in DB.');
+                throw new \Exception('File filters.xml was not processed.');
             }
             yii::endProfile('FiltersPrepare');
 
@@ -720,7 +801,7 @@ class LoadController extends \yii\console\Controller
         {
             yii::beginProfile('ProductFiltersPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
-                throw new \Exception('File product.xml not found. The product attachments were not inserted in DB.');
+                throw new \Exception('File product.xml not found. The filters for product were not inserted in DB.');
             }
 
             $productsXML = new \SimpleXMLElement(
@@ -728,7 +809,7 @@ class LoadController extends \yii\console\Controller
             );
 
             if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed. The product attachments were not inserted in DB.');
+                throw new \Exception('File product.xml was not processed. The filters for product were not inserted in DB.');
             }
 
             //Парсирование xml файла с продуктами
@@ -782,6 +863,45 @@ class LoadController extends \yii\console\Controller
             echo $e->getMessage() . "\n";
         }
     }
+
+    public function actionMakeimglist()
+    {
+        try
+        {
+            $imagesForDownloadArr = [];
+            $results = yii::$app->db->createCommand('
+                SELECT [[id]] as `product_id`, [[small_image]] as `image` FROM {{%product}} WHERE `small_image` IS NOT NULL
+                UNION ALL SELECT [[id]] as `product_id`, [[big_image]] as `image` FROM {{%product}} WHERE `big_image` IS NOT NULL
+                UNION ALL SELECT [[id]] as `product_id`, [[super_big_image]] as `image` FROM {{%product}} WHERE `super_big_image` IS NOT NULL
+                UNION ALL SELECT [[product_id]] as `product_id`, [[image]] as `image` FROM {{%product_attachment}} WHERE `meaning` = 1 AND `image` IS NOT NULL
+            ')->queryAll();
+
+            foreach ($results as $row)
+            {
+                if ( ! file_exists(yii::$app->params['uploadPath'] . '/' . $row['product_id'] . '/' . $row['image']))
+                {
+                    $imagesForDownloadArr[] = ['product_id' => $row['product_id'], 'image' => $row['image']];
+                }
+            }
+
+            if (! file_exists(yii::$app->params['xmlUploadPath']['current']))
+            {
+                mkdir(yii::$app->params['xmlUploadPath']['current']);
+            }
+
+            $f = fopen(yii::$app->params['xmlUploadPath']['current'] . '/filesforupload.txt' , 'w+');
+            foreach ($imagesForDownloadArr as $row)
+            {
+                fwrite($f,$row['product_id'] . '|' . $row['image'] . "\n");
+            }
+            fclose($f);
+        }
+        catch (Exception $e)
+        {
+            echo $e->getMessage() . "\n";
+        }
+    }
+
 
     public function actionIndex()
     {
