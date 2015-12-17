@@ -878,7 +878,7 @@ class LoadController extends \yii\console\Controller
 
             foreach ($results as $row)
             {
-                if ( ! file_exists(yii::$app->params['uploadPath'] . '/' . $row['product_id'] . '/' . $row['image']))
+                if ( $row['image'] != '' && ! file_exists(yii::$app->params['uploadPath'] . '/' . $row['product_id'] . '/' . $row['image']))
                 {
                     $imagesForDownloadArr[] = ['product_id' => $row['product_id'], 'image' => $row['image']];
                 }
