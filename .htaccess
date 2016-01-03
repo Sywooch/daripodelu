@@ -9,15 +9,6 @@ AddDefaultCharset utf-8
 	RewriteCond %{HTTP_HOST} ^www.cb66852.tmweb.ru
     RewriteRule (.*) http://www.daripodelu.ru/$1 [R=301,L]
 	
-	RewriteCond %{REQUEST_URI} ^/hotelroom/1.html$
-	RewriteRule (.*) http://www.daripodelu.ru/rooms/double-room.html [R=301,L]
-	
-	RewriteCond %{REQUEST_URI} ^/hotelroom/2.html$
-	RewriteRule (.*) http://www.daripodelu.ru/rooms/trekhmestnyi-nomer.html [R=301,L]
-	
-	RewriteCond %{REQUEST_URI} ^/hotelroom/3.html$
-	RewriteRule (.*) http://www.daripodelu.ru/rooms/chetyrekhmestnyi-nomer.html [R=301,L]
-
     # RewriteCond %{REQUEST_URI} ^/(data)
     # RewriteRule ^data/html/(.*)$ data/html/$1 [L]
 

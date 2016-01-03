@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 file="./downloads/current/filesforupload_min.txt"
 
@@ -13,8 +13,16 @@ while read line ; do
 
     fulldirpath=${fullpath%/*}
 
-    if [ ! -d "$fulldirpath" ]
+    # if [ ! -d "$fulldirpath" ]
+    # then
+    #     mkdir -p "$fulldirpath"
+    # fi
+
+    if [ ! -f $fullpath ]
     then
-        mkdir -p "$fulldirpath"
+        sleep 1s
+
+        echo "wget --user=22477_xmlexport --password=MF1lHzTR --wait=1s -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath"
+        wget --user=22477_xmlexport --password=MF1lHzTR --wait=1s -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath
     fi
 done < $file

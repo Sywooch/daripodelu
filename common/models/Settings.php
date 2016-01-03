@@ -32,7 +32,7 @@ class Settings extends ActiveRecord
     public function rules()
     {
         return [
-            [['param', 'value', 'label', 'type'], 'required'],
+            [['param', 'label', 'type'], 'required'],
             [['value', 'default'], 'string'],
             [['param'], 'string', 'max' => 128],
             [['label'], 'string', 'max' => 255],

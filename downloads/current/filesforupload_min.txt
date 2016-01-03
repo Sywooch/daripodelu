@@ -4,5 +4,7 @@
 1252;thumbnails/www/1000/1513.10_jpg_280x280.jpg
 372;thumbnails/1822.40_6_tif_1000x1000.jpg
 1252;thumbnails/www/1000/1513.10_jpg_1000x1000.jpg
-14652;thumbnails/www/1055_14_psd_1000x1000.jpg
-14652;thumbnails/www/1055_15_psd_1000x1000.jpg
+72396;thumbnails/5716.10_4_tif_1000x1000.jpg
+72396;thumbnails/5716.10_3_tif_1000x1000.jpg
+72396;thumbnails/5716.10_2_tif_1000x1000.jpg
+72396;thumbnails/5716.10_1_tif_1000x1000.jpg

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<doct timestamp="17.12.2015 05:15:10" title="gifts.ru directories structure export with articles">
+<doct timestamp="18.12.2015 05:15:10" title="gifts.ru directories structure export with articles">
 <page>
 <page_id>1</page_id>
 <name>Каталог</name>
@@ -4773,10 +4773,6 @@
 </product>
 <product>
 <page>1105700</page>
-<product>45900</product>
-</product>
-<product>
-<page>1105700</page>
 <product>29049</product>
 </product>
 <product>
@@ -7394,10 +7390,6 @@
 </product>
 <product>
 <page>1105711</page>
-<product>37412</product>
-</product>
-<product>
-<page>1105711</page>
 <product>37402</product>
 </product>
 <product>
@@ -9470,10 +9462,6 @@
 </product>
 <product>
 <page>1105867</page>
-<product>33254</product>
-</product>
-<product>
-<page>1105867</page>
 <product>26591</product>
 </product>
 <product>
@@ -10771,10 +10759,6 @@
 </product>
 <product>
 <page>1105735</page>
-<product>39573</product>
-</product>
-<product>
-<page>1105735</page>
 <product>46715</product>
 </product>
 <product>
@@ -11583,10 +11567,6 @@
 <product>
 <page>1105736</page>
 <product>26301</product>
-</product>
-<product>
-<page>1105736</page>
-<product>39320</product>
 </product>
 <product>
 <page>1105736</page>
@@ -16098,10 +16078,6 @@
 </product>
 <product>
 <page>1105782</page>
-<product>38456</product>
-</product>
-<product>
-<page>1105782</page>
 <product>45029</product>
 </product>
 <product>
@@ -16608,10 +16584,6 @@
 <product>
 <page>1105792</page>
 <product>37268</product>
-</product>
-<product>
-<page>1105792</page>
-<product>38456</product>
 </product>
 <product>
 <page>1105792</page>
@@ -17512,10 +17484,6 @@
 </product>
 <product>
 <page>1105798</page>
-<product>34164</product>
-</product>
-<product>
-<page>1105798</page>
 <product>20736</product>
 </product>
 <product>
@@ -17571,10 +17539,6 @@
 <product>
 <page>1105799</page>
 <product>41778</product>
-</product>
-<product>
-<page>1105799</page>
-<product>43439</product>
 </product>
 <product>
 <page>1105799</page>
@@ -17655,10 +17619,6 @@
 <product>
 <page>1105799</page>
 <product>41789</product>
-</product>
-<product>
-<page>1105799</page>
-<product>39573</product>
 </product>
 <product>
 <page>1105799</page>
@@ -20065,10 +20025,6 @@
 </product>
 <product>
 <page>1105835</page>
-<product>33254</product>
-</product>
-<product>
-<page>1105835</page>
 <product>21950</product>
 </product>
 <product>
@@ -21973,10 +21929,6 @@
 </product>
 <product>
 <page>1105832</page>
-<product>51737</product>
-</product>
-<product>
-<page>1105832</page>
 <product>26120</product>
 </product>
 <product>
@@ -21986,6 +21938,10 @@
 <product>
 <page>1105832</page>
 <product>53371</product>
+</product>
+<product>
+<page>1105832</page>
+<product>59007</product>
 </product>
 <product>
 <page>1105832</page>
@@ -23070,10 +23026,6 @@
 </product>
 <product>
 <page>1105877</page>
-<product>59075</product>
-</product>
-<product>
-<page>1105877</page>
 <product>65325</product>
 </product>
 <product>
@@ -23377,10 +23329,6 @@
 <product>
 <page>1106884</page>
 <product>21340</product>
-</product>
-<product>
-<page>1106884</page>
-<product>43439</product>
 </product>
 <product>
 <page>1106884</page>
@@ -25600,10 +25548,6 @@
 <product>
 <page>1106950</page>
 <product>40607</product>
-</product>
-<product>
-<page>1106950</page>
-<product>39573</product>
 </product>
 <product>
 <page>1106950</page>
@@ -29612,10 +29556,6 @@
 </product>
 <product>
 <page>1106885</page>
-<product>39573</product>
-</product>
-<product>
-<page>1106885</page>
 <product>39047</product>
 </product>
 <product>
@@ -29712,6 +29652,10 @@
 </product>
 <product>
 <page>1106885</page>
+<product>59007</product>
+</product>
+<product>
+<page>1106885</page>
 <product>25978</product>
 </product>
 <product>
@@ -29753,10 +29697,6 @@
 <product>
 <page>1106885</page>
 <product>35967</product>
-</product>
-<product>
-<page>1106885</page>
-<product>37412</product>
 </product>
 <product>
 <page>1106885</page>
@@ -31565,10 +31505,6 @@
 <product>
 <page>1106954</page>
 <product>58843</product>
-</product>
-<product>
-<page>1106954</page>
-<product>59075</product>
 </product>
 <product>
 <page>1106954</page>

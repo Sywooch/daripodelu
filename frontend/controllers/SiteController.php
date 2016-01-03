@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\models\LoginForm;
+use frontend\models\FeedbackForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -72,7 +73,32 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $feedbackModel = new FeedbackForm();
+        $this->view->registerMetaTag([
+            'name' => 'description',
+            'content' => Yii::$app->config->siteMetaDescript,
+        ]);
+        $this->view->registerMetaTag([
+            'name' => 'keywords',
+            'content' => Yii::$app->config->siteMetaKeywords,
+        ]);
+        $this->view->title = Yii::$app->config->siteName;
+
+        $this->layout = 'index';
+        $this->getView()->params['feedbackModel'] = $feedbackModel;
         return $this->render('index');
+    }
+
+    public function actionSendmail()
+    {
+        $model = new FeedbackForm();
+
+        if ($model->load(yii::$app->request->post()) && $model->validate())
+        {
+            $model->sendEmail(yii::$app->config->siteAdminEmail);
+        }
+
+        return $this->redirect(yii::$app->request->referrer);
     }
 
     /**
@@ -113,7 +139,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionContact()
+    /*public function actionContact()
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -129,17 +155,7 @@ class SiteController extends Controller
                 'model' => $model,
             ]);
         }
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return mixed
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
+    }*/
 
     /**
      * Signs user up.

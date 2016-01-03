@@ -15,19 +15,33 @@ class SettingsForm extends Model {
     public $siteAdminEmail;
     public $siteMetaDescription;
     public $siteMetaKeywords;
+    public $sitePhone;
+    public $siteWorkSchedule;
     public $newsPerPage;
     public $newsPerHome;
     public $gateLogin;
     public $gatePassword;
+    private $conformityVars = [
+        'siteName' => 'SITE_NAME',
+        'siteAdminEmail' => 'SITE_ADMIN_EMAIL',
+        'siteMetaDescription' => 'SITE_META_DESCRIPT',
+        'siteMetaKeywords' => 'SITE_META_KEYWORDS',
+        'newsPerPage' => 'NEWS_ITEMS_PER_PAGE',
+        'newsPerHome' => 'NEWS_ITEMS_PER_HOME',
+        'gateLogin' => 'GATE_LOGIN',
+        'gatePassword' => 'GATE_PASSWORD',
+        'sitePhone' => 'SITE_PHONE',
+        'siteWorkSchedule' => 'SITE_WORK_SCHEDULE',
+    ];
 
     public function rules()
     {
         return [
-            [['siteName', 'siteAdminEmail', 'siteMetaDescription', 'siteMetaKeywords', 'gateLogin', 'gatePassword'], 'string'],
+            [['siteName', 'siteAdminEmail', 'siteMetaDescription', 'siteMetaKeywords', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'string'],
             [['siteName', 'newsPerPage', 'newsPerHome', 'gateLogin', 'gatePassword'], 'required'],
             [['newsPerPage', 'newsPerHome'], 'integer'],
             ['siteAdminEmail', 'email'],
-            [['siteName', 'siteAdminEmail', 'siteMetaDescription', 'siteMetaKeywords', 'newsPerPage', 'newsPerHome', 'gateLogin', 'gatePassword'], 'trim'],
+            [['siteName', 'siteAdminEmail', 'siteMetaDescription', 'siteMetaKeywords', 'newsPerPage', 'newsPerHome', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'trim'],
         ];
     }
 
@@ -44,6 +58,8 @@ class SettingsForm extends Model {
         $model->siteAdminEmail = Yii::$app->config->get('SITE_ADMIN_EMAIL');
         $model->siteMetaDescription = Yii::$app->config->get('SITE_META_DESCRIPT');
         $model->siteMetaKeywords = Yii::$app->config->get('SITE_META_KEYWORDS');
+        $model->sitePhone = Yii::$app->config->get('SITE_PHONE');
+        $model->siteWorkSchedule = Yii::$app->config->get('SITE_WORK_SCHEDULE');
         $model->newsPerPage = Yii::$app->config->get('NEWS_ITEMS_PER_PAGE');
         $model->newsPerHome = Yii::$app->config->get('NEWS_ITEMS_PER_HOME');
         $model->gateLogin = Yii::$app->config->get('GATE_LOGIN');
@@ -62,6 +78,8 @@ class SettingsForm extends Model {
             'siteAdminEmail' => $items['SITE_ADMIN_EMAIL']->label,
             'siteMetaDescription' => $items['SITE_META_DESCRIPT']->label,
             'siteMetaKeywords' => $items['SITE_META_KEYWORDS']->label,
+            'sitePhone' => $items['SITE_PHONE']->label,
+            'siteWorkSchedule' => $items['SITE_WORK_SCHEDULE']->label,
             'newsPerPage' => $items['NEWS_ITEMS_PER_PAGE']->label,
             'newsPerHome' => $items['NEWS_ITEMS_PER_HOME']->label,
             'gateLogin' => $items['GATE_LOGIN']->label,
@@ -84,14 +102,11 @@ class SettingsForm extends Model {
 
     public function save()
     {
-        $rslt = ($this->isAttributeRequired('siteName')? $this->set('SITE_NAME', $this->siteName) : true) &&
-                ($this->isAttributeRequired('siteAdminEmail')? $this->set('SITE_ADMIN_EMAIL', $this->siteAdminEmail) : true) &&
-                ($this->isAttributeRequired('siteMetaDescription')? $this->set('SITE_META_DESCRIPT', $this->siteMetaDescription) : true) &&
-                ($this->isAttributeRequired('siteMetaKeywords')? $this->set('SITE_META_KEYWORDS', $this->siteMetaKeywords) : true) &&
-                ($this->isAttributeRequired('newsPerPage')? $this->set('NEWS_ITEMS_PER_PAGE', $this->newsPerPage) : true) &&
-                ($this->isAttributeRequired('newsPerHome')? $this->set('NEWS_ITEMS_PER_HOME', $this->newsPerHome) : true) &&
-                ($this->isAttributeRequired('gateLogin')? $this->set('GATE_LOGIN', $this->gateLogin) : true) &&
-                ($this->isAttributeRequired('gatePassword')? $this->set('GATE_PASSWORD', $this->gatePassword) : true);
+        $rslt = true;
+        foreach ($this->conformityVars as $param => $var)
+        {
+            $rslt = $rslt && $this->set($var, $this->{$param});
+        }
 
         return $rslt;
     }

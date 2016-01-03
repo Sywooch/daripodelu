@@ -12,9 +12,9 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+        'assetManager' => [],
+        'errorHandler' => [
+            'errorAction' => 'site/error',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -25,8 +25,13 @@ return [
                 ],
             ],
         ],
-        'errorHandler' => [
-            'errorAction' => 'site/error',
+        'request'=>[
+            'class' => 'common\components\Request',
+            'web'=> '/frontend/web'
+        ],
+        'user' => [
+            'identityClass' => 'common\models\User',
+            'enableAutoLogin' => true,
         ],
     ],
     'params' => $params,

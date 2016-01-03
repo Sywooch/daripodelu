@@ -18,6 +18,8 @@ use common\models\Settings;
  * @property integer $newsPerHome
  * @property string $gateLogin
  * @property string $gatePassword
+ * @property string $sitePhone
+ * @property string $siteWorkSchedule
  */
 class Config extends yii\base\Component {
 

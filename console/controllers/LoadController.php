@@ -892,7 +892,7 @@ class LoadController extends \yii\console\Controller
             $f = fopen(yii::$app->params['xmlUploadPath']['current'] . '/filesforupload.txt' , 'w+');
             foreach ($imagesForDownloadArr as $row)
             {
-                fwrite($f,$row['product_id'] . '|' . $row['image'] . "\n");
+                fwrite($f,$row['product_id'] . ';' . $row['image'] . "\n");
             }
             fclose($f);
         }
