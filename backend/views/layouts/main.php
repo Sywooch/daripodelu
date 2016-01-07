@@ -43,6 +43,7 @@ BootboxAsset::overrideSystemConfirm();
                         'items' => [
                             ['label' => 'Страницы', 'url' => ['/page/index']],
                             ['label' => 'Новости', 'url' => ['/news/index']],
+                            ['label' => 'Блоки', 'url' => ['/block/index']]
 //                            ['label' => 'Фотогалерея', 'url' => ['/gallery/index']],
 //                            ['label' => 'Баннеры', 'url' => ['/banners/index']],
                         ]

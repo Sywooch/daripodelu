@@ -15,6 +15,10 @@ return [
         'stock' => 'http://api2.gifts.ru/export/v2/catalogue/stock.xml',
         'filters' => 'http://api2.gifts.ru/export/v2/catalogue/filters.xml',
     ],*/
+    'positions' => [
+        'footer' => 'Подвал страницы',
+        'main_center_left' => 'Главная страница (в центре слева)',
+    ],
     'imageMaxWidth' => 1920,
     'imageMaxHeight' => 1080,
     'maxImgFileSize' => 2048000,

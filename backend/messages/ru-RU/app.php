@@ -82,5 +82,7 @@ return [
     '<strong> Error! </strong> An error occurred while saving the alias of gallery.' => '<strong>Ошибка!</strong> Произошла ошибка при сохранении URL-псевдонима альбома.',
     'Update photo' => 'Редактирование фотографии',
     'Only images with status "Published" is displayed on the site.' => 'Только фотографии со статусом "Опубликовано" отображаются на сайте.',
+    'Blocks' => 'Блоки',
+    'Create Block' => 'Создание блока',
     '' => '',
 ];

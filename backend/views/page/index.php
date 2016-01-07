@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
-$this->title = $this->title . ' :: ' . Yii::$app->params['SITE.TITLE'];
+$this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
 
 if( Yii::$app->session->hasFlash('error') ) 
 {

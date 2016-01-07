@@ -46,8 +46,7 @@ $feedbackModel = $this->params['feedbackModel'];
             </div>
         </header>
         <div class="hd-line"></div>
-
-
+        <?= $content; ?>
     </div>
     <div class="footer-box">
         <div class="container">

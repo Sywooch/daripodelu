@@ -21,9 +21,11 @@ class AppAsset extends AssetBundle
         '/css/reset.css',
         'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300,300italic,400italic,600italic,700italic&subset=latin,cyrillic-ext',
         'https://fonts.googleapis.com/css?family=Cuprum:400,700&subset=latin,cyrillic',
+        '/js/bxslider/jquery.bxslider.css',
         '/css/style.css',
     ];
     public $js = [
+        '/js/bxslider/jquery.bxslider.min.js',
         '/js/jquery.textarea_autosize.js',
         '/js/main.js',
     ];
