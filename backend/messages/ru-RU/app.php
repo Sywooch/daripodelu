@@ -84,5 +84,7 @@ return [
     'Only images with status "Published" is displayed on the site.' => 'Только фотографии со статусом "Опубликовано" отображаются на сайте.',
     'Blocks' => 'Блоки',
     'Create Block' => 'Создание блока',
+    'Is displayed only in the list of blocks.' => 'Отображается только в списке блоков.',
+    '<strong>Saved!</strong> The block added successfully.' => '<strong>Сохранено!</strong> Блок успешно сохранен.',
     '' => '',
 ];

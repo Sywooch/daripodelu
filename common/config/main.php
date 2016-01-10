@@ -17,7 +17,7 @@ return [
             'charset' => 'utf8',
             'tablePrefix' => 'dpd_',
             'enableSchemaCache' => true,
-            'schemaCacheDuration' => 3600,
+            'schemaCacheDuration' => YII_DEBUG ? 0 : 3600,
             'schemaCache' => 'cache',
         ],
         'formatter' => [

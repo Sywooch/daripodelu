@@ -19,7 +19,7 @@ class BlockSearch extends Block
     {
         return [
             [['id', 'weight', 'show_all_pages'], 'integer'],
-            [['position', 'name', 'title', 'content'], 'safe'],
+            [['position', 'name', 'title', 'content', 'show_on_pages'], 'safe'],
         ];
     }
 
@@ -49,7 +49,8 @@ class BlockSearch extends Block
 
         $this->load($params);
 
-        if (!$this->validate()) {
+        if ( !$this->validate())
+        {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
@@ -64,7 +65,8 @@ class BlockSearch extends Block
         $query->andFilterWhere(['like', 'position', $this->position])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'content', $this->content]);
+            ->andFilterWhere(['like', 'content', $this->content])
+            ->andFilterWhere(['like', 'show_on_pages', $this->show_on_pages]);
 
         return $dataProvider;
     }

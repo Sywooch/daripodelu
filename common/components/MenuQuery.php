@@ -5,7 +5,8 @@ namespace common\components;
 use creocoder\nestedsets\NestedSetsQueryBehavior;
 
 
-class MenuQuery extends \yii\db\ActiveQuery {
+class MenuQuery extends \yii\db\ActiveQuery
+{
 
     public function behaviors()
     {

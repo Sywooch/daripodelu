@@ -16,7 +16,8 @@ use dosamigos\transliterator\TransliteratorHelper;
 /**
  * MenuTreeController implements the CRUD actions for MenuTree model.
  */
-class MenutreeController extends Controller {
+class MenutreeController extends Controller
+{
 
     public function behaviors()
     {
@@ -45,7 +46,7 @@ class MenutreeController extends Controller {
      */
     public function actionIndex()
     {
-        if ( ! Yii::$app->request->get('MenuTreeSearch'))
+        if ( !Yii::$app->request->get('MenuTreeSearch'))
         {
             return $this->redirect(['index', 'MenuTreeSearch[show_in_menu]' => 1]);
         }
@@ -74,7 +75,7 @@ class MenutreeController extends Controller {
         if ($model->load(Yii::$app->request->post()))
         {
             $parent = $model->findOne(['id' => $model->parent_id]);
-            if ( ! is_null($parent))
+            if ( !is_null($parent))
             {
                 if ($model->prev_id > 0)
                 {

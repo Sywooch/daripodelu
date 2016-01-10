@@ -21,7 +21,8 @@ use common\models\Settings;
  * @property string $sitePhone
  * @property string $siteWorkSchedule
  */
-class Config extends yii\base\Component {
+class Config extends yii\base\Component
+{
 
     protected $data = [];
 
@@ -35,7 +36,7 @@ class Config extends yii\base\Component {
         {
             if ($item->param)
             {
-                $this->data[$item->param] = (isset($item->value) && ! is_null($item->value) && ! empty($item->value)) ? $item->value : $item->default;
+                $this->data[$item->param] = (isset($item->value) && !is_null($item->value) && !empty($item->value)) ? $item->value : $item->default;
             }
         }
 
@@ -44,10 +45,13 @@ class Config extends yii\base\Component {
 
     public function get($key)
     {
-        if (array_key_exists($key, $this->data)){
+        if (array_key_exists($key, $this->data))
+        {
             return $this->data[$key];
-        } else {
-            throw new yii\base\Exception('Undefined parameter '.$key);
+        }
+        else
+        {
+            throw new yii\base\Exception('Undefined parameter ' . $key);
         }
     }
 
@@ -67,6 +71,7 @@ class Config extends yii\base\Component {
         try
         {
             $value = $this->get($key);
+
             return $value;
         }
         catch (yii\base\Exception $e)

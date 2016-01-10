@@ -11,7 +11,8 @@ use common\models\Image;
 //TODO-cms Сделать ajax-редактирование фотографий у новости
 //TODO-cms Сделать массовое ajax-удаление отмеченных фотографий у новости
 
-class ImageController extends \yii\web\Controller {
+class ImageController extends \yii\web\Controller
+{
 
     public function behaviors()
     {
@@ -58,7 +59,6 @@ class ImageController extends \yii\web\Controller {
 
     public function actionDeletescope()
     {
-
     }
 
     public function actionSetmain($id)

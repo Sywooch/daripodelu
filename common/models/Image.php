@@ -27,7 +27,8 @@ use yii\helpers\FileHelper;
  * @property integer $maxHeight
  * @property string $url
  */
-class Image extends ActiveRecord {
+class Image extends ActiveRecord
+{
 
     const NOT_MAIN = 0;
     const IS_MAIN = 1;
@@ -146,7 +147,7 @@ class Image extends ActiveRecord {
      */
     public function setMaxHeight($maxHeight)
     {
-        if ( ! is_integer($maxHeight))
+        if ( !is_integer($maxHeight))
         {
             throw new yii\base\InvalidArgumentException('Max height must be integer');
         }
@@ -176,7 +177,7 @@ class Image extends ActiveRecord {
      */
     public function setMaxWidth($maxWidth)
     {
-        if ( ! is_integer($maxWidth))
+        if ( !is_integer($maxWidth))
         {
             throw new yii\base\InvalidArgumentException('Max width must be integer');
         }
@@ -336,9 +337,9 @@ class Image extends ActiveRecord {
             $tmp = explode('_', $name);
             list($width, $height) = explode('x', $tmp[2]);
 
-            if ( ! file_exists($this->_getImagePath(['width' => $width, 'height' => $height])))
+            if ( !file_exists($this->_getImagePath(['width' => $width, 'height' => $height])))
             {
-                if ( ! file_exists($this->getImageTmbDirPath()))
+                if ( !file_exists($this->getImageTmbDirPath()))
                 {
                     mkdir($this->getImageTmbDirPath());
                 }
@@ -381,12 +382,12 @@ class Image extends ActiveRecord {
             {
                 if ($this->file)
                 {
-                    if ( ! file_exists($this->getModelDirPath()))
+                    if ( !file_exists($this->getModelDirPath()))
                     {
                         mkdir($this->getModelDirPath());
                     }
 
-                    if ( ! file_exists($this->getImageDirPath()))
+                    if ( !file_exists($this->getImageDirPath()))
                     {
                         mkdir($this->getImageDirPath());
                     }
@@ -399,6 +400,7 @@ class Image extends ActiveRecord {
                         if (components\Image::proportionalResize($this->file->tempName, $this->getMaxSizeString())->save($this->_getImagePath()))
                         {
                             $trans->commit();
+
                             return true;
                         }
                         else
@@ -412,13 +414,15 @@ class Image extends ActiveRecord {
                     }
                 }
 
-                if ( ! $this->isNewRecord)
+                if ( !$this->isNewRecord)
                 {
                     $trans->commit();
+
                     return true;
                 }
             }
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             $trans->rollBack();
         }

@@ -9,7 +9,8 @@ use yii\data\ActiveDataProvider;
 /**
  * NewsSearch represents the model behind the search form about `app\models\News`.
  */
-class NewsSearch extends News {
+class NewsSearch extends News
+{
 
     /**
      * @inheritdoc
@@ -54,7 +55,7 @@ class NewsSearch extends News {
 
         $this->load($params);
 
-        if ( ! $this->validate())
+        if ( !$this->validate())
         {
             // uncomment the following line if you do not want to any records when validation fails
             // $query->where('0=1');

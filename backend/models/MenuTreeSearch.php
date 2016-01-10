@@ -10,7 +10,8 @@ use common\models\MenuTree;
 /**
  * MenuTreeSearch represents the model behind the search form about `app\models\MenuTree`.
  */
-class MenuTreeSearch extends MenuTree {
+class MenuTreeSearch extends MenuTree
+{
 
     /**
      * @inheritdoc
@@ -54,7 +55,7 @@ class MenuTreeSearch extends MenuTree {
 
         $this->load($params);
 
-        if ( ! $this->validate())
+        if ( !$this->validate())
         {
             // uncomment the following line if you do not want to any records when validation fails
             // $query->where('0=1');

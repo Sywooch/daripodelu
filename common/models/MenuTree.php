@@ -33,7 +33,8 @@ use yii\helpers\Url;
  * @property integer $show_as_link
  * @property integer $status
  */
-class MenuTree extends ActiveRecord {
+class MenuTree extends ActiveRecord
+{
 
     const ROOT_ID = 1;
 
@@ -200,7 +201,7 @@ class MenuTree extends ActiveRecord {
      */
     public function getTreeForDropDownList($selfEscape = false, $visible = true, $canBeParent = true)
     {
-        $tree = $this->getTree($selfEscape, ! $visible);
+        $tree = $this->getTree($selfEscape, !$visible);
         $optionsArray = [];
         foreach ($tree as $item)
         {
@@ -209,12 +210,12 @@ class MenuTree extends ActiveRecord {
             {
                 if ($item->can_be_parent == static::PARENT_CAN_BE)
                 {
-                    $optionsArray[$item->id] = str_repeat('- - ', $item->depth) . (($item->id !== 1)? $item->name : Yii::t('app', 'No'));
+                    $optionsArray[$item->id] = str_repeat('- - ', $item->depth) . (($item->id !== 1) ? $item->name : Yii::t('app', 'No'));
                 }
             }
             else
             {
-                $optionsArray[$item->id] = str_repeat('- - ', $item->depth) . (($item->id !== 1)? $item->name : Yii::t('app', 'No'));
+                $optionsArray[$item->id] = str_repeat('- - ', $item->depth) . (($item->id !== 1) ? $item->name : Yii::t('app', 'No'));
             }
         }
 
@@ -224,9 +225,9 @@ class MenuTree extends ActiveRecord {
     public function getSiblingItems($selfEscape = true, $all = false)
     {
         $siblingItems = [];
-        $modelId = $selfEscape === true? $this->id : -9999;
+        $modelId = $selfEscape === true ? $this->id : -9999;
         $parentItem = MenuTree::findOne(['id' => $this->parent_id]);
-        if($parentItem)
+        if ($parentItem)
         {
             if (($all))
             {
@@ -253,7 +254,7 @@ class MenuTree extends ActiveRecord {
         foreach ($children as $child)
         {
             $routesArr[$route . $child->alias] = ArrayHelper::toArray($child);
-            if ( ! $child->isLeaf())
+            if ( !$child->isLeaf())
             {
                 MenuTree::makeRoutes($child, $routesArr, $route . $child->alias . '/');
             }
@@ -264,7 +265,7 @@ class MenuTree extends ActiveRecord {
 
     public function getRoutes()
     {
-        if ( ! is_null($this->cache))
+        if ( !is_null($this->cache))
         {
             $routes = $this->cache->get(MenuTree::CACHE_KEY_ROUTES);
             if ($routes === false)
@@ -317,7 +318,7 @@ class MenuTree extends ActiveRecord {
 
     public function getMenuItems()
     {
-        if ( ! is_null($this->cache))
+        if ( !is_null($this->cache))
         {
             $menuItems = $this->cache->get(MenuTree::CACHE_KEY_NAV);
             if ($menuItems === false)
@@ -355,7 +356,6 @@ class MenuTree extends ActiveRecord {
         if (substr_count($route, '/') == 2)
         {
             list($moduleId, $controllerId, $actionId) = explode('/', $route);
-
         }
         elseif (substr_count($route, '/') == 1)
         {
@@ -372,7 +372,7 @@ class MenuTree extends ActiveRecord {
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        if ( ! is_null($this->cache))
+        if ( !is_null($this->cache))
         {
             $routes = MenuTree::makeRoutes();
             $this->cache->set(MenuTree::CACHE_KEY_ROUTES, $routes);
@@ -385,7 +385,7 @@ class MenuTree extends ActiveRecord {
     public function afterDelete()
     {
         parent::afterDelete();
-        if ( ! is_null($this->cache))
+        if ( !is_null($this->cache))
         {
             $routes = MenuTree::makeRoutes();
             $this->cache->set(MenuTree::CACHE_KEY_ROUTES, $routes);

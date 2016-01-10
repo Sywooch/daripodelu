@@ -8,7 +8,8 @@ use yii\widgets\InputWidget;
 use common\models\MenuTree;
 
 
-class InputAliasWidget extends InputWidget {
+class InputAliasWidget extends InputWidget
+{
 
     public $sourceFieldId;
     public $url;
@@ -45,7 +46,7 @@ class InputAliasWidget extends InputWidget {
 
     public function run()
     {
-        $this->options['id'] = isset($this->options['id'])? $this->options['id'] : 'item-alias';
+        $this->options['id'] = isset($this->options['id']) ? $this->options['id'] : 'item-alias';
         $input = $this->hasModel()
             ? Html::activeTextInput($this->model, $this->attribute, $this->options)
             : Html::textInput($this->name, $this->value, $this->options);

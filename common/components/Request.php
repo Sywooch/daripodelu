@@ -3,7 +3,8 @@
 namespace common\components;
 
 
-class Request extends \yii\web\Request {
+class Request extends \yii\web\Request
+{
 
     public $web;
 

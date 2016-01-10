@@ -15,7 +15,8 @@ use backend\behaviors\ContentAliasBehavior;
 /**
  * PageController implements the CRUD actions for Page model.
  */
-class PageController extends Controller {
+class PageController extends Controller
+{
 
     public function behaviors()
     {
@@ -88,7 +89,7 @@ class PageController extends Controller {
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
                 $model->showInMenu = $_POST['MenuTree']['show_in_menu'];
 
-                if ( ! $model->saveAlias())
+                if ( !$model->saveAlias())
                 {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }
@@ -147,7 +148,7 @@ class PageController extends Controller {
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
                 $model->show_in_menu = $_POST['MenuTree']['show_in_menu'];
 
-                if ( ! $model->saveAlias())
+                if ( !$model->saveAlias())
                 {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }

@@ -10,7 +10,8 @@ use yii\web\Controller;
 /**
  * Site controller
  */
-class SiteController extends Controller {
+class SiteController extends Controller
+{
 
     /**
      * @inheritdoc
@@ -60,7 +61,7 @@ class SiteController extends Controller {
 
     public function actionLogin()
     {
-        if ( ! \Yii::$app->user->isGuest)
+        if ( !\Yii::$app->user->isGuest)
         {
             return $this->goHome();
         }

@@ -10,11 +10,12 @@ use Imagine\Image\Point;
 use Imagine\Image\ImageInterface;
 
 
-class Image extends yii\imagine\Image {
+class Image extends yii\imagine\Image
+{
 
     public static function proportionalResize($filename, $size, $filter = ImageInterface::FILTER_UNDEFINED)
     {
-        if ( ! is_string($size) || ! preg_match('/^(\d+x\d*)|(\d*x\d+)$/', $size))
+        if ( !is_string($size) || !preg_match('/^(\d+x\d*)|(\d*x\d+)$/', $size))
         {
             throw new InvalidParamException('Wrong parameter of method ' . __METHOD__ . ' of class ' . __CLASS__);
         }
@@ -22,7 +23,7 @@ class Image extends yii\imagine\Image {
         list($width, $height) = explode('x', $size);
         $img = static::getImagine()->open(Yii::getAlias($filename));
 
-        if ( ! empty($width) && ! empty($height))
+        if ( !empty($width) && !empty($height))
         {
             $startX = 0;
             $startY = 0;
@@ -50,9 +51,8 @@ class Image extends yii\imagine\Image {
             {
                 $thumb = static::proportionalResize($filename, $width . 'x');
             }
-
         }
-        elseif ( ! empty($width))
+        elseif ( !empty($width))
         {
             if ($width <= 0)
             {

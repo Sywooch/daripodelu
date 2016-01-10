@@ -7,7 +7,8 @@ use yii\base\Behavior;
 use common\models\SEOInformation;
 
 
-class SEOBehavior {
+class SEOBehavior
+{
 
     private $model = null;
     private $moduleId = null;

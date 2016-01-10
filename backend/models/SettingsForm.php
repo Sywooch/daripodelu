@@ -9,7 +9,8 @@ use yii\base\Model;
 /**
  * Settings form
  */
-class SettingsForm extends Model {
+class SettingsForm extends Model
+{
 
     public $siteName;
     public $siteAdminEmail;

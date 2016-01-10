@@ -15,10 +15,20 @@ use yii\base\InvalidParamException;
  * @property string $content
  * @property integer $weight
  * @property integer $show_all_pages
+ * @property string $show_on_pages
  */
 class Block extends \yii\db\ActiveRecord
 {
-    private $positions = [];
+    const NO_POS = 'no_pos';
+
+    /**
+     * @var array
+     */
+    private $positions = [Block::NO_POS => 'Нет'];
+    /**
+     * @var \common\models\MenuTree
+     */
+    private $menuTree = null;
 
     /**
      * @inheritdoc
@@ -34,12 +44,13 @@ class Block extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'name', 'title', 'content', 'weight'], 'required'],
-            [['content'], 'string'],
+            [['position', 'name', 'weight'], 'required'],
+            [['content', 'show_on_pages'], 'string'],
             [['weight', 'show_all_pages'], 'integer'],
             [['position'], 'string', 'max' => 40],
             [['name'], 'string', 'max' => 100],
-            [['title'], 'string', 'max' => 255]
+            [['title'], 'string', 'max' => 255],
+            [['position', 'name', 'title', 'content', 'weight', 'show_on_pages'], 'trim'],
         ];
     }
 
@@ -56,6 +67,7 @@ class Block extends \yii\db\ActiveRecord
             'content' => Yii::t('app', 'Текст'),
             'weight' => Yii::t('app', 'Порядок следования'),
             'show_all_pages' => Yii::t('app', 'Показывать на всех страницах'),
+            'show_on_pages' => Yii::t('app', 'Показывать только на страницах'),
         ];
     }
 
@@ -67,7 +79,7 @@ class Block extends \yii\db\ActiveRecord
      */
     public function positionName($position)
     {
-        if ( ! isset($this->position[$position]))
+        if ( !isset($this->position[$position]))
         {
             throw new \Exception('Position "' . $position . '" is not exist');
         }
@@ -90,7 +102,7 @@ class Block extends \yii\db\ActiveRecord
      */
     public function addPositions($positions)
     {
-        if ( ! is_array($positions))
+        if ( !is_array($positions))
         {
             throw new InvalidParamException('Invalid parameter passed to addPosition method. Parameter $positions must be an array.');
         }
@@ -105,9 +117,15 @@ class Block extends \yii\db\ActiveRecord
      * Adds a new position
      * @param $code string a uniqe characters code of position
      * @param $name string a name of position
+     * @throws \Exception
      */
     public function addPosition($code, $name)
     {
+        if ($code == Block::NO_POS)
+        {
+            throw new \Exception('Position named "' . $code . '" can not be added. Name "' . $code . '" is reserved.');
+        }
+
         $this->positions[$code] = $name;
     }
 
@@ -117,7 +135,7 @@ class Block extends \yii\db\ActiveRecord
      */
     public function removePositions($positions)
     {
-        if ( ! is_array($positions))
+        if ( !is_array($positions))
         {
             throw new InvalidParamException('Invalid parameter passed to removePositions method. Parameter $positions must be an array.');
         }
@@ -134,9 +152,54 @@ class Block extends \yii\db\ActiveRecord
      */
     public function removePosition($position)
     {
-        if (isset($this->positions[$position]))
+        if (isset($this->positions[$position]) && $position != Block::NO_POS)
         {
-            unset($this->positions[$name]);
+            unset($this->positions[$position]);
         }
+    }
+
+    /**
+     * Attaches MenuTree object
+     * @param \common\models\MenuTree $menuTree
+     */
+    public function attachMenuTree(\common\models\MenuTree $menuTree)
+    {
+        $this->menuTree = $menuTree;
+    }
+
+    /**
+     * Returns the list of pages relative URL
+     *
+     * For example,
+     *      [
+     *          ['/' => '/'],
+     *          ['articles/detective-novels/novel.html' => 'articles/detective-novels/novel.html'],
+     *          ['news.html' => 'news.html'],
+     *      ]
+     * @return array
+     */
+    public function getPagesList()
+    {
+        $pagesList = [];
+        if ( !is_null($this->menuTree))
+        {
+            $pagesList[] = '/';
+            foreach ($this->menuTree->getRoutes() as $alias => $paramsList)
+            {
+                $pagesList[$alias . yii::$app->urlManager->suffix] = $alias . yii::$app->urlManager->suffix;
+            }
+        }
+
+        return $pagesList;
+    }
+
+    /**
+     * Returns the max value of the "weight" column for specified position
+     * @param $position string
+     * @return int
+     */
+    public function getMaxWeightForPosition($position)
+    {
+        return Block::find()->where(['position' => $position])->max('[[weight]]');
     }
 }

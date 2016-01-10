@@ -19,7 +19,8 @@ use common\models\SEOInformation;
 /**
  * NewsController implements the CRUD actions for News model.
  */
-class NewsController extends Controller {
+class NewsController extends Controller
+{
 
     public function behaviors()
     {
@@ -55,7 +56,7 @@ class NewsController extends Controller {
         $seoInfo = SEOInformation::findModel('news', 'index');
         if (is_null($seoInfo))
         {
-            $seoInfo =  new SEOInformation();
+            $seoInfo = new SEOInformation();
             $seoInfo->controller_id = 'news';
             $seoInfo->action_id = 'index';
         }
@@ -119,7 +120,7 @@ class NewsController extends Controller {
                 $model->alias = $_POST['MenuTree']['alias'];
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
 
-                if ( ! $model->saveAlias())
+                if ( !$model->saveAlias())
                 {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }
@@ -136,6 +137,8 @@ class NewsController extends Controller {
             else
             {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
             }
         }
         else
@@ -188,7 +191,7 @@ class NewsController extends Controller {
                 $model->alias = $_POST['MenuTree']['alias'];
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
 
-                if ( ! $model->saveAlias())
+                if ( !$model->saveAlias())
                 {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }

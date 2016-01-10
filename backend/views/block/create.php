@@ -11,12 +11,12 @@ $this->title = Yii::t('app', 'Create Block');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Blocks'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="page-create">
+<div class="block-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-    $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
+    $this->title = $this->title . ' :: ' . Yii::t('app', 'Blocks') . ' :: ' . Yii::$app->config->siteName;
 
     if( Yii::$app->session->hasFlash('error') )
     {

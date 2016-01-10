@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use backend\models\Block;
 use backend\models\BlockSearch;
+use common\models\MenuTree;
 
 /**
  * BlockController implements the CRUD actions for Block model.
@@ -46,6 +47,9 @@ class BlockController extends Controller
         $query = Block::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['weight' => SORT_ASC],
+            ],
         ]);
 
         return $this->render('index', [
@@ -72,11 +76,35 @@ class BlockController extends Controller
     public function actionCreate()
     {
         $model = new Block();
+        $model->attachMenuTree(new MenuTree());
         $model->addPositions(yii::$app->params['positions']);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        } else {
+        if ($model->load(Yii::$app->request->post()))
+        {
+            $maxWeight = $model->getMaxWeightForPosition($model->position);
+            $model->weight = $maxWeight + 1;
+            if ($model->save())
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The block added successfully.'));
+
+                if (isset($_POST['saveBlock']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
+        }
+        else
+        {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -94,9 +122,12 @@ class BlockController extends Controller
         $model = $this->findModel($id);
         $model->addPositions(yii::$app->params['positions']);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        }
+        else
+        {
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -125,9 +156,12 @@ class BlockController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Block::findOne($id)) !== null) {
+        if (($model = Block::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

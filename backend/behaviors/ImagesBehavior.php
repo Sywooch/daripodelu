@@ -14,7 +14,8 @@ use common\models\Image;
  * @property integer $ownerIdAttribute
  * @property string $ctgIdAttribute
  */
-class ImagesBehavior extends Behavior {
+class ImagesBehavior extends Behavior
+{
 
     private $model;
     private $ownerIdAttribute = 'id';
@@ -76,7 +77,7 @@ class ImagesBehavior extends Behavior {
 
     public function getCtgId()
     {
-        return ( ! isset($this->owner->{$this->ctgIdAttribute}) || is_null($this->owner->{$this->ctgIdAttribute})) ? 0 : $this->owner->{$this->ctgIdAttribute};
+        return ( !isset($this->owner->{$this->ctgIdAttribute}) || is_null($this->owner->{$this->ctgIdAttribute})) ? 0 : $this->owner->{$this->ctgIdAttribute};
     }
 
     /**
@@ -92,13 +93,13 @@ class ImagesBehavior extends Behavior {
      */
     public function setMaxWidth($maxWidth)
     {
-        if ( ! is_integer($maxWidth))
+        if ( !is_integer($maxWidth))
         {
             throw new yii\base\InvalidArgumentException('Max width must be integer');
         }
         else
         {
-            if($maxWidth <= 0)
+            if ($maxWidth <= 0)
             {
                 throw new yii\base\InvalidArgumentException('Max width must be greater than 0');
             }
@@ -120,13 +121,13 @@ class ImagesBehavior extends Behavior {
      */
     public function setMaxHeight($maxHeight)
     {
-        if ( ! is_integer($maxHeight))
+        if ( !is_integer($maxHeight))
         {
             throw new yii\base\InvalidArgumentException('Max height must be integer');
         }
         else
         {
-            if($maxHeight <= 0)
+            if ($maxHeight <= 0)
             {
                 throw new yii\base\InvalidArgumentException('Max height must be greater than 0');
             }
@@ -138,7 +139,7 @@ class ImagesBehavior extends Behavior {
     public function getMaxFileSize()
     {
         $model = new Image();
-        $validators =  $model->getActiveValidators('file');
+        $validators = $model->getActiveValidators('file');
 
         return 600000;
     }
@@ -171,7 +172,8 @@ class ImagesBehavior extends Behavior {
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_DELETE => function($event) {
+            ActiveRecord::EVENT_AFTER_DELETE => function ($event)
+            {
                 Image::deleteAllFilesOfOwner($this->model, $this->owner->{$this->ownerIdAttribute}, $this->getCtgId());
 
                 $imageModel = new Image();

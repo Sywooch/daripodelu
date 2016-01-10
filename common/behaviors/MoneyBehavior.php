@@ -6,7 +6,8 @@ use common\components\ActiveRecord;
 use yii;
 use yii\base\Behavior;
 
-class MoneyBehavior extends Behavior {
+class MoneyBehavior extends Behavior
+{
 
     private $moneyAttributes = [];
 

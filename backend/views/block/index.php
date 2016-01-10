@@ -130,11 +130,13 @@ if( Yii::$app->session->hasFlash('success') )
             'position',
             'name',
             'title',
-            'content:ntext',
-            // 'weight',
             // 'show_all_pages',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => ActionColumn::className(),
+                'template' => '{update} {delete}',
+                'contentOptions' => ['style'=>'width: 50px'],
+            ],
         ],
     ]); ?>
 

@@ -22,7 +22,8 @@ use common\components\ActiveRecord;
  * @property string $last_update_date
  * @property string $status
  */
-class News extends ActiveRecord {
+class News extends ActiveRecord
+{
 
     /**
      * @inheritdoc

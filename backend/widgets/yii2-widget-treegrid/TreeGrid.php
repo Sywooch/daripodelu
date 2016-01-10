@@ -9,7 +9,8 @@ use yii\helpers\Json;
 use backend\widgets\grid\TreeGridAssets;
 
 
-class TreeGrid extends GridView {
+class TreeGrid extends GridView
+{
 
     public $pluginOptions = [];
 
@@ -19,9 +20,9 @@ class TreeGrid extends GridView {
         $view = $this->getView();
         TreeGridAssets::register($view);
         $options = '';
-        if ( is_array($this->pluginOptions))
+        if (is_array($this->pluginOptions))
         {
-            if ( ! empty($this->pluginOptions))
+            if ( !empty($this->pluginOptions))
             {
                 $options = Json::encode($this->pluginOptions);
             }
@@ -50,15 +51,19 @@ class TreeGrid extends GridView {
 
         $cells = [];
         /* @var $column Column */
-        foreach ($this->columns as $column) {
+        foreach ($this->columns as $column)
+        {
             $cells[] = $column->renderDataCell($model, $key, $index);
         }
-        if ($this->rowOptions instanceof Closure) {
+        if ($this->rowOptions instanceof Closure)
+        {
             $options = call_user_func($this->rowOptions, $model, $key, $index, $this);
-        } else {
+        }
+        else
+        {
             $options = $this->rowOptions;
         }
-        $options['data-key'] = is_array($key) ? json_encode($key) : (string) $key;
+        $options['data-key'] = is_array($key) ? json_encode($key) : (string)$key;
 
         $class = 'treegrid-' . $nodeId;
 

@@ -19,7 +19,8 @@ use yii\db\ActiveRecord;
  * @property string $created_date
  * @property integer $status
  */
-class Page extends \common\components\ActiveRecord {
+class Page extends \common\components\ActiveRecord
+{
 
     /**
      * @inheritdoc

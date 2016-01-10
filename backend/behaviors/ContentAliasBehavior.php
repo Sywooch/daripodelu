@@ -22,7 +22,8 @@ use common\models\MenuTree;
  * @property int $status
  * @package backend\behaviors
  */
-class ContentAliasBehavior extends Behavior {
+class ContentAliasBehavior extends Behavior
+{
 
     private $alias = '';
     private $actionId;
@@ -161,7 +162,7 @@ class ContentAliasBehavior extends Behavior {
 
     public function getCtgId()
     {
-        return ( ! isset($this->owner->{$this->ctgIdAttribute}) || is_null($this->owner->{$this->ctgIdAttribute})) ? null : $this->owner->{$this->ctgIdAttribute};
+        return ( !isset($this->owner->{$this->ctgIdAttribute}) || is_null($this->owner->{$this->ctgIdAttribute})) ? null : $this->owner->{$this->ctgIdAttribute};
     }
 
     /**
@@ -305,7 +306,7 @@ class ContentAliasBehavior extends Behavior {
             $model->attachCache(Yii::$app->cache);
             $model->alias = $this->alias;
             $model->show_in_menu = $this->showInMenu;
-            $saveResult = $model->save(true, ['alias','show_in_menu']);
+            $saveResult = $model->save(true, ['alias', 'show_in_menu']);
         }
 
         return $saveResult;
@@ -314,7 +315,8 @@ class ContentAliasBehavior extends Behavior {
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_DELETE => function($event) {
+            ActiveRecord::EVENT_AFTER_DELETE => function ($event)
+            {
                 $model = $this->getAliasModel();
 
                 if ($model !== null)

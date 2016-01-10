@@ -4,7 +4,8 @@ namespace common\components;
 
 use \Yii;
 
-class ActiveRecord extends \yii\db\ActiveRecord {
+class ActiveRecord extends \yii\db\ActiveRecord
+{
 
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;

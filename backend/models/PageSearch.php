@@ -9,7 +9,8 @@ use yii\data\ActiveDataProvider;
 /**
  * PageSearch represents the model behind the search form about `app\models\Page`.
  */
-class PageSearch extends Page {
+class PageSearch extends Page
+{
 
     /**
      * @inheritdoc
@@ -51,7 +52,7 @@ class PageSearch extends Page {
 
         $this->load($params);
 
-        if ( ! $this->validate())
+        if ( !$this->validate())
         {
             // uncomment the following line if you do not want to any records when validation fails
             // $query->where('0=1');

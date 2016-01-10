@@ -8,7 +8,8 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use app\models\SettingsForm;
 
-class SettingsController extends Controller {
+class SettingsController extends Controller
+{
 
     public function behaviors()
     {
