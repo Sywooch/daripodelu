@@ -20,7 +20,7 @@ use common\models\MenuTree;
     <div role="tabpanel">
         <ul class="nav nav-tabs">
             <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-            <li role="presentation"><a href="#settings" aria-controls="main" role="tab" data-toggle="tab">Настройки видимости</a></li>
+            <li role="presentation"><a href="#settings" aria-controls="main" role="tab" data-toggle="tab">Настройка видимости</a></li>
         </ul>
 
         <div class="tab-content cms">
@@ -48,10 +48,21 @@ use common\models\MenuTree;
             <div role="tabpanel" id="settings" class="tab-pane">
                 <?= $form->field($model, 'position')->dropDownList($model->positions(), ['style' => 'max-width: 400px;']) ?>
 
-                <?php $model->show_all_pages = 1; ?>
+                <?php
+                if ($model->isNewRecord)
+                {
+                    $readOnly = ['readOnly' => true];
+                    $model->show_all_pages = 1;
+                }
+                else
+                {
+                    $readOnly = $model->show_all_pages == 1 ? ['readOnly' => true] : [];
+                }
+                ?>
+
                 <?= $form->field($model, 'show_all_pages')->checkbox(); ?>
 
-                <?= $form->field($model, 'show_on_pages')->textarea(['rows' => 6]); ?>
+                <?= $form->field($model, 'show_on_pages')->textarea(array_merge(['rows' => 6], $readOnly)); ?>
             </div>
         </div>
         <div style="padding-bottom: 5px;">&nbsp;</div>
@@ -71,11 +82,6 @@ use common\models\MenuTree;
 
 </div>
 <?php $this->registerJs('
-    if ($("#block-show_all_pages").is(":checked"))
-    {
-        $("#block-show_on_pages").attr("readOnly", true);
-    }
-
     $("#block-show_all_pages").change(function(){
         if ($(this).is(":checked"))
         {

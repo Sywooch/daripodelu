@@ -10,6 +10,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use app\models\News;
+use backend\models\Block;
+
+yii\jui\JuiAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\NewsSearch */
@@ -59,7 +62,7 @@ if( Yii::$app->session->hasFlash('success') )
 ] ); ?>
 <?php $this->registerJs("
     $('#block-del-btn').on('click', function(e){
-        var keys = $('#blockids').yiiGridView('getSelectedRows');
+        var keys = $('.blockids').yiiGridView('getSelectedRows');
         $.ajax({
             type: 'POST',
             url: '" . Url::to(['/block/deletescope']) . "',
@@ -111,33 +114,119 @@ if( Yii::$app->session->hasFlash('success') )
     'tagName' => 'a',
 ] ); ?>
 <div class="clearfix">&nbsp;</div>
-<?php Pjax::begin(['id' => 'blocks-gv-container']); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => null,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
+<?php foreach ($positions as $code => $name): ?>
+    <div style="padding: 10px 0 2px; font-size: 24px"><?= $name; ?><?php if ($code != Block::NO_POS): ?> &ndash; {<?= $code ?>}<?php endif; ?></div>
+    <?php Pjax::begin(['id' => 'blocks-gv-container-' . $code]); ?>
+        <?= Html::a('<span class="glyphicon glyphicon-floppy-save"></span>' . Yii::t('app', 'Save changes'),
+            ['order'],
             [
-                'class' => CheckboxColumn::className(),
-                'checkboxOptions' => [
-                    'value' => $model[$key]->id,
+                'class' => 'btn btn-primary btn-sm pull-right',
+                'id' => 'save-order_' . $code,
+                'disabled' => 'disabled',
+                'title' => Yii::t('app', 'Save changes after sorting'),
+                'style' => 'margin: 5px;',
+            ]
+        );
+        ?>
+        <div class="clearfix">&nbsp;</div>
+        <?= GridView::widget([
+            'dataProvider' => $dataProviders[$code],
+            'filterModel' => null,
+            'columns' => [
+                [
+                    'class' => CheckboxColumn::className(),
+                    'checkboxOptions' => [
+                        'value' => $model[$key]->id,
+                    ],
+                    'name' => 'blockids[]',
+                    'contentOptions' => ['style'=>'width: 30px'],
                 ],
-                'name' => 'blockids[]',
-                'contentOptions' => ['style'=>'width: 30px'],
-            ],
-            'position',
-            'name',
-            'title',
-            // 'show_all_pages',
+                'name',
+                'title',
+                // 'show_all_pages',
 
-            [
-                'class' => ActionColumn::className(),
-                'template' => '{update} {delete}',
-                'contentOptions' => ['style'=>'width: 50px'],
+                [
+                    'class' => ActionColumn::className(),
+                    'template' => '{update} {delete}',
+                    'contentOptions' => ['style'=>'width: 50px'],
+                ],
             ],
-        ],
-    ]); ?>
+            'options' => [
+                'class' => 'grid-view blockids',
+            ],
+            'tableOptions' => [
+                'id' => 'table_' . $code,
+                'class' => 'table table-striped table-bordered',
+            ],
+        ]); ?>
 
-<?php Pjax::end(); ?>
+
+        <?php $this->registerJs("
+
+            var fixHelper_$code = function(e, ui) {
+                    ui.children().each(function() {
+                        $(this).width($(this).width());
+                    });
+                    return ui;
+                },
+                saveOrder_$code = $('#save-order_$code');
+
+            $('#table_$code tbody').sortable({
+                cursor: 'move',
+                cursorAt: { left: 12 },
+                helper: fixHelper_$code,
+                placeholder: 'ui-sortable-placeholder',
+                update: function( event, ui ) {
+                    saveOrder_$code.attr('disabled', false);
+                }
+            }).disableSelection();
+
+            saveOrder_$code.on('click', function(e){
+                var link = $(this).attr('href'),
+                    itemsList = {};
+
+                $('#table_$code tbody tr').each(function(index, value) {
+                    itemsList[index] = $(this).attr('data-key');
+                });
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: link,
+                    dataType: 'json',
+                    data: {sortData: itemsList},
+                    beforeSend: function(){},
+                    success: function(data, textStatus, jqXHR){
+                        if (data.status == 'success')
+                        {
+                            bootbox.alert('" . Yii::t('app', 'The changes was successfully saved!') . "');
+                            saveOrder_$code.attr('disabled', true);
+                        }
+                        else if (data.status == 'no_updated')
+                        {
+                            bootbox.alert('" . Yii::t('app', 'No changes was made!') . "');
+                        }
+                        else
+                        {
+                            bootbox.alert('" . Yii::t('app', 'No changes was made!') . "');
+                        }
+                    },
+                    error: function(){
+                        bootbox.alert('" . Yii::t('app', 'An error occurred while updating!') . "');
+                    },
+                    statusCode: {
+                        404: function() {
+                          bootbox.alert('" . Yii::t('app', 'Page not found!') . "');
+                        },
+                        500: function() {
+                          bootbox.alert('" . Yii::t('app', 'Internal server error!') . "');
+                        },
+                    }
+                });
+
+                return false;
+            });
+        "); ?>
+    <?php Pjax::end(); ?>
+    <div style="padding: 10px 0 10px"></div>
+<?php endforeach; ?>

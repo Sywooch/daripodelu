@@ -24,7 +24,7 @@ class Block extends \yii\db\ActiveRecord
     /**
      * @var array
      */
-    private $positions = [Block::NO_POS => 'Нет'];
+    private $positions = [Block::NO_POS => 'Нет позиции'];
     /**
      * @var \common\models\MenuTree
      */

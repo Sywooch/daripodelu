@@ -6,6 +6,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use backend\models\Block;
@@ -44,17 +45,21 @@ class BlockController extends Controller
      */
     public function actionIndex()
     {
-        $query = Block::find();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'sort' => [
-                'defaultOrder' => ['weight' => SORT_ASC],
-            ],
-        ]);
+        $positions = array_merge(yii::$app->params['positions'], [Block::NO_POS => 'Нет позиции']);
+        foreach ($positions as $code => $name)
+        {
+            $dataProviders[$code] = new ActiveDataProvider([
+                'query' => Block::find()->where(['position' => $code]),
+                'sort' => [
+                    'defaultOrder' => ['weight' => SORT_ASC],
+                ],
+            ]);
+        }
 
         return $this->render('index', [
 //            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProviders' => $dataProviders,
+            'positions' => $positions,
         ]);
     }
 
@@ -120,11 +125,30 @@ class BlockController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->attachMenuTree(new MenuTree());
         $model->addPositions(yii::$app->params['positions']);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save())
+        if ($model->load(Yii::$app->request->post()))
         {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->save())
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The block added successfully.'));
+
+                if (isset($_POST['saveBlock']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
         }
         else
         {
@@ -145,6 +169,48 @@ class BlockController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Deletes a set of items in accordance with the ids array
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     */
+    public function actionDeletescope()
+    {
+        if (isset($_POST['ids']))
+        {
+            $keys = Yii::$app->request->post('ids');
+            $rslt = Block::deleteAll(['id' => $keys]);
+            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
+            {
+                echo Json::encode(['status' => 'success', 'rslt' => $rslt]);
+            }
+            else
+            {
+                return $this->redirect(isset($_POST['returnURL']) ? Yii::$app->request->post('returnURL') : ['index']);
+            }
+        }
+    }
+
+    public function actionOrder()
+    {
+        $counter = 0;
+        $status = 'no_data_found';
+        if (isset($_POST['sortData']))
+        {
+            $sortData = Yii::$app->request->post('sortData');
+            if (is_array($sortData) && count($sortData) > 0)
+            {
+                foreach ($sortData as $index => $id)
+                {
+                    $counter += (Block::updateAll(['weight' => $index], ['id' => intval($id)])) ? 1 : 0;
+                }
+            }
+
+            $status = ($counter > 0) ? 'success' : 'no_updated';
+        }
+
+        echo Json::encode(['status' => $status, 'rslt' => $counter]);
     }
 
     /**

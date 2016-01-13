@@ -165,6 +165,8 @@ class PageController extends Controller
             else
             {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </ strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
             }
         }
         else
