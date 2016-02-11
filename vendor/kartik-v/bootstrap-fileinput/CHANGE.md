@@ -1,6 +1,44 @@
 Change Log: `bootstrap-fileinput`
 =================================
 
+## version 4.3.0
+
+**Date:** 25-Jan-2016
+
+1. (enh #550): Correct Drag and drop issue with v4.2.9.
+
+## version 4.2.9
+
+**Date:** 22-Jan-2016
+
+1. (enh #489): Update documentation for `change` and `fileselect` events.
+2. (enh #521): Update Dutch Translations.
+3. (enh #523): Add new branch `sass` for `bootstrap-sass-official` support.
+4. (enh #530): Error alert box and preview thumbnail styling enhancements.
+5. (enh #531): Enhance/Fix typos of Arabic translation.
+6. (enh #534, enh #535): Ability to remove errored file thumbnails via `removeFromPreviewOnError`.
+7. (enh #541): Improve default slug callback to accept most characters.
+8. (enh #545): Refactor code to deep extend options correctly.
+
+## version 4.2.8
+
+**Date:** 18-Nov-2015
+
+1. Update bootstrap bower version to support only 3.x variants.
+2. Implement package.json.
+3. (enh #449): Add Arabic Translations.
+4. (enh #454): Update Turkish Translations.
+5. (enh #460): Update CSS selectors prefix to start with `file`.
+6. (enh #462): Responsive buttons and new property `buttonLabelClass`.
+7. (enh #465): Add Català translations.
+8. (enh #474): Upload via button within each preview thumbnail skips last file for async uploads.
+9. (enh #477): Fix IE10 specific styling bug for file input block button.
+10. (enh #481): Universal Module Definition for use with CommonJS, AMD or browser globals.
+11. (bug #483): Clear and reset native input after uploading each single file thumbnail.
+12. (enh #488): Publish to npm.
+13. (enh #490): Fix `zh-TW` translation `browseLabel` wording.
+14. (enh #494): Add Indonesian translations.
+
 ## version 4.2.7
 
 **Date**: 13-Sep-2015

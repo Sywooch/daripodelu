@@ -3,6 +3,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use frontend\widgets\BlockWidget;
 
 /* @var $feedbackModel frontend\models\FeedbackForm */
 
@@ -14,12 +15,12 @@ $feedbackModel = $this->params['feedbackModel'];
             <nav class="main-nav container">
                 <ul class="nav-catalogue">
                     <li>
-                        <a href="category.html">Каталог продукции</a>
+                        <a href="/catalogue.html">Каталог продукции</a>
                     </li>
                 </ul>
                 <ul class="shop-cart">
                     <li>
-                        <a href="cart.html">Корзина:  21 450 руб.</a>
+                        <a href="/cart.html">Корзина:  21 450 руб.</a>
                     </li>
                 </ul>
                 <ul class="main-menu inl-blck">
@@ -40,7 +41,7 @@ $feedbackModel = $this->params['feedbackModel'];
                     <span class="schedule block" itemprop="openingHours"><?= yii::$app->config->siteWorkSchedule; ?></span>
                 </div>
                 <div class="logo-box">
-                    <a class="logo" href="./"><img src="img/logo.png" alt="Дариподелу"></a>
+                    <a class="logo" href="/"><img src="/img/logo.png" alt="Дариподелу"></a>
                     <span class="tagline block">Бизнес-подарки на любой вкус</span>
                 </div>
             </div>
@@ -85,7 +86,7 @@ $feedbackModel = $this->params['feedbackModel'];
         </div>
         <div class="ft-lines"></div>
         <footer class="container">
-            <div class="copyright">&copy; «Дари по делу» 2015. Бизнес-сувениры и промо-продукция</div>
+            <div class="copyright"><?= BlockWidget::widget(['position' => 'footer']) ?></div>
         </footer>
     </div>
 <?php $this->endContent(); ?>

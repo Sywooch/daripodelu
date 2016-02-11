@@ -1,13 +1,15 @@
 <?php
 
 /**
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
  * @package yii2-widgets
  * @subpackage yii2-widget-fileinput
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 namespace kartik\file;
+
+use kartik\base\AssetBundle;
 
 /**
  * Asset bundle for FileInput Widget
@@ -15,9 +17,11 @@ namespace kartik\file;
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since 1.0
  */
-class FileInputAsset extends \kartik\base\AssetBundle
+class FileInputAsset extends AssetBundle
 {
-
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         $this->setSourcePath('@vendor/kartik-v/bootstrap-fileinput');

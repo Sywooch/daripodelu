@@ -235,6 +235,7 @@ class LoadController extends \yii\console\Controller
                         $row['parent_id'],
                         $row['name'],
                         $row['uri'],
+                        0,
                     ];
                 }
             }
@@ -242,7 +243,7 @@ class LoadController extends \yii\console\Controller
             if (count($valuesArr) > 0)
             {
                 yii::beginProfile('CatalogueInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert('{{%catalogue}}',['id', 'parent_id', 'name', 'uri'], $valuesArr)->execute();
+                yii::$app->db->createCommand()->batchInsert('{{%catalogue}}',['id', 'parent_id', 'name', 'uri', 'user_row'], $valuesArr)->execute();
                 yii::endProfile('CatalogueInsertIntoDB');
             }
         }

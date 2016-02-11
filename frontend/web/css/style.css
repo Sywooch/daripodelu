@@ -343,6 +343,7 @@ ul.shop-cart li a,
 .product .properties a,
 .product .order-table th,
 .add-item-box .add-item-link,
+.no-photo,
 h1,
 .h1,
 h2,
@@ -495,7 +496,8 @@ ul.secondary-nav-menu li a,
     border-bottom: 1px solid #ff80ab;
 }
 
-.filter-box {
+.filter-box,
+.no-photo {
     border: 1px solid #ffe858;
 }
 
@@ -518,7 +520,8 @@ table.shop-cart td.count-field-box input {
 }
 
 .products-list .product-item:hover .panel,
-.products-list .product-item.active .panel {
+.products-list .product-item.active .panel,
+.no-photo {
     background: #fff;
 }
 
@@ -666,6 +669,7 @@ table.shop-cart tfoot tr {
 .checkout-form-box .btn-group .btn-default,
 .main-ctg-list a,
 .articles-inf-block .more,
+.no-photo,
 h1,
 .h1,
 h2,
@@ -699,6 +703,25 @@ table.shop-cart td.total-price {
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/
+
+.no-photo {
+    background: #fff !important;
+    border: 1px solid #ffe858 !important;
+    color: #a172cc !important;
+    display: block;
+    font-size: 14px !important;
+    font-family: 'Cuprum', sans-serif;
+    text-align: center;
+}
+
+.no-photo_158x158 {
+    display: block;
+    width: 158px;
+    height: 158px;
+    margin: 0 auto;
+    padding-top: 57px;
+    vertical-align: middle;
+}
 
 .main-header {
     height: 300px;
@@ -872,6 +895,10 @@ ul.shop-cart li {
     text-align: center;
     width: 1250px;
     word-spacing: -0.25em;
+}
+
+.inner-page .main-ctg-list {
+    margin-top: 20px;
 }
 
 .main-ctg-list a {
@@ -1374,11 +1401,21 @@ ul.shop-cart li {
     z-index: 4;
 }
 
-.products-list .product-item .panel .product-img {
+.product-img-border {
     display: block;
-    height: auto;
     margin: 0 auto;
+    height: 220px;
     width: 220px;
+    line-height: 220px;
+    overflow: hidden;
+    text-align: center;
+    border: none;
+}
+
+.products-list .product-item .panel .product-img {
+    max-height: 100%;
+    max-width: 100%;
+    vertical-align: middle;
 }
 
 .products-list .product-item a.name {
@@ -1447,7 +1484,7 @@ ul.shop-cart li {
 }
 
 .products-list .product-item:hover .panel,
-.products-list .product-item.active .panel{
+.products-list .product-item.active .panel {
     border-top: none;
     padding-top: 19px;
     width: 280px;

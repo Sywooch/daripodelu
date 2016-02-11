@@ -1,79 +1,110 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
-
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
-use frontend\assets\AppAsset;
-use common\widgets\Alert;
+use yii\helpers\Url;
+use frontend\widgets\BlockWidget;
 
-AppAsset::register($this);
+/* @var $feedbackModel frontend\models\FeedbackForm */
+
+$feedbackModel = $this->params['feedbackModel'];
 ?>
-<?php $this->beginPage() ?>
-<!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>">
-<head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?= Html::csrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-</head>
-<body>
-<?php $this->beginBody() ?>
-
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = [
-            'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-            'url' => ['/site/logout'],
-            'linkOptions' => ['data-method' => 'post']
-        ];
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
-
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+<?php $this->beginContent('@app/views/layouts/base.php'); ?>
+    <div class="menu-line"></div>
+    <div class="main-wrapper">
+        <header class="main-header">
+            <div class="container">
+                <div class="row">
+                    <nav class="main-nav">
+                        <ul class="nav-catalogue">
+                            <li>
+                                <a href="/catalogue.html">Каталог продукции</a>
+                            </li>
+                        </ul>
+                        <ul class="shop-cart">
+                            <li>
+                                <a href="/cart.html">Корзина:  21 450 руб.</a>
+                            </li>
+                        </ul>
+                        <ul class="main-menu inl-blck">
+                            <li>
+                                <a href="<?= Url::to(['page/view', 'id' => 1]); ?>">Методы нанесения</a>
+                            </li>
+                            <li>
+                                <a href="<?= Url::to(['page/view', 'id' => 2]); ?>">«Дари по делу»</a>
+                            </li>
+                            <li>
+                                <a href="#">Контактная информация</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="container" itemscope itemtype="http://schema.org/Organization">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="phone-box">
+                            <span class="phone block" itemprop="telephone"><?= yii::$app->config->sitePhone; ?></span>
+                            <span class="schedule block" itemprop="openingHours"><?= yii::$app->config->siteWorkSchedule; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="logo-box">
+                            <a class="logo" href="/"><img src="/img/logo-min.png" alt="Дариподелу"></a>
+                            <span class="tagline block">Бизнес-подарки на любой вкус</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="hd-line"></div>
+        <div class="bd-box">
+            <div class="container">
+                <div class="row">
+                    <?= $content ?>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+    <div class="before-ft-lines"></div>
+    <div class="footer-box">
+        <div class="container">
+            <div class="contacts-box">
+                <span class="question">Есть к нам вопросы?</span>
+                <div class="phone-box">
+                    <span class="offer block">Просто позвоните нам:</span>
+                    <span class="phone block"><?= yii::$app->config->sitePhone; ?></span>
+                    <span class="schedule block"><?= yii::$app->config->siteWorkSchedule; ?></span>
+                </div>
+                <span class="offer block">или напишите:</span>
+                <div class="feedback-form-box">
+                    <?php $form = ActiveForm::begin([
+                        'action' => Url::to(['site/sendmail']), 'id' => 'mail-form',
+                        'enableAjaxValidation' => false,
+                        'enableClientValidation' => true,
+                    ]); ?>
+                    <?= $form->field($feedbackModel, 'emailPhone', [
+                        'template' => '<div class="field-box">{error}{input}</div>',
+                        'inputOptions' => [
+                            'placeholder' => $feedbackModel->getAttributeLabel('emailPhone'),
+                        ],
+                    ]); ?>
+                    <?= $form->field($feedbackModel, 'message', [
+                        'template' => '<div class="field-box textarea-box">{error}{input}</div>',
+                        'inputOptions' => [
+                            'placeholder' => $feedbackModel->getAttributeLabel('message'),
+                        ],
+                    ])->textarea(); ?>
+                    <div class="btn-group">
+                        <?= Html::submitButton('Задать вопрос', ['class' => 'btn btn-default', 'id' => 'send-button', 'name' => 'send-button']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+        <div class="ft-lines"></div>
+        <footer class="container">
+            <div class="copyright"><?= BlockWidget::widget(['position' => 'footer']) ?></div>
+        </footer>
     </div>
-</footer>
-
-<?php $this->endBody() ?>
-</body>
-</html>
-<?php $this->endPage() ?>
+<?php $this->endContent(); ?>

@@ -87,5 +87,13 @@ return [
     'Update block' => 'Редактирование блока',
     'Is displayed only in the list of blocks.' => 'Отображается только в списке блоков.',
     '<strong>Saved!</strong> The block added successfully.' => '<strong>Сохранено!</strong> Блок успешно сохранен.',
+    'Catalogue' => 'Каталог',
+    'Categories' => 'Категории',
+    'Category' => 'Категория',
+    'Update category' => 'Редактировать категорию',
+    'Products' => 'Товары',
+    'Product' => 'Товар',
+    'Create category' => 'Создать категорию',
+    'Images can be added only after the category will be saved.' => 'Изображения могут быть добавлены только после того, как категория будет сохранена.',
     '' => '',
 ];

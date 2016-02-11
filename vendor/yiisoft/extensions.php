@@ -57,15 +57,6 @@ return array (
       '@creocoder/nestedsets' => $vendorDir . '/creocoder/yii2-nested-sets/src',
     ),
   ),
-  'kartik-v/yii2-krajee-base' => 
-  array (
-    'name' => 'kartik-v/yii2-krajee-base',
-    'version' => '1.7.7.0',
-    'alias' => 
-    array (
-      '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base',
-    ),
-  ),
   'kartik-v/yii2-widget-affix' => 
   array (
     'name' => 'kartik-v/yii2-widget-affix',
@@ -82,15 +73,6 @@ return array (
     'alias' => 
     array (
       '@kartik/spinner' => $vendorDir . '/kartik-v/yii2-widget-spinner',
-    ),
-  ),
-  'newerton/yii2-fancybox' => 
-  array (
-    'name' => 'newerton/yii2-fancybox',
-    'version' => '9999999-dev',
-    'alias' => 
-    array (
-      '@newerton/fancybox' => $vendorDir . '/newerton/yii2-fancybox',
     ),
   ),
   'yiisoft/yii2-imagine' => 
@@ -118,33 +100,6 @@ return array (
     'alias' => 
     array (
       '@kartik/money' => $vendorDir . '/kartik-v/yii2-money',
-    ),
-  ),
-  'kartik-v/yii2-widget-activeform' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-activeform',
-    'version' => '1.4.5.0',
-    'alias' => 
-    array (
-      '@kartik/form' => $vendorDir . '/kartik-v/yii2-widget-activeform',
-    ),
-  ),
-  'kartik-v/yii2-widget-depdrop' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-depdrop',
-    'version' => '1.0.2.0',
-    'alias' => 
-    array (
-      '@kartik/depdrop' => $vendorDir . '/kartik-v/yii2-widget-depdrop',
-    ),
-  ),
-  'kartik-v/yii2-widget-fileinput' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-fileinput',
-    'version' => '1.0.3.0',
-    'alias' => 
-    array (
-      '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput',
     ),
   ),
   'mihaildev/yii2-ckeditor' => 
@@ -190,6 +145,60 @@ return array (
     'alias' => 
     array (
       '@Zelenin/yii/behaviors' => $vendorDir . '/zelenin/yii2-slug-behavior',
+    ),
+  ),
+  'kartik-v/yii2-krajee-base' => 
+  array (
+    'name' => 'kartik-v/yii2-krajee-base',
+    'version' => '1.8.2.0',
+    'alias' => 
+    array (
+      '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base',
+    ),
+  ),
+  'kartik-v/yii2-widget-activeform' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-activeform',
+    'version' => '1.4.7.0',
+    'alias' => 
+    array (
+      '@kartik/form' => $vendorDir . '/kartik-v/yii2-widget-activeform',
+    ),
+  ),
+  'kartik-v/yii2-widget-depdrop' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-depdrop',
+    'version' => '1.0.4.0',
+    'alias' => 
+    array (
+      '@kartik/depdrop' => $vendorDir . '/kartik-v/yii2-widget-depdrop',
+    ),
+  ),
+  'kartik-v/yii2-widget-fileinput' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-fileinput',
+    'version' => '1.0.4.0',
+    'alias' => 
+    array (
+      '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput',
+    ),
+  ),
+  'iutbay/yii2-imagecache' => 
+  array (
+    'name' => 'iutbay/yii2-imagecache',
+    'version' => '0.2.0.0',
+    'alias' => 
+    array (
+      '@iutbay/yii2imagecache' => $vendorDir . '/iutbay/yii2-imagecache',
+    ),
+  ),
+  'newerton/yii2-fancybox' => 
+  array (
+    'name' => 'newerton/yii2-fancybox',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@newerton/fancybox' => $vendorDir . '/newerton/yii2-fancybox',
     ),
   ),
 );

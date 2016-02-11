@@ -1,13 +1,15 @@
 <?php
 
 /**
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
  * @package yii2-widgets
  * @subpackage yii2-widget-depdrop
- * @version 1.0.2
+ * @version 1.0.4
  */
 
 namespace kartik\depdrop;
+
+use kartik\base\AssetBundle;
 
 /**
  * Asset bundle for Dependent Dropdown widget
@@ -15,8 +17,11 @@ namespace kartik\depdrop;
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since 1.0
  */
-class DepDropAsset extends \kartik\base\AssetBundle
+class DepDropAsset extends AssetBundle
 {
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         $this->setSourcePath('@vendor/kartik-v/dependent-dropdown');

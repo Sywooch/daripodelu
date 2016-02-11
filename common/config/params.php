@@ -17,6 +17,7 @@ return [
     ],*/
     'positions' => [
         'footer' => 'Подвал страницы',
+        'left' => 'Слева',
         'main_center_left' => 'Главная страница (в центре слева)',
     ],
     'imageMaxWidth' => 1920,

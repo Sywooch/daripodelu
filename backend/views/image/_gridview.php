@@ -10,8 +10,8 @@ use yii\grid\GridView;
 use yii\grid\CheckboxColumn;
 use yii\widgets\Pjax;
 use kartik\file\FileInput;
-use kartik\spinner\Spinner;
-use app\models\Image;
+use common\models\Image;
+use backend\widgets\Spinner;
 
 yii\jui\JuiAsset::register($this);
 

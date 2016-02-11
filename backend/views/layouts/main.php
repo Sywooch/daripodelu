@@ -37,6 +37,12 @@ BootboxAsset::overrideSystemConfirm();
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-left', 'style' => 'margin-left: 40px;'],
                 'items' => [
+                    [
+                        'label' => 'Каталог',
+                        'items' => [
+                            ['label' => 'Категории', 'url' => ['/catalogue/index']],
+                        ],
+                    ],
                     ['label' => 'Меню', 'url' => ['/menutree/index']],
                     [
                         'label' => 'Контент',

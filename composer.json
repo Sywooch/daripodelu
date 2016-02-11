@@ -21,6 +21,7 @@
         "yiisoft/yii2-imagine": "~2.0.0",
         "2amigos/yii2-date-time-picker-widget" : "~1.0",
         "creocoder/yii2-nested-sets": "0.9.0",
+        "iutbay/yii2-imagecache" : "*",
         "kartik-v/yii2-money": "*",
         "kartik-v/yii2-widget-activeform": "*",
         "kartik-v/yii2-widget-affix": "*",

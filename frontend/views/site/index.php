@@ -1,5 +1,8 @@
 <?php
 
+use yii;
+use frontend\widgets\BlockWidget;
+use frontend\widgets\CatalogueWidget;
 /* @var $this yii\web\View */
 
 ?>
@@ -7,32 +10,8 @@
     <div class="container">
         <section class="main-ctg-list-box">
             <h2 class="h1">Выбери лучшее предложение</h2>
-            <div class="main-ctg-list">
-                <a href="#">
-                    <span class="panel"></span>
-                    <img src="uploads/products/suvenir.jpg" alt="">
-                    <span>Сувениры</span>
-                </a>
-                <a href="category.html">
-                    <span class="panel"></span>
-                    <img src="uploads/products/shirts.jpg" alt="">
-                    <span>Футболки</span>
-                </a>
-                <a href="#">
-                    <span class="panel"></span>
-                    <img src="uploads/products/clothes.jpg" alt="">
-                    <span>Одежды</span>
-                </a>
-                <a href="#">
-                    <span class="panel"></span>
-                    <img src="uploads/products/zont.jpg" alt="">
-                    <span>Зонты</span>
-                </a>
-                <a href="#">
-                    <span class="panel"></span>
-                    <img src="uploads/products/bag.jpg" alt="">
-                    <span>Сумки</span>
-                </a>
+
+                <?= CatalogueWidget::widget(['template' => 'index']); ?>
             </div>
             <div class="clear"></div>
         </section>
@@ -42,8 +21,7 @@
     <div class="container">
         <div class="inf-col inf-col-1">
             <section class="about-inf-block">
-                <h2>«Дари по делу» &ndash; <span class="block txt-r">ваш уникальный бизнес-партнер!</span></h2>
-                <p>Мы рады быть вашим партнером во всем, что касается повышения лояльности и привлекательности вашей компании в целом и продвигаемого бренда в частности, со стороны ваших клиентов и партнеров, посредством создания подарочной сувенирной продукции с индивидуальной персонализацией.</p>
+                <?= BlockWidget::widget(['position' => 'main_center_left']) ?>
             </section>
         </div>
         <div class="inf-col inf-col-2">

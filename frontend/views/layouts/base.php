@@ -38,7 +38,7 @@ $this->beginPage();
     <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icons/apple-touch-icon-152x152.png">-->
     <?php $this->head() ?>
 </head>
-<body>
+<body<?php if(yii::$app->controller->route != 'site/index'): ?> class="inner-page"<?php endif; ?>>
 <?php $this->beginBody(); ?>
     <?= $content; ?>
 <?php $this->endBody(); ?>

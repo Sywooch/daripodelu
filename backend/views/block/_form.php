@@ -41,6 +41,7 @@ use common\models\MenuTree;
                         [
                             'preset' => 'full',
                             'inline' => false,
+                            'allowedContent' => true,
                         ]
                     ),
                 ]); ?>

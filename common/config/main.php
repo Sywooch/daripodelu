@@ -28,6 +28,18 @@ return [
             'timeFormat' => 'HH:mm:ss',
             'thousandSeparator' => ' ',
         ],
+        'imageCache' => [
+            'class' => 'iutbay\yii2imagecache\ImageCache',
+            'sourcePath' => '@app/../uploads',
+            'sourceUrl' => '/uploads',
+//            'thumbsPath' => '@app/web/cache/thumbs',
+//            'thumbsUrl' => '@web/cache/thumbs',
+            'sizes' => [
+                '36x36' => [36, 36],
+            //    'medium' => [300, 300],
+            //    'large' => [600, 600],
+            ],
+        ],
         'i18n' => [
             'translations' => [
                 'app*' => [
@@ -44,14 +56,38 @@ return [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'rules' => [
-                ['class' => 'common\components\CmsUrlRule'],
-                '<controller:\w+>/<id:\d+>' => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-            ],
             'showScriptName' => false,
-            'suffix' => '.html',
+            'rules' => [
+                [
+                    'pattern' => 'thumbs/<path:.*>',
+                    'route' => 'site/thumb',
+                    'suffix' => null,
+                ],
+                [
+                    'pattern' => 'catalogue/<uri:[\w\d\-]+>',
+                    'route' => 'catalogue/view',
+                    'suffix' => '.html',
+                ],
+                [
+                    'class' => 'common\components\CmsUrlRule',
+                    'suffix' => '.html',
+                ],
+                [
+                    'pattern' => '<controller:\w+>/<id:\d+>',
+                    'route' => '<controller>/view',
+                    'suffix' => '.html',
+                ],
+                [
+                    'pattern' => '<controller:\w+>/<action:\w+>/<id:\d+>',
+                    'route' => '<controller>/<action>',
+                    'suffix' => '.html',
+                ],
+                [
+                    'pattern' => '<controller:\w+>/<action:\w+>',
+                    'route' => '<controller>/<action>',
+                    'suffix' => '.html',
+                ],
+            ],
         ],
     ],
     'language' => 'ru-RU',

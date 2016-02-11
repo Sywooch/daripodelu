@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use backend\behaviors\ImagesBehavior;
 use common\components\ActiveRecord;
+use common\models\Image;
 
 /**
  * This is the model class for table "{{%news}}".
@@ -92,6 +93,16 @@ class News extends ActiveRecord
                 'ownerIdAttribute' => 'id',
             ],
         ];
+    }
+
+    public function getMainPhoto()
+    {
+        return $this->hasOne(Image::className(), ['owner_id' => 'id'])->andWhere(['model' => 'news'])->andWhere(['ctg_id' => 0])->andWhere(['is_main' => Image::IS_MAIN]);
+    }
+
+    public function getImages()
+    {
+        return $this->hasMany(Image::className(), ['owner_id' => 'id'])->andWhere(['model' => 'gallery'])->andWhere(['ctg_id' => 0])->andWhere(['status' => Image::STATUS_ACTIVE]);
     }
 
     public function beforeSave($insert)

@@ -69,6 +69,21 @@ $(function(){
         });
     }
 
+    if ($(".products-list .product-item").length) {
+        $(".products-list .product-item").each(function(){
+            $(this).attr("data-height", $(this).height());
+        });
+
+        $(".products-list .product-item").hover(
+            function(){
+                $(this).css({marginBottom: $(this).attr("data-height") + "px"});
+            },
+            function(){
+                $(this).css({marginBottom: "0px"});
+            }
+        );
+    }
+
     $('.phone-input').keypress(function(key) {
         if((key.charCode < 48 || key.charCode > 57) && key.charCode != 32 && key.charCode != 40 && key.charCode != 41 && key.charCode != 43 && key.charCode != 45) {
             return false;
