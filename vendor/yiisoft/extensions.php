@@ -183,15 +183,6 @@ return array (
       '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput',
     ),
   ),
-  'iutbay/yii2-imagecache' => 
-  array (
-    'name' => 'iutbay/yii2-imagecache',
-    'version' => '0.2.0.0',
-    'alias' => 
-    array (
-      '@iutbay/yii2imagecache' => $vendorDir . '/iutbay/yii2-imagecache',
-    ),
-  ),
   'newerton/yii2-fancybox' => 
   array (
     'name' => 'newerton/yii2-fancybox',
@@ -199,6 +190,15 @@ return array (
     'alias' => 
     array (
       '@newerton/fancybox' => $vendorDir . '/newerton/yii2-fancybox',
+    ),
+  ),
+  'kartik-v/yii2-widget-select2' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-select2',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/select2' => $vendorDir . '/kartik-v/yii2-widget-select2',
     ),
   ),
 );

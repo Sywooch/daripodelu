@@ -50,6 +50,16 @@ class SiteController extends Controller
         ];
     }
 
+    public function beforeAction($action)
+    {
+        if ($action->id == 'error')
+        {
+            $this->layout = 'errors.php';
+        }
+
+        return parent::beforeAction($action);
+    }
+
     /**
      * @inheritdoc
      */
@@ -63,7 +73,7 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'thumb' => 'iutbay\yii2imagecache\ThumbAction',
+            'thumb' => 'rkdev\yii2imagecache\ThumbAction',
         ];
     }
 

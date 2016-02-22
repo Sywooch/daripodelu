@@ -1,16 +1,24 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
+use yii\widgets\Pjax;
+use frontend\assets\Select2Asset;
 use frontend\widgets\BlockWidget;
 
 /* @var $this yii\web\View */
 /* @var $categories frontend\models\Catalogue[] */
+/* @var $productsProvider yii\data\ActiveDataProvider */
 /* @var $products frontend\models\Product[] */
+/* @var $filterTypes frontend\models\FilterType[] */
+
+Select2Asset::register($this);
 
 $this->params['breadcrumbs'][] = $heading;
+$products = $productsProvider->getModels();
 ?>
 <div class="col-2">
     <?php if ( is_array($categories) && count($categories) > 0): ?>
@@ -30,6 +38,55 @@ $this->params['breadcrumbs'][] = $heading;
 <div class="col-8">
     <main class="main-content">
         <h1><?= $heading; ?></h1>
+        <?php Pjax::begin(['id' => 'pl-container', 'scrollTo' => 1]); ?>
+        <div class="filter-box">
+            <?php
+            $counter = 0;
+            foreach ($filterTypes as $filterType):
+                if ($filterType->id != 8) :
+                $counter++;
+                $selected = '';
+            ?>
+                <select class="choice" name="ProductSearch[filter][<?= Html::encode($filterType->id); ?>]" id="product-search-<?= Html::encode($filterType->id); ?>">
+                    <option value=""><?= Html::encode($filterType->name); ?></option>
+                    <?php foreach ($filterType->filters as $filter): ?>
+                    <?php
+                    /* @var $filter frontend\models\Filter */
+                    $filterParamsString = $filterType->id . '.' . $filter->id;
+                    foreach ($filterParams as $filterTypeId => $filterId):
+                        if ($filterType->id != $filterTypeId):
+                            $filterParamsString .= '-' . $filterTypeId . '.' . $filterId;
+                        endif;
+                    endforeach;
+                    $selected = (isset($filterParams[$filterType->id]) && $filterParams[$filterType->id] == $filter->id)? ' selected' : '';
+                    ?>
+                    <option value="<?= Url::to(['catalogue/view', 'uri' => $uri, 'filterParams' => $filterParamsString]) ?>"<?= $selected; ?>><?= Html::encode($filter->name); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <?php if ($counter == 5): ?>
+                <div class="hr"></div>
+                <?php endif; ?>
+            <?php
+                endif;
+            endforeach;
+            ?>
+            <?php if ($counter < 5): ?>
+                <div class="hr"></div>
+            <?php endif; ?>
+            <form action="">
+                <input type="text" name="ProductSearch[amount]" value="" style="width: 100px;" placeholder="тираж">
+                <input type="text" name="ProductSearch[price][from]" value="" style="width: 90px;" placeholder="цена от">
+                <span class="units">р.</span>
+                <span class="txt">&ndash;</span>
+                <input type="text" name="ProductSearch[price][to]" value="" style="width: 90px;" placeholder="цена до">
+                <span class="units">р.</span>
+                <a class="new-link" href="<?= Url::to(['catalogue/view', 'uri' => $uri, 'filterParams' => '8.229']) ?>">Новинки</a>
+                <span class="new-count txt"><?= $newProductsCount; ?></span>
+                <?php if (isset($filterParams[8]) && $filterParams[8] == 229 && count($filterParams) == 1): ?>
+                <a href="<?= Url::to(['catalogue/view', 'uri' => $uri]) ?>" title="Отменить фильтр" data-pjax="pl-container"><i class="fa fa-times-circle"></i></a>
+                <?php endif; ?>
+            </form>
+        </div>
         <div class="products-list">
         <?php if (count($products) > 0): ?>
             <?php foreach ($products as $product): ?>
@@ -59,11 +116,13 @@ $this->params['breadcrumbs'][] = $heading;
                         <dt>Свободно:</dt>
                         <dd><?= Html::encode($product->free); ?> шт.</dd>
                     </dl>
-                    <?php if ($product->groupProducts): ?>
-                    <?php /* @var $product->groupProducts frontend\models\Product[] */ ?>
+                    <?php if (count($product->groupProducts) > 1): ?>
                     <div class="similar-products">
                     <?php foreach ($product->groupProducts as $groupProduct): ?>
-                        <?= Yii::$app->imageCache->thumb('/uploads/' . $groupProduct->id . '/' . $groupProduct->big_image, '36x36') ?>
+                    <?php /* @var $groupProduct frontend\models\Product */ ?>
+                        <?php /*if ($product->id != $groupProduct->id): */ ?>
+                        <span class="img-border"><?= Yii::$app->imageCache->thumb('/uploads/' . $groupProduct->id . '/' . $groupProduct->small_image, '36') ?></span>
+                        <?php /* endif; */ ?>
                     <?php endforeach; ?>
                     </div>
                     <?php endif; ?>
@@ -72,5 +131,69 @@ $this->params['breadcrumbs'][] = $heading;
             <?php endforeach; ?>
         <?php endif; ?>
         </div>
+        <?= LinkPager::widget([
+            'pagination' => $productsProvider->pagination,
+            'options' => ['class' => 'pagination inl-blck'],
+        ]); ?>
+        <?php Pjax::end(); ?>
     </main>
 </div>
+<?php $this->registerJs('
+    $(document).on("pjax:complete", function() {
+        if( $(".filter-box select.choice").length ) {
+            $(".filter-box select.choice").select2({
+                width: "resolve",
+                minimumResultsForSearch: 9999
+            }).on("change", function(){
+                var selectItem = $(this),
+                    idVal = "select2-" + selectItem.attr("id") + "-container",
+                    inputSpan = null,
+                    pseudoSpan = null,
+                    pseudoBtn = null;
+
+                console.log(selectItem.val());
+                if (selectItem.val() != "")
+                {
+                    $.pjax.reload(
+                        "#pl-container",
+                        {
+                            "url": selectItem.val(),
+                            "push": true,
+                            "replace": false,
+                            "timeout": 1000,
+                            "scrollTo": 1
+                        }
+                    );
+                }
+            });
+        }
+    });
+
+    if( $("select.choice").length ) {
+        $("select.choice").select2({
+            width: "resolve",
+            minimumResultsForSearch: 9999
+        }).on("change", function(){
+            var selectItem = $(this),
+                idVal = "select2-" + selectItem.attr("id") + "-container",
+                inputSpan = null,
+                pseudoSpan = null,
+                pseudoBtn = null;
+
+            console.log(selectItem.val());
+            if (selectItem.val() != "")
+            {
+                $.pjax.reload(
+                    "#pl-container",
+                    {
+                        "url": selectItem.val(),
+                        "push": true,
+                        "replace": false,
+                        "timeout": 1000,
+                        "scrollTo": 1
+                    }
+                );
+            }
+        });
+    }
+', \yii\web\View::POS_READY) ?>

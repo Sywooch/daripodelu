@@ -23,6 +23,7 @@ Yii::$container = new yii\di\Container;
  * Used for properties that are identical for both WebApplication and ConsoleApplication
  *
  * @property \common\components\Config $config
+ * @property \rkdev\yii2imagecache\ImageCache $imageCache
  */
 abstract class BaseApplication extends yii\base\Application
 {

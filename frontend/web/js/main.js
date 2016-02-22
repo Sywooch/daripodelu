@@ -14,42 +14,6 @@ $(function(){
         });
     }
 
-    if( $("select.choice").length ) {
-        $("select.choice").select2({
-            //allowClear: true,
-            width: "resolve",
-            minimumResultsForSearch: 15
-        }).on("change", function(){
-            var selectItem = $(this),
-                idVal = "select2-" + selectItem.attr("id") + "-container",
-                inputSpan = null,
-                pseudoSpan = null,
-                pseudoBtn = null;
-
-            inputSpan = $("#" + idVal).parents(".select2-container").eq(0);
-            if( selectItem.val() == ''){
-                inputSpan.removeClass('not-empty');
-            }
-            else
-            {
-                inputSpan.addClass('not-empty');
-                pseudoSpan = $("<span />")
-                pseudoBtn = $("<span />")
-                pseudoSpan.addClass("pseudo-span");
-                pseudoBtn.attr("title", "Сбросить фильтр").addClass("pseudo-btn");
-
-                pseudoBtn.on("click", function(){
-                    selectItem.val('').change();
-                    inputSpan.removeClass('not-empty');
-                    pseudoSpan.remove();
-                    $(this).remove();
-                });
-
-                inputSpan.append(pseudoSpan, pseudoBtn);
-            }
-        });
-    }
-
     if( $(".input-file-box").length ) {
         $(".input-file-box .file-field").click(function(){
             fileDialogOpen(this);

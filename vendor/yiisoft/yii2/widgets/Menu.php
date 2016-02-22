@@ -14,21 +14,21 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 /**
- * MenuTree displays a multi-level menu using nested HTML lists.
+ * Menu displays a multi-level menu using nested HTML lists.
  *
- * The main property of MenuTree is [[items]], which specifies the possible items in the menu.
+ * The main property of Menu is [[items]], which specifies the possible items in the menu.
  * A menu item can contain sub-items which specify the sub-menu under that menu item.
  *
- * MenuTree checks the current route and request parameters to toggle certain menu items
+ * Menu checks the current route and request parameters to toggle certain menu items
  * with active state.
  *
- * Note that MenuTree only renders the HTML tags about the menu. It does do any styling.
+ * Note that Menu only renders the HTML tags about the menu. It does do any styling.
  * You are responsible to provide CSS styles to make it look like a real menu.
  *
- * The following example shows how to use MenuTree:
+ * The following example shows how to use Menu:
  *
- * ~~~
- * echo MenuTree::widget([
+ * ```php
+ * echo Menu::widget([
  *     'items' => [
  *         // Important: you need to specify url as 'controller/action',
  *         // not just as 'controller' even if default action is used.
@@ -41,7 +41,7 @@ use yii\helpers\Html;
  *         ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
  *     ],
  * ]);
- * ~~~
+ * ```
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0

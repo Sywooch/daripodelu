@@ -103,7 +103,7 @@ class Slug extends SluggableBehavior
      * @param bool $lowercase
      * @return string
      */
-    private function slug($string, $replacement = '-', $lowercase = true)
+    public function slug($string, $replacement = '-', $lowercase = true)
     {
         if ($this->translit) {
             $string = $this->transliterate($string);
@@ -119,7 +119,7 @@ class Slug extends SluggableBehavior
      * @param string $string
      * @return string
      */
-    private function transliterate($string)
+    public function transliterate($string)
     {
         if (extension_loaded('intl') === true) {
             return transliterator_transliterate($this->transliterateOptions, $string);
@@ -133,7 +133,7 @@ class Slug extends SluggableBehavior
      * @return bool
      * @throws InvalidConfigException
      */
-    private function validateSlug($slug)
+    public function validateSlug($slug)
     {
         $validator = Yii::createObject(array_merge(['class' => UniqueValidator::className()], $this->uniqueValidator));
 
@@ -151,7 +151,7 @@ class Slug extends SluggableBehavior
      * @param int $iteration
      * @return string
      */
-    private function generateUniqueSlug($baseSlug, $iteration)
+    public function generateUniqueSlug($baseSlug, $iteration)
     {
         return is_callable($this->uniqueSlugGenerator)
             ? call_user_func($this->uniqueSlugGenerator, $baseSlug, $iteration, $this->owner)

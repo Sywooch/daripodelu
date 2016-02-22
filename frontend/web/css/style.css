@@ -1475,8 +1475,17 @@ ul.shop-cart li {
     width: 240px;
 }
 
-.products-list .product-item .similar-products img {
+.products-list .product-item .similar-products .img-border {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
     margin: 0 4px 6px;
+    text-align: center;
+}
+
+.products-list .product-item .similar-products .img-border {
+    vertical-align: middle;
 }
 
 .products-list .product-item:hover {
@@ -2135,4 +2144,18 @@ table.shop-cart tr td.delimiter {
 .footer-box footer {
     text-align: center;
     height: 52px;
+}
+
+.fa:before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-left: 5px;
+}
+
+.fa-times-circle:before {
+    content: "\f057";
 }

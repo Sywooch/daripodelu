@@ -29,15 +29,12 @@ return [
             'thousandSeparator' => ' ',
         ],
         'imageCache' => [
-            'class' => 'iutbay\yii2imagecache\ImageCache',
+            'class' => 'rkdev\yii2imagecache\ImageCache',
             'sourcePath' => '@app/../uploads',
             'sourceUrl' => '/uploads',
-//            'thumbsPath' => '@app/web/cache/thumbs',
-//            'thumbsUrl' => '@web/cache/thumbs',
             'sizes' => [
+                '36' => [36],
                 '36x36' => [36, 36],
-            //    'medium' => [300, 300],
-            //    'large' => [600, 600],
             ],
         ],
         'i18n' => [
@@ -62,6 +59,21 @@ return [
                     'pattern' => 'thumbs/<path:.*>',
                     'route' => 'site/thumb',
                     'suffix' => null,
+                ],
+                [
+                    'pattern' => 'catalogue/<uri:[\w\d\-]+>/filter/<filterParams:[\d]+\.[\d]+(\-[\d]+\.[\d]+)*>/page<page:\d+>',
+                    'route' => 'catalogue/view',
+                    'suffix' => '.html',
+                ],
+                [
+                    'pattern' => 'catalogue/<uri:[\w\d\-]+>/filter/<filterParams:[\d]+\.[\d]+(\-[\d]+\.[\d]+)*>',
+                    'route' => 'catalogue/view',
+                    'suffix' => '.html',
+                ],
+                [
+                    'pattern' => 'catalogue/<uri:[\w\d\-]+>/page<page:\d+>',
+                    'route' => 'catalogue/view',
+                    'suffix' => '.html',
                 ],
                 [
                     'pattern' => 'catalogue/<uri:[\w\d\-]+>',

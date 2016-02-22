@@ -16,6 +16,7 @@ use common\models\Settings;
  * @property string $siteMetaKeywords
  * @property integer $newsPerPage
  * @property integer $newsPerHome
+ * @property integer $productsPerPage
  * @property string $gateLogin
  * @property string $gatePassword
  * @property string $sitePhone
