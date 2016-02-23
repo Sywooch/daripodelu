@@ -125,7 +125,8 @@ class CatalogueController extends \yii\web\Controller
             $ids = [$model->id];
         }
 
-        //Get the list of products with list of group products
+
+        //Get the list of products with list of group products----------------------------------------------------------
         if (! empty($filterParams))
         {
             $productsQuery = $this->prepareFilterQuery(Product::find(), $filterParams);
@@ -163,12 +164,16 @@ class CatalogueController extends \yii\web\Controller
                 ]
             ],
         ]);
+        //END Get the list of products with list of group products------------------------------------------------------
+
 
         //Get new products count
         $newProductsCount = Product::find()->andWhere(['catalogue_id' => $ids])->andWhere(['status_id' => 0])->count();
 
-        //Prepare filters for the list of products
+
+        //Prepare filters for the list of products----------------------------------------------------------------------
         $productIdsQuery = Product::find()->select(['id'])->andWhere(['catalogue_id' => $ids]);
+        $productIdsQuery = $this->prepareFilterQuery($productIdsQuery, $filterParams);
         $productFilters = ProductFilter::find()
             ->select(['type_id', 'filter_id'])
             ->andWhere(['in', 'product_id', $productIdsQuery])
@@ -177,25 +182,33 @@ class CatalogueController extends \yii\web\Controller
 
         $productFilterTypes =[];
         $productFilterIds =[];
+        $filtersArr = [];
         foreach ($productFilters as $productFilter)
         {
             /* @var $productFilter \frontend\models\ProductFilter */
             $productFilterTypes[] = $productFilter->type_id;
             $productFilterIds[] = $productFilter->filter_id;
+            $filtersArr[$productFilter->type_id][] = $productFilter->filter_id;
         }
 
         $productFilterTypes = array_unique($productFilterTypes);
-        $productFilterIds = array_unique($productFilterIds);
 
         $filters = FilterType::find()
             ->joinWith([
-                'filters' => function ($query) use ($productFilterIds) {
-                    $query->andWhere(['{{%filter}}.id' => $productFilterIds])->orderBy(['{{%filter}}.name' => SORT_ASC]);
+                'filters' => function ($query) use ($filtersArr) {
+                    $orCondition = ['or'];
+                    foreach ($filtersArr as $filterType => $filterIds)
+                    {
+                        $orCondition[] = ['and', ['{{%filter}}.type_id' => $filterType], ['{{%filter}}.id' => $filterIds]];
+                    }
+                    $query->andWhere($orCondition)->orderBy(['{{%filter}}.name' => SORT_ASC]);
                 }
             ])
             ->andWhere(['{{%filter_type}}.id' => $productFilterTypes])
             ->orderBy(['{{%filter_type}}.name' => SORT_ASC])
             ->all();
+        //END Prepare filters-------------------------------------------------------------------------------------------
+
 
         $this->heading = $model->name;
         $this->metaTitle = $this->heading . ' | ' . Yii::t('app', 'Catalogue') . ' | ' . Yii::$app->config->siteName;
