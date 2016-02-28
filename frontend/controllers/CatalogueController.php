@@ -125,7 +125,6 @@ class CatalogueController extends \yii\web\Controller
             $ids = [$model->id];
         }
 
-
         //Get the list of products with list of group products----------------------------------------------------------
         if (! empty($filterParams))
         {
@@ -151,6 +150,32 @@ class CatalogueController extends \yii\web\Controller
             $productsQuery = Product::findByCategories($ids)->with(['groupProducts']);
         }
 
+        //Prepare filters for the list of products
+        $productIdsQuery = Product::find()->select(['id'])->andWhere(['catalogue_id' => $ids]);
+
+        $amount = 0;
+        $priceFrom = 0;
+        $priceTo = 0;
+        if (isset($_POST['ProductSearch']) && is_array($_POST['ProductSearch']))
+        {
+            $amount = (int) trim($_POST['ProductSearch']['amount']);
+            $priceFrom = (float) preg_replace('/[,]/','.', trim($_POST['ProductSearch']['price']['from']));
+            $priceTo = (float) preg_replace('/[,]/','.', trim($_POST['ProductSearch']['price']['to']));
+
+            $productsQuery = $productsQuery->andWhere(['>=', 'free', $amount]);
+            $productIdsQuery = $productIdsQuery->andWhere(['>=', 'free', $amount]);
+            if ($priceTo > 0)
+            {
+                $productsQuery = $productsQuery->andWhere(['between', 'enduserprice', $priceFrom, $priceTo]);
+                $productIdsQuery = $productIdsQuery->andWhere(['between', 'enduserprice', $priceFrom, $priceTo]);
+            }
+            else
+            {
+                $productsQuery = $productsQuery->andWhere(['>=', 'enduserprice', $priceFrom]);
+                $productIdsQuery = $productIdsQuery->andWhere(['>=', 'enduserprice', $priceFrom]);
+            }
+        }
+
         $productProvider = new ActiveDataProvider([
             'query' => $productsQuery,
             'pagination' => [
@@ -172,7 +197,6 @@ class CatalogueController extends \yii\web\Controller
 
 
         //Prepare filters for the list of products----------------------------------------------------------------------
-        $productIdsQuery = Product::find()->select(['id'])->andWhere(['catalogue_id' => $ids]);
         $productIdsQuery = $this->prepareFilterQuery($productIdsQuery, $filterParams);
         $productFilters = ProductFilter::find()
             ->select(['type_id', 'filter_id'])
@@ -242,7 +266,10 @@ class CatalogueController extends \yii\web\Controller
             'categories' => $childCategories,
             'productsProvider' => $productProvider,
             'newProductsCount' => $newProductsCount,
-            'filterTypes' => $filters
+            'filterTypes' => $filters,
+            'amountFilter' => $amount == 0 ? '' : $amount,
+            'priceFromFilter' => $priceFrom == 0 ? '' : $priceFrom,
+            'priceToFilter' => $priceTo == 0 ? '' : $priceTo,
         ]);
     }
 

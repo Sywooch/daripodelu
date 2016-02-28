@@ -325,7 +325,8 @@ ul.nav-catalogue li a {
 }
 
 ul.shop-cart li a,
-.total-box .to-cart {
+.total-box .to-cart,
+.filter-box .btn-apply {
     background: #ff80ab;
     color: #fff;
 }
@@ -690,6 +691,7 @@ ul.secondary-nav-menu li,
 .product .offer .color-price,
 .total-box .total-price,
 .total-box .to-cart,
+.filter-box .btn,
 .add-item-box .add-item-link,
 .constructor-links-box a.item,
 table.shop-cart td.item-price,
@@ -1334,7 +1336,7 @@ ul.shop-cart li {
 
 .filter-box a.new-link {
     display: inline-block;
-    margin-left: 30px;
+    margin-left: 40px;
 }
 
 .filter-box .units {
@@ -1346,6 +1348,13 @@ ul.shop-cart li {
 .filter-box .units,
 .filter-box .new-count {
     font-size: 14px;
+}
+
+.filter-box .btn {
+    font-size: 16px;
+    height: 29px;
+    line-height: 29px;
+    margin: 0 0 0 10px;
 }
 
 .products-list {

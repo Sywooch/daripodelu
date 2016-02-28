@@ -48,7 +48,21 @@ $products = $productsProvider->getModels();
                 $selected = '';
             ?>
                 <select class="choice" name="ProductSearch[filter][<?= Html::encode($filterType->id); ?>]" id="product-search-<?= Html::encode($filterType->id); ?>">
-                    <option value=""><?= Html::encode($filterType->name); ?></option>
+                    <?php
+                    /* @var $filter frontend\models\Filter */
+                    $filterParamsString = '';
+                    foreach ($filterParams as $filterTypeId => $filterId):
+                        if ($filterType->id != $filterTypeId):
+                            $filterParamsString .= $filterTypeId . '.' . $filterId . '-';
+                        endif;
+                    endforeach;
+                    $filterParamsString = trim($filterParamsString, '-');
+                    $linkParamsArr = ['catalogue/view', 'uri' => $uri];
+                    if ($filterParamsString != ''):
+                        $linkParamsArr['filterParams'] = $filterParamsString;
+                    endif;
+                    ?>
+                    <option value="<?= Url::to($linkParamsArr); ?>"><?= Html::encode($filterType->name); ?></option>
                     <?php foreach ($filterType->filters as $filter): ?>
                     <?php
                     /* @var $filter frontend\models\Filter */
@@ -73,13 +87,26 @@ $products = $productsProvider->getModels();
             <?php if ($counter < 5): ?>
                 <div class="hr"></div>
             <?php endif; ?>
-            <form action="">
-                <input type="text" name="ProductSearch[amount]" value="" style="width: 100px;" placeholder="тираж">
-                <input type="text" name="ProductSearch[price][from]" value="" style="width: 90px;" placeholder="цена от">
+            <?php
+            if (count($filterParams) > 0):
+                $filterParamsString = '';
+                foreach ($filterParams as $filterTypeId => $filterId):
+                    $filterParamsString .= $filterTypeId . '.' . $filterId . '-';
+                endforeach;
+                $filterParamsString = trim($filterParamsString, '-');
+                $linkParamsArr = ['catalogue/view', 'uri' => $uri, 'filterParams' => $filterParamsString];
+            else:
+                $linkParamsArr = ['catalogue/view', 'uri' => $uri];
+            endif;
+            ?>
+            <form id="product_search_form" action="<?= Url::to($linkParamsArr); ?>" method="post">
+                <input type="text" name="ProductSearch[amount]" value="<?= $amountFilter ?>" style="width: 100px;" placeholder="тираж">
+                <input type="text" name="ProductSearch[price][from]" value="<?= $priceFromFilter ?>" style="width: 90px;" placeholder="цена от">
                 <span class="units">р.</span>
                 <span class="txt">&ndash;</span>
-                <input type="text" name="ProductSearch[price][to]" value="" style="width: 90px;" placeholder="цена до">
+                <input type="text" name="ProductSearch[price][to]" value="<?= $priceToFilter ?>" style="width: 90px;" placeholder="цена до">
                 <span class="units">р.</span>
+                <?= Html::submitButton('Применить', ['class' => 'btn btn-apply', 'name' => 'ProductSearchApply', 'title' => 'Применить параметры фильтра']); ?>
                 <a class="new-link" href="<?= Url::to(['catalogue/view', 'uri' => $uri, 'filterParams' => '8.229']) ?>">Новинки</a>
                 <span class="new-count txt"><?= $newProductsCount; ?></span>
                 <?php if (isset($filterParams[8]) && $filterParams[8] == 229 && count($filterParams) == 1): ?>
@@ -151,7 +178,6 @@ $products = $productsProvider->getModels();
                     pseudoSpan = null,
                     pseudoBtn = null;
 
-                console.log(selectItem.val());
                 if (selectItem.val() != "")
                 {
                     $.pjax.reload(
@@ -165,6 +191,31 @@ $products = $productsProvider->getModels();
                         }
                     );
                 }
+            });
+
+            $(".filter-box select.choice option:not(:nth-child(1)):selected").each(function(){
+                var selectItem = $(this).parents("select").eq(0),
+                    idVal = "select2-" + selectItem.attr("id") + "-container",
+                    inputSpan = null,
+                    pseudoSpan = null,
+                    pseudoBtn = null;
+
+                inputSpan = $("#" + idVal).parents(".select2-container").eq(0);
+                inputSpan.addClass("not-empty");
+                pseudoSpan = $("<span />")
+                pseudoBtn = $("<span />")
+                pseudoSpan.addClass("pseudo-span");
+                pseudoBtn.attr("title", "Сбросить фильтр").addClass("pseudo-btn");
+
+                pseudoBtn.on("click", function(){
+                    selectItem.find("option").attr("selected", false);
+                    selectItem.find("option:nth-child(1)").attr("selected", true).change();
+                    inputSpan.removeClass("not-empty");
+                    pseudoSpan.remove();
+                    $(this).remove();
+                });
+
+                inputSpan.append(pseudoSpan, pseudoBtn);
             });
         }
     });
@@ -180,7 +231,6 @@ $products = $productsProvider->getModels();
                 pseudoSpan = null,
                 pseudoBtn = null;
 
-            console.log(selectItem.val());
             if (selectItem.val() != "")
             {
                 $.pjax.reload(
@@ -195,5 +245,36 @@ $products = $productsProvider->getModels();
                 );
             }
         });
+
+        $(".filter-box select.choice option:not(:nth-child(1)):selected").each(function(){
+            var selectItem = $(this).parents("select").eq(0),
+                idVal = "select2-" + selectItem.attr("id") + "-container",
+                inputSpan = null,
+                pseudoSpan = null,
+                pseudoBtn = null;
+
+            inputSpan = $("#" + idVal).parents(".select2-container").eq(0);
+            inputSpan.addClass("not-empty");
+            pseudoSpan = $("<span />")
+            pseudoBtn = $("<span />")
+            pseudoSpan.addClass("pseudo-span");
+            pseudoBtn.attr("title", "Сбросить фильтр").addClass("pseudo-btn");
+
+            pseudoBtn.on("click", function(){
+                selectItem.find("option").attr("selected", false);
+                selectItem.find("option:nth-child(1)").attr("selected", true).change();
+                inputSpan.removeClass("not-empty");
+                pseudoSpan.remove();
+                $(this).remove();
+            });
+
+            inputSpan.append(pseudoSpan, pseudoBtn);
+        });
     }
+
+    $(document.body).on("submit", "#product_search_form", function(event) {
+        event.preventDefault(); // stop default submit behavior when it bubbles to <body>
+
+        $.pjax.submit(event, "#pl-container");
+    });
 ', \yii\web\View::POS_READY) ?>
