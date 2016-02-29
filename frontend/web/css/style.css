@@ -1540,6 +1540,10 @@ ul.pagination li {
     padding: 0;
 }
 
+ul.pagination li.disabled {
+    display: none;
+}
+
 ul.pagination li a {
     border: 1px solid transparent;
     display: block;

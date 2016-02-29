@@ -161,6 +161,8 @@ $products = $productsProvider->getModels();
         <?= LinkPager::widget([
             'pagination' => $productsProvider->pagination,
             'options' => ['class' => 'pagination inl-blck'],
+            'prevPageLabel' => '<',
+            'nextPageLabel' => '>',
         ]); ?>
         <?php Pjax::end(); ?>
     </main>
