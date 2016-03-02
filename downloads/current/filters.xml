@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<root timestamp="18.12.2015 05:17:00" title="gifts.ru filters export">
+<root timestamp="02.03.2016 05:17:09" title="gifts.ru filters export">
 <filtertypes>
 <filtertype>
 <filtertypeid>5</filtertypeid>
@@ -973,6 +973,34 @@
 <filterid>48245</filterid>
 <filtername>спандекс 4%</filtername>
 </filter>
+<filter>
+<filterid>48249</filterid>
+<filtername>АБС-пластик</filtername>
+</filter>
+<filter>
+<filterid>48250</filterid>
+<filtername>никель</filtername>
+</filter>
+<filter>
+<filterid>48251</filterid>
+<filtername>поликарбонат</filtername>
+</filter>
+<filter>
+<filterid>48252</filterid>
+<filtername>полипропилен</filtername>
+</filter>
+<filter>
+<filterid>48253</filterid>
+<filtername>полиэтилентерефталат</filtername>
+</filter>
+<filter>
+<filterid>48254</filterid>
+<filtername>спандекс</filtername>
+</filter>
+<filter>
+<filterid>48256</filterid>
+<filtername>синтетический габардин</filtername>
+</filter>
 </filters>
 </filtertype>
 <filtertype>
@@ -1578,6 +1606,10 @@
 <filter>
 <filterid>48232</filterid>
 <filtername>Makito</filtername>
+</filter>
+<filter>
+<filterid>48233</filterid>
+<filtername>Piquadro</filtername>
 </filter>
 </filters>
 </filtertype>

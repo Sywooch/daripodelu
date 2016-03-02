@@ -1,19 +1,21 @@
-AddDefaultCharset utf-8
-
+php_flag display_errors on
 <IfModule mod_rewrite.c>
     Options +FollowSymlinks
     RewriteEngine On
-	
-	RewriteCond %{HTTP_HOST} ^daripodelu.ru [OR]
-	RewriteCond %{HTTP_HOST} ^cb66852.tmweb.ru [OR]
-	RewriteCond %{HTTP_HOST} ^www.cb66852.tmweb.ru
-    RewriteRule (.*) http://www.daripodelu.ru/$1 [R=301,L]
-	
+
+	  # RewriteCond %{HTTP_HOST} ^daripodelu.ru [OR]
+	  # RewriteCond %{HTTP_HOST} ^cb66852.tmweb.ru [OR]
+	  # RewriteCond %{HTTP_HOST} ^www.cb66852.tmweb.ru
+    # RewriteRule (.*) http://www.daripodelu.ru/$1 [R=301,L]
+
     # RewriteCond %{REQUEST_URI} ^/(data)
     # RewriteRule ^data/html/(.*)$ data/html/$1 [L]
 
     RewriteCond %{REQUEST_URI} ^/yandex_47f534ee214cfdfb.html
     RewriteRule ^(yandex_47f534ee214cfdfb\.html)$ $1 [L]
+
+    # RewriteCond %{REQUEST_URI} ^/test.php
+    # RewriteRule ^(test\.php)$ $1 [L]
 
     RewriteCond %{REQUEST_URI} ^/googlee00d140def2cedb5.html
     RewriteRule ^(googlee00d140def2cedb5\.html)$ $1 [L]
@@ -40,3 +42,5 @@ AddDefaultCharset utf-8
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^.*$ frontend/web/index.php
 </IfModule>
+AddDefaultCharset utf-8
+AddType 'text/html; charset=utf-8' .html .htm .shtml

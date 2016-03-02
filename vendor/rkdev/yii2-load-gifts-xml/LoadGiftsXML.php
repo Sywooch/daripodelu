@@ -44,7 +44,7 @@ class LoadGiftsXML {
 
         if ($login !== null && $password !== null)
         {
-            curl_setopt($ch, CURLOPT_USERPWD, $this->login . ':' . $this->password);
+            curl_setopt($ch, CURLOPT_USERPWD, $login . ':' . $password);
         }
 
         $output = curl_exec($ch);

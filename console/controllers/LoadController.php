@@ -135,10 +135,12 @@ class LoadController extends \yii\console\Controller
     public function actionDownloadxml()
     {
         $loadXMLObject = LoadGiftsXML::getInstance();
+        $login = yii::$app->config->gateLogin;
+        $password = yii::$app->config->gatePassword;
 
         try
         {
-            $treeXML = $loadXMLObject->get(yii::$app->params['gate']['tree']);
+            $treeXML = $loadXMLObject->get(yii::$app->params['gate']['tree'], $login, $password);
             if($treeXML === false)
             {
                 throw new \Exception('File tree.xml was not processed.');
@@ -153,7 +155,7 @@ class LoadController extends \yii\console\Controller
 
         try
         {
-            $productsXML = $loadXMLObject->get(yii::$app->params['gate']['product']);
+            $productsXML = $loadXMLObject->get(yii::$app->params['gate']['product'], $login, $password);
             if($treeXML === false)
             {
                 throw new \Exception('File product.xml was not processed.');
@@ -168,7 +170,7 @@ class LoadController extends \yii\console\Controller
 
         try
         {
-            $filtersXML = $loadXMLObject->get(yii::$app->params['gate']['filters']);
+            $filtersXML = $loadXMLObject->get(yii::$app->params['gate']['filters'], $login, $password);
             if($filtersXML === false)
             {
                 throw new \Exception('File stock.xml was not processed.');
@@ -183,7 +185,7 @@ class LoadController extends \yii\console\Controller
 
         try
         {
-            $stockXML = $loadXMLObject->get(yii::$app->params['gate']['stock']);
+            $stockXML = $loadXMLObject->get(yii::$app->params['gate']['stock'], $login, $password);
             if($stockXML === false)
             {
                 throw new \Exception('File stock.xml was not processed.');

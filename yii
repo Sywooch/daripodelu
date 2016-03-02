@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/opt/php55/bin/php
 <?php
 /**
  * Yii console bootstrap file.

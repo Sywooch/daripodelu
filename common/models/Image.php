@@ -341,7 +341,7 @@ class Image extends ActiveRecord
             {
                 if ( !file_exists($this->getImageTmbDirPath()))
                 {
-                    mkdir($this->getImageTmbDirPath());
+                    mkdir($this->getImageTmbDirPath(), 0777, true);
                 }
 
                 yii\imagine\Image::$driver = \yii\imagine\Image::DRIVER_GD2;
@@ -384,12 +384,12 @@ class Image extends ActiveRecord
                 {
                     if ( !file_exists($this->getModelDirPath()))
                     {
-                        mkdir($this->getModelDirPath());
+                        mkdir($this->getModelDirPath(), 0777, true);
                     }
 
                     if ( !file_exists($this->getImageDirPath()))
                     {
-                        mkdir($this->getImageDirPath());
+                        mkdir($this->getImageDirPath(), 0777, true);
                     }
 
                     components\Image::$driver = components\Image::DRIVER_GD2;
