@@ -28,7 +28,9 @@ composer.phar
 phpunit.phar
 # local phpunit config
 /phpunit.xml
+
 uploads
 frontend/web/thumbs
+downloads
 
 local-img-download.sh

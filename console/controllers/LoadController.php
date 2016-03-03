@@ -111,6 +111,26 @@ class LoadController extends \yii\console\Controller
     {
         try
         {
+            if ( ! file_exists(yii::$app->params['gate']['tree']))
+            {
+                throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/tree.xml' . '" not found.' . "\n\r");
+            }
+
+            if ( ! file_exists(yii::$app->params['gate']['product']))
+            {
+                throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/product.xml' . '" not found.' . "\n\r");
+            }
+
+            if ( ! file_exists(yii::$app->params['gate']['filters']))
+            {
+                throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/filters.xml' . '" not found.' . "\n\r");
+            }
+
+            if ( ! file_exists(yii::$app->params['gate']['stock']))
+            {
+                throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/stock.xml' . '" not found.' . "\n\r");
+            }
+
             yii::$app->db->createCommand()->delete('{{%product_print}}')->execute();
             yii::$app->db->createCommand()->delete('{{%print}}')->execute();
             yii::$app->db->createCommand()->delete('{{%product_filter}}')->execute();
