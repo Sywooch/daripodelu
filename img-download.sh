@@ -16,9 +16,33 @@
 # file="./downloads/current/xan.txt"
 # file="./downloads/current/xao.txt"
 
+# ========================================================================
+# логин
+login="22477_xmlexport"
+
+# пароль
+pass="MF1lHzTR"
+
+# Пауза в секундах между несколькими загрузками (в т.ч. повторами). Это снижает загруженность сервера.
+# Чтобы указать значение в минутах, используйте "m", в часах - "h", в днях - "d" после числа.
+wait="1s"
+
+# путь к файлу со списком незагруженных картинок
 file="./downloads/current/filesforupload.txt"
 
+# путь к директории, в которую следует загружать картинки
 uploadPath="./uploads"
+# ========================================================================
+
+# формирование файла со списком незагруженных картинок
+./yii load/makeimglist
+
+# проверка наличия файла со списком незагруженных картинок
+if ! [ -f ./downloads/current/filesforupload.txt ];
+then
+    echo "No file with images list for upload"
+fi
+
 counter=0
 
 while read line ; do
@@ -32,16 +56,11 @@ while read line ; do
 
     counter=$((counter+1))
 
-    # if [ ! -d "$fulldirpath" ]
-    # then
-    #     mkdir -p "$fulldirpath"
-    # fi
-
     if [ ! -f $fullpath ]
     then
         sleep 0.5s
 
-        echo "$counter  wget --user=22477_xmlexport --password=MF1lHzTR --wait=1s -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath"
-        wget --user=22477_xmlexport --password=MF1lHzTR --wait=1s -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath
+        echo "$counter  wget --user=****** --password=****** --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath"
+        wget --user=$login --password=$pass --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath
     fi
 done < $file

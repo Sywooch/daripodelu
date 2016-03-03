@@ -4,10 +4,10 @@ return [
     'baseUploadURL' => '/uploads',
     'cacheNavExpire' => 4 * 3600,  //The number of seconds in which the cache of navigation menu will expire. 0 means never expire.
     'gate' => [
-        'product' => 'http://ratmir3025.tmweb.ru/product.xml',
-        'tree' => 'http://ratmir3025.tmweb.ru/tree.xml',
-        'stock' => 'http://ratmir3025.tmweb.ru/stock.xml',
-        'filters' => 'http://ratmir3025.tmweb.ru/filters.xml',
+        'product' => 'http://ratmir3025.tmweb.ru/downloads/current/product.xml',
+        'tree' => 'http://ratmir3025.tmweb.ru/downloads/current/tree.xml',
+        'stock' => 'http://ratmir3025.tmweb.ru/downloads/current/stock.xml',
+        'filters' => 'http://ratmir3025.tmweb.ru/downloads/current/filters.xml',
     ],
     /*'gate' => [
         'product' => 'http://api2.gifts.ru/export/v2/catalogue/product.xml',

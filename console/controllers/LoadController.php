@@ -135,8 +135,8 @@ class LoadController extends \yii\console\Controller
     public function actionDownloadxml()
     {
         $loadXMLObject = LoadGiftsXML::getInstance();
-        $login = yii::$app->config->gateLogin;
-        $password = yii::$app->config->gatePassword;
+        $login = mb_strrpos(yii::$app->basePath, 'daripodelu/console') !== false ? null : yii::$app->config->gateLogin;
+        $password = mb_strrpos(yii::$app->basePath, 'daripodelu/console') !== false ? null : yii::$app->config->gatePassword;
 
         try
         {
