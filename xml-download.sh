@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# очистка таблиц БД
-./yii load/droptables
-
 # загрузка xml-файлов с сайта gifs.ru
 ./yii load/downloadxml
+
+# очистка таблиц БД
+./yii load/droptables
 
 # анализ tree.xml и запись категорий в БД
 ./yii load/insertctg
