@@ -30,3 +30,5 @@ phpunit.phar
 /phpunit.xml
 uploads
 frontend/web/thumbs
+
+local-img-download.sh

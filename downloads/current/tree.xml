@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<doct timestamp="02.03.2016 05:15:17" title="gifts.ru directories structure export with articles">
+<doct timestamp="03.03.2016 05:15:18" title="gifts.ru directories structure export with articles">
 <page>
 <page_id>1</page_id>
 <name>Каталог</name>
@@ -11574,10 +11574,6 @@
 </product>
 <product>
 <page>1105736</page>
-<product>18834</product>
-</product>
-<product>
-<page>1105736</page>
 <product>25739</product>
 </product>
 <product>
@@ -13450,10 +13446,6 @@
 <page_id>1105871</page_id>
 <name>Чехлы для планшета</name>
 <uri>chehly-dlya-plansheta</uri>
-<product>
-<page>1105871</page>
-<product>49241</product>
-</product>
 <product>
 <page>1105871</page>
 <product>49242</product>
@@ -19101,6 +19093,10 @@
 </product>
 <product>
 <page>1105835</page>
+<product>68178</product>
+</product>
+<product>
+<page>1105835</page>
 <product>65498</product>
 </product>
 <product>
@@ -23871,6 +23867,10 @@
 </product>
 <product>
 <page>1106882</page>
+<product>68178</product>
+</product>
+<product>
+<page>1106882</page>
 <product>33912</product>
 </product>
 <product>
@@ -26146,6 +26146,10 @@
 <product>
 <page>1106941</page>
 <product>58459</product>
+</product>
+<product>
+<page>1106941</page>
+<product>68178</product>
 </product>
 <product>
 <page>1106941</page>
@@ -31636,6 +31640,10 @@
 <product>
 <page>1107076</page>
 <product>65503</product>
+</product>
+<product>
+<page>1107076</page>
+<product>68178</product>
 </product>
 </page>
 </page>

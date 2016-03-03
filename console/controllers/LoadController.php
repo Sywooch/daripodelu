@@ -892,7 +892,7 @@ class LoadController extends \yii\console\Controller
                 mkdir(yii::$app->params['xmlUploadPath']['current']);
             }
 
-            $f = fopen(yii::$app->params['xmlUploadPath']['current'] . '/filesforupload.txt' , 'w+');
+            $f = fopen(yii::$app->params['xmlUploadPath']['current'] . '/imagesforupload.txt' , 'w+');
             foreach ($imagesForDownloadArr as $row)
             {
                 fwrite($f,$row['product_id'] . ';' . $row['image'] . "\n");
@@ -905,6 +905,40 @@ class LoadController extends \yii\console\Controller
         }
     }
 
+    public function actionMakefileslist()
+    {
+        try
+        {
+            $filesForDownloadArr = [];
+            $results = yii::$app->db->createCommand('
+                SELECT [[product_id]] as `product_id`, [[file]] as `file` FROM {{%product_attachment}} WHERE `meaning` = 0 AND `file` IS NOT NULL
+            ')->queryAll();
+
+            foreach ($results as $row)
+            {
+                if ( $row['file'] != '' && ! file_exists(yii::$app->params['uploadPath'] . '/' . $row['product_id'] . '/' . $row['file']))
+                {
+                    $filesForDownloadArr[] = ['product_id' => $row['product_id'], 'file' => $row['file']];
+                }
+            }
+
+            if (! file_exists(yii::$app->params['xmlUploadPath']['current']))
+            {
+                mkdir(yii::$app->params['xmlUploadPath']['current']);
+            }
+
+            $f = fopen(yii::$app->params['xmlUploadPath']['current'] . '/filesforupload.txt' , 'w+');
+            foreach ($filesForDownloadArr as $row)
+            {
+                fwrite($f,$row['product_id'] . ';' . $row['file'] . "\n");
+            }
+            fclose($f);
+        }
+        catch (Exception $e)
+        {
+            echo $e->getMessage() . "\n";
+        }
+    }
 
     public function actionIndex()
     {
