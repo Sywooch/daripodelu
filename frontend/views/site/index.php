@@ -1,6 +1,5 @@
 <?php
 
-use yii;
 use frontend\widgets\BlockWidget;
 use frontend\widgets\CatalogueWidget;
 /* @var $this yii\web\View */

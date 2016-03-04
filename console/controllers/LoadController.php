@@ -111,22 +111,22 @@ class LoadController extends \yii\console\Controller
     {
         try
         {
-            if ( ! file_exists(yii::$app->params['gate']['tree']))
+            if ( ! file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml'))
             {
                 throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/tree.xml' . '" not found.' . "\n\r");
             }
 
-            if ( ! file_exists(yii::$app->params['gate']['product']))
+            if ( ! file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml'))
             {
                 throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/product.xml' . '" not found.' . "\n\r");
             }
 
-            if ( ! file_exists(yii::$app->params['gate']['filters']))
+            if ( ! file_exists(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml'))
             {
                 throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/filters.xml' . '" not found.' . "\n\r");
             }
 
-            if ( ! file_exists(yii::$app->params['gate']['stock']))
+            if ( ! file_exists(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml'))
             {
                 throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/stock.xml' . '" not found.' . "\n\r");
             }
