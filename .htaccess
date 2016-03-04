@@ -36,7 +36,7 @@ php_flag display_errors on
     RewriteRule ^img/(.*)$ frontend/web/img/$1 [L]
     RewriteRule ^js/(.*)$ frontend/web/js/$1 [L]
 
-    RewriteCond %{REQUEST_URI} !^/(frontend|backend)/web/(assets|css|img|js)|uploads/
+    RewriteCond %{REQUEST_URI} !^/(frontend|backend)/web/(assets|css|img|js)|uploads|(downloads/current)/
     RewriteCond %{REQUEST_URI} !index.php
     RewriteCond %{REQUEST_FILENAME} !-f [OR]
     RewriteCond %{REQUEST_FILENAME} !-d
