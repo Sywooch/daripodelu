@@ -29,8 +29,10 @@ phpunit.phar
 # local phpunit config
 /phpunit.xml
 
-uploads
+/downloads/*
+/uploads/*
 frontend/web/thumbs
-downloads
 
+
+local-files-download.sh
 local-img-download.sh
