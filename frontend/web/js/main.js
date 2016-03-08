@@ -122,3 +122,70 @@ function fileDialogOpen(target){
         }
     });
 }
+
+function calcSum(obj, price)
+{
+    var totalCount = 0,
+        totalInfoObj = obj.find(".total-info"),
+        totalPrice = 0;
+
+    obj.find("input.size-count").each(function(){
+        var val = parseInt($(this).val());
+
+        if (isNaN(val))
+        {
+            val = 0;
+        }
+        totalCount = totalCount + val;
+    });
+
+    totalPrice = totalCount * price;
+
+    totalInfoObj.find(".total-count").text(totalCount);
+    totalInfoObj.find(".total-price").html(decoratePrice(totalPrice, "руб.", ","));
+
+    if (totalCount == 0)
+    {
+        totalInfoObj.hide();
+    }
+    else
+    {
+        totalInfoObj.show();
+    }
+}
+
+function decoratePrice(price, currency, delimiter)
+{
+    var priceStr = "",
+        integerPart = "",
+        fractionalPart = "",
+        arr = String(price).split(/[,\.]/);
+
+    if (arr.length == 1)
+    {
+        integerPart = arr[0];
+    }
+    else if (arr.length > 1)
+    {
+        integerPart = arr[0];
+        fractionalPart = arr[1];
+    }
+    else
+    {
+        return price;
+    }
+
+    if (fractionalPart == "")
+    {
+        fractionalPart = "00";
+    }
+
+    priceStr = separateOnTetradBySpace(integerPart) + delimiter + '<span class="small">' + fractionalPart + " " + currency + "</span>"
+
+    return priceStr;
+}
+
+function separateOnTetradBySpace(str)
+{
+    return String(str).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+}

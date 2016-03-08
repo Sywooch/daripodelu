@@ -81,6 +81,11 @@ return [
                     'suffix' => '.html',
                 ],
                 [
+                    'pattern' => 'product/<id:[\d]+>',
+                    'route' => 'product/view',
+                    'suffix' => '.html',
+                ],
+                [
                     'class' => 'common\components\CmsUrlRule',
                     'suffix' => '.html',
                 ],

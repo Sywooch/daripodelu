@@ -1593,7 +1593,19 @@ ul.secondary-nav-menu li a:hover {
     width: 365px;
 }
 
-.product .photo-box .photo {}
+.product .photo-box .photo {
+    display: block;
+    width: 365px;
+    height: 365px;
+    line-height: 365px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.product .photo-box .photo img {
+    max-width: 365px;
+    max-height: 365px;
+}
 
 .product .photo-box .thumbs {
     word-spacing: -0.25em;
@@ -1602,6 +1614,16 @@ ul.secondary-nav-menu li a:hover {
 .product .photo-box .thumbs a {
     display: inline-block;
     margin: 0 9px;
+    width: 109px;
+    height: 109px;
+    line-height: 109px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.product .photo-box .thumbs a img {
+    max-width: 109px;
+    max-height: 109px;
 }
 
 .product .photo-box .thumbs > a:first-child {
@@ -1634,6 +1656,8 @@ ul.secondary-nav-menu li a:hover {
     text-align: center;
     text-decoration: none;
     width: 45px;
+    line-height: 45px;
+    vertical-align: middle;
 }
 
 .product .color-option-box {
@@ -1695,6 +1719,10 @@ ul.secondary-nav-menu li a:hover {
 
 .total-box {
     font-size: 16px;
+}
+
+.total-box .total-info {
+    display: none;
 }
 
 .total-box .total-price {

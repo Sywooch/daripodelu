@@ -8,10 +8,11 @@ use Yii;
  * This is the model class for table "{{%product_attachment}}".
  *
  * @property integer $product_id
- * @property integer $meaning
+ * @property integer $meaning тип файла (1 - картинка, 0 - НЕ картинка)
  * @property string $file
  * @property string $image
  * @property string $name
+ * @property string $imageUrl
  *
  * @property Product $product
  */
@@ -57,5 +58,10 @@ class ProductAttachment extends \yii\db\ActiveRecord
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
+    }
+
+    public function getImageUrl()
+    {
+        return yii::$app->params['baseUploadURL'] . '/' . $this->product_id . '/' . $this->image;
     }
 }

@@ -46,6 +46,7 @@ use backend\behaviors\ImagesBehavior;
  * @property ProductFilter[] $productFilters
  * @property ProductPrint[] $productPrints
  * @property SlaveProduct[] $slaveProducts
+ * @property Product[] $groupProducts
  */
 class Product extends \yii\db\ActiveRecord
 {

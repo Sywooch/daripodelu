@@ -11,7 +11,7 @@ use Yii;
  * @property string $print_id
  *
  * @property Product $product
- * @property Print $print
+ * @property PrintKind $print
  */
 class ProductPrint extends \yii\db\ActiveRecord
 {
@@ -59,6 +59,6 @@ class ProductPrint extends \yii\db\ActiveRecord
      */
     public function getPrint()
     {
-        return $this->hasOne(Print::className(), ['name' => 'print_id']);
+        return $this->hasOne(PrintKind::className(), ['name' => 'print_id']);
     }
 }

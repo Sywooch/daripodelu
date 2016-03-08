@@ -121,7 +121,7 @@ $products = $productsProvider->getModels();
                 <div class="panel">
                     <div class="panel-top"></div>
                     <?php if ($product->status_id == 0): ?><span class="marker new">Новинка</span><? endif; ?>
-                    <a class="name" href="<?= Url::to(['product/view', 'id' => $product->id]); ?>" itemprop="name">
+                    <a class="name" href="<?= Url::to(['product/view', 'id' => $product->id]); ?>" itemprop="name" data-pjax="0">
                         <i class="product-img-border"><img class="product-img" src="<?= $product->smallImageUrl; ?>" alt="" itemprop="image"></i><span><?= Html::encode($product->name); ?></span>
                     </a>
                     <?php
