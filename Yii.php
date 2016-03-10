@@ -22,6 +22,7 @@ Yii::$container = new yii\di\Container;
  * Class BaseApplication
  * Used for properties that are identical for both WebApplication and ConsoleApplication
  *
+ * @property \frontend\components\cart\ShopCart $cart
  * @property \common\components\Config $config
  * @property \rkdev\yii2imagecache\ImageCache $imageCache
  */

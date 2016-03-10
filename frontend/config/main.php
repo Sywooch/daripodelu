@@ -9,10 +9,13 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['cart', 'log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'assetManager' => [],
+        'cart' => [
+            'class' => 'frontend\components\cart\ShopCart',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

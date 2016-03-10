@@ -86,45 +86,48 @@ use frontend\widgets\BlockWidget;
             <meta itemprop="price" content="<?= yii::$app->formatter->asDecimal($model->enduserprice, 2) ?>">
             <meta itemprop="priceCurrency" content="RUB">
         </div>
-        <table class="order-table">
-            <thead>
-            <tr>
-                <th>Размер</th>
-                <th>На складе</th>
-                <th>Тираж</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php if (count($model->slaveProducts) > 0): ?>
-                <?php foreach ($model->slaveProducts as $slaveProduct): ?>
+        <form action="" method="post" name="add2cartForm">
+            <input type="hidden" name="product" value="<?= $model->id ?>">
+            <table class="order-table">
+                <thead>
+                <tr>
+                    <th>Размер</th>
+                    <th>На складе</th>
+                    <th>Тираж</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if (count($model->slaveProducts) > 0): ?>
+                    <?php foreach ($model->slaveProducts as $slaveProduct): ?>
+                        <tr>
+                            <td><?= $slaveProduct->size_code ?></td>
+                            <td><?= $slaveProduct->amount ?> / <span title="Доступно для резервирования"><?= $slaveProduct->free ?></span></td>
+                            <td class="field-box">
+                                <input class="size-count" type="text" name="size[<?= $slaveProduct->id ?>_<?= $slaveProduct->size_code ?>]" id="size-<?= $slaveProduct->id ?>-<?= $slaveProduct->size_code ?>" data-target-id="product-<?= $model->id ?>" value="">шт.
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
                     <tr>
-                        <td><?= $slaveProduct->size_code ?></td>
-                        <td><?= $slaveProduct->amount ?> / <span title="Доступно для резервирования"><?= $slaveProduct->free ?></span></td>
+                        <?php if ( ! is_null($model->product_size) && trim($model->product_size) != ''): ?>
+                            <td><?= $model->product_size; ?></td>
+                        <?php else: ?>
+                            <td style="padding-left: 20px;">&mdash;</td>
+                        <?php endif; ?>
+                        <td><?= $model->amount ?> / <span title="Доступно для резервирования"><?= $model->free ?></span></td>
                         <td class="field-box">
-                            <input class="size-count" type="text" name="size[<?= $slaveProduct->size_code ?>]" id="size-<?= $slaveProduct->id ?>-<?= $slaveProduct->size_code ?>" data-target-id="product-<?= $model->id ?>" value="">шт.
+                            <input class="size-count" type="text" name="size" id="size-<?= $model->id ?>" value="">шт.
                         </td>
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <?php if ( ! is_null($model->product_size) && trim($model->product_size) != ''): ?>
-                        <td><?= $model->product_size; ?></td>
-                    <?php else: ?>
-                        <td style="padding-left: 20px;">&mdash;</td>
-                    <?php endif; ?>
-                    <td><?= $model->amount ?> / <span title="Доступно для резервирования"><?= $model->free ?></span></td>
-                    <td class="field-box">
-                        <input class="size-count" type="text" name="size[<?= $slaveProduct->size_code ?>]" id="size-<?= $model->id ?>" value="">шт.
-                    </td>
-                </tr>
-            <?php endif; ?>
-            </tbody>
-        </table>
-        <div class="total-box">
-            <button class="btn to-cart" type="button">В корзину</button>
-            <span class="total-info"><span class="total-count">0</span> штук за <span class="total-price">0.<span class="small">00 руб.</span></span></span>
-            <div class="clear"></div>
-        </div>
+                <?php endif; ?>
+                </tbody>
+            </table>
+            <div class="total-box">
+                <button class="btn to-cart" name="add2cartBtn" type="submit">В корзину</button>
+                <span class="total-info"><span class="total-count">0</span> штук за <span class="total-price">0.<span class="small">00 руб.</span></span></span>
+                <div class="clear"></div>
+            </div>
+        </form>
     </div>
     <div class="dashes-line"></div>
 </div>
