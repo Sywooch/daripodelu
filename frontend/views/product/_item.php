@@ -86,7 +86,7 @@ use frontend\widgets\BlockWidget;
             <meta itemprop="price" content="<?= yii::$app->formatter->asDecimal($model->enduserprice, 2) ?>">
             <meta itemprop="priceCurrency" content="RUB">
         </div>
-        <form action="" method="post" name="add2cartForm">
+        <form action="<?= Url::to(['cart/add']); ?>" method="post" name="add2cartForm">
             <input type="hidden" name="product" value="<?= $model->id ?>">
             <table class="order-table">
                 <thead>

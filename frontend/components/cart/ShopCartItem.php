@@ -3,6 +3,7 @@
 
 namespace frontend\components\cart;
 
+use yii\base\Object;
 use frontend\components\cart\ShopCartItemSize;
 
 /**
@@ -13,7 +14,7 @@ use frontend\components\cart\ShopCartItemSize;
  * @property float $cost The product's cost
  * @property \frontend\components\cart\ShopCartItemSize[] $size the list of sizes with quantity
  */
-class ShopCartItem
+class ShopCartItem extends Object
 {
     /* @var int $productId */
     private $productId;
@@ -37,7 +38,7 @@ class ShopCartItem
      */
     public function setProductId($productId)
     {
-        $this->productId = $productId;
+        $this->productId = (int) $productId;
     }
 
     /**
@@ -91,7 +92,7 @@ class ShopCartItem
      */
     public function setCost($cost)
     {
-        $this->cost = $cost;
+        $this->cost = (float) $cost;
     }
 
     /**

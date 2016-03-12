@@ -20,7 +20,7 @@ $feedbackModel = $this->params['feedbackModel'];
                 </ul>
                 <ul class="shop-cart">
                     <li>
-                        <a href="/cart.html">Корзина:  21 450 руб.</a>
+                        <a href="/cart.html">Корзина:  <?= yii::$app->cart->getTotalCost(); ?> руб.</a>
                     </li>
                 </ul>
                 <ul class="main-menu inl-blck">

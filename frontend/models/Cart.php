@@ -2,16 +2,19 @@
 
 namespace frontend\models;
 
-use Yii;
+use yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%cart}}".
  *
  * @property integer $id
  * @property resource $data
- * @property string $update_date
+ * @property string $last_use_date
  */
-class Cart extends \yii\db\ActiveRecord
+class Cart extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -27,9 +30,9 @@ class Cart extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['data', 'update_date'], 'required'],
+            [['data'], 'required'],
             [['data'], 'string'],
-            [['update_date'], 'safe']
+            [['last_use_date'], 'safe']
         ];
     }
 
@@ -41,7 +44,20 @@ class Cart extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'data' => Yii::t('app', 'Data'),
-            'update_date' => Yii::t('app', 'Update Date'),
+            'last_use_date' => Yii::t('app', 'Last Use Date'),
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_AFTER_FIND => ['last_use_date'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 }

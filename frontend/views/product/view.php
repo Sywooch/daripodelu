@@ -241,4 +241,64 @@ use frontend\widgets\BlockWidget;
             return false;
         }
     });
+
+    $("body").on("submit", function(event){
+        var eventTarget = event.target,
+            productsCount = 0;
+
+        if ($(eventTarget).has("form[name=\"add2cartForm\"]"))
+        {
+            $(eventTarget).find("input.size-count").each(function(){
+                productsCount += isNaN(parseInt($(this).val())) ? 0 : parseInt($(this).val())
+            });
+
+            if (productsCount == 0)
+            {
+                alert("Вы забыли указать количество товара");
+                return false;
+            }
+
+            $.ajax({
+                url: $(eventTarget).attr("action"),
+                type: $(eventTarget).attr("method"),
+                dataType: "json",
+                data: $(eventTarget).serialize(),
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
+                },
+                statusCode: {
+                    400: function () {
+                        alert("Bad Request");
+                    },
+                    401: function () {
+                        alert("Unauthorized");
+                    },
+                    403: function () {
+                        alert("Access Forbidden");
+                    },
+                    404: function () {
+                        alert("Page Not Found");
+                    },
+                    500: function () {
+                        alert("Internal Server Error");
+                    },
+                    502: function () {
+                        alert("Bad Gateway");
+                    },
+                    503: function () {
+                        alert("Service Unavailable");
+                    },
+                    504: function () {
+                        alert("Gateway Timeout");
+                    }
+                }
+            });
+        }
+
+        return false;
+    });
 ', View::POS_READY); ?>

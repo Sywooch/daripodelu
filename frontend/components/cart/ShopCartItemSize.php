@@ -2,6 +2,8 @@
 
 namespace frontend\components\cart;
 
+use yii\base\Object;
+
 /**
  * Class ShopCartItemSize
  * @package frontend\components\cart
@@ -9,7 +11,7 @@ namespace frontend\components\cart;
  * @property string $sizeCode Символьный код размера
  * @property integer $quantity Количество товаров размера с кодом $sizeCode
  */
-class ShopCartItemSize
+class ShopCartItemSize extends Object
 {
     const DEAFAULT_SIZE = 'no_size';
 
