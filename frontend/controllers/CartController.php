@@ -26,7 +26,7 @@ class CartController extends Controller
 
             if ( ! is_null($product))
             {
-                $cartItem->cost = $product->enduserprice;
+                $cartItem->price = $product->enduserprice;
                 if (is_array($size))
                 {
                     foreach ($size as $key => $item)
@@ -52,7 +52,7 @@ class CartController extends Controller
                     {
                         $result['status'] = 'success';
                         $result['msg'] = 'Product is successfull added to cart';
-                        $result['rslt'] = yii::$app->cart->getTotalCost();
+                        $result['rslt'] = yii::$app->cart->getTotalPrice();
                     }
                     else
                     {

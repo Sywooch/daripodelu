@@ -59,6 +59,12 @@ $(function(){
         //alert(key.charCode);
         return true;
     });
+
+    var tpContainer = $(".shop-cart .cart-total-price");
+    if (tpContainer.length)
+    {
+        tpContainer.text(separateOnTetradBySpace(tpContainer.text()));
+    }
 });
 
 function removeFileInput(target) {
@@ -188,4 +194,15 @@ function decoratePrice(price, currency, delimiter)
 function separateOnTetradBySpace(str)
 {
     return String(str).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+}
+
+function changeTotalPrice($totalPrice)
+{
+    var totalPriceContainer = $(".shop-cart .cart-total-price");
+
+    if (totalPriceContainer.length)
+    {
+        $totalPrice = separateOnTetradBySpace($totalPrice);
+        totalPriceContainer.text($totalPrice);
+    }
 }

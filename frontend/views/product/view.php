@@ -266,7 +266,10 @@ use frontend\widgets\BlockWidget;
                 beforeSend: function () {
                 },
                 success: function (data) {
-                    console.log(data);
+                    if (data.status == "success")
+                    {
+                        changeTotalPrice(data.rslt);
+                    };
                 },
                 error: function () {
                 },

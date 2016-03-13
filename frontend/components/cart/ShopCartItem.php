@@ -11,7 +11,7 @@ use frontend\components\cart\ShopCartItemSize;
  *
  * @package frontend\components\cart
  * @property integer $productId ID of product
- * @property float $cost The product's cost
+ * @property float $price The product's cost
  * @property \frontend\components\cart\ShopCartItemSize[] $size the list of sizes with quantity
  */
 class ShopCartItem extends Object
@@ -19,8 +19,8 @@ class ShopCartItem extends Object
     /* @var int $productId */
     private $productId;
 
-    /* @var float $cost */
-    private $cost = 0;
+    /* @var float $price */
+    private $price = 0;
 
     /* @var ShopCartItemSize[] $size */
     private $size = [];
@@ -82,17 +82,17 @@ class ShopCartItem extends Object
     /**
      * @return float
      */
-    public function getCost()
+    public function getPrice()
     {
-        return $this->cost;
+        return $this->price;
     }
 
     /**
-     * @param float $cost
+     * @param float $price
      */
-    public function setCost($cost)
+    public function setPrice($price)
     {
-        $this->cost = (float) $cost;
+        $this->price = (float) $price;
     }
 
     /**
@@ -111,8 +111,8 @@ class ShopCartItem extends Object
         return $productCount;
     }
 
-    public function getTotalCost()
+    public function getTotalPrice()
     {
-        return $this->getCost() * $this->getProductsCount();
+        return $this->getPrice() * $this->getProductsCount();
     }
 }

@@ -13,10 +13,14 @@ use frontend\models\Product;
  * This is class of Shop Cart
  *
  * @package frontend\components\cart
+ * @property integer $validityPeriod storage period in seconds of the information about cart
  * @property integer $id cart ID
  */
 class ShopCart extends yii\base\Component
 {
+    /* @var $validityPeriod int storage period in seconds of the information about cart */
+    public $validityPeriod = 0;
+
     protected $id = null;
     /* @var $cartModel Cart */
     protected $cartModel = null;
@@ -104,6 +108,7 @@ class ShopCart extends yii\base\Component
             yii::$app->response->cookies->add(new yii\web\Cookie([
                 'name' => 'cart',
                 'value' => $this->id,
+                'expire' => time() + $this->validityPeriod,
             ]));
 
             $this->fillCartObject(unserialize($this->cartModel->data));
@@ -117,16 +122,16 @@ class ShopCart extends yii\base\Component
     }
 
     /**
-     * Returns total cost of all products in the cart
+     * Returns total price of all products in the cart
      *
      * @return float|int
      */
-    public function getTotalCost()
+    public function getTotalPrice()
     {
         $totalPrice = 0;
         foreach ($this->items as $item)
         {
-            $totalPrice += $item->getTotalCost();
+            $totalPrice += $item->getTotalPrice();
         }
 
         return $totalPrice;
@@ -230,7 +235,7 @@ class ShopCart extends yii\base\Component
             {
                 if ($this->items[$i]->productId == $product->id)
                 {
-                    $this->items[$i]->cost = (float) $product->enduserprice;
+                    $this->items[$i]->price = (float) $product->enduserprice;
                 }
             }
         }
