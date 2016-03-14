@@ -15,7 +15,7 @@ return [
         'assetManager' => [],
         'cart' => [
             'class' => 'frontend\components\cart\ShopCart',
-            'validityPeriod' => 91 * 24 * 60 * 60,
+            'validityPeriod' => $params['cartCookieValidityPeriod'],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

@@ -79,11 +79,9 @@ use frontend\widgets\BlockWidget;
             </div>
         <?php endif; ?>
         <div class="offer" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-            <?php
-            list($integerPart, $fractionalPart) = explode('.', yii::$app->formatter->asDecimal($model->enduserprice, 2));
-            ?>
-            <span class="color-price"><?= $integerPart; ?><?php if ( ! is_null($fractionalPart)): ?>,<span class="small"><?= $fractionalPart; ?> руб.</span><?php endif; ?></span>
-            <meta itemprop="price" content="<?= yii::$app->formatter->asDecimal($model->enduserprice, 2) ?>">
+            <?php list($integerPart, $fractionalPart) = explode('.', yii::$app->formatter->asDecimal($model->enduserprice, 2)); ?>
+            <span class="color-price"><?= $integerPart; ?>,<span class="small"><?php if ( ! is_null($fractionalPart)): ?><?= $fractionalPart; ?><?php else: ?>00<?php endif; ?> руб.</span></span>
+            <meta itemprop="price" content="<?= preg_replace('/[ ]+/', '', yii::$app->formatter->asDecimal($model->enduserprice, 2)); ?>">
             <meta itemprop="priceCurrency" content="RUB">
         </div>
         <form action="<?= Url::to(['cart/add']); ?>" method="post" name="add2cartForm">

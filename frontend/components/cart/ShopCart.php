@@ -15,10 +15,11 @@ use frontend\models\Product;
  * @package frontend\components\cart
  * @property integer $validityPeriod storage period in seconds of the information about cart
  * @property integer $id cart ID
+ * @property ShopCartItem[] $items
  */
 class ShopCart extends yii\base\Component
 {
-    /* @var $validityPeriod int storage period in seconds of the information about cart */
+    /* @var $validityPeriod int storage period of the information about cart in seconds */
     public $validityPeriod = 0;
 
     protected $id = null;
@@ -41,10 +42,15 @@ class ShopCart extends yii\base\Component
                 $this->id = $this->cartModel->id;
                 $this->fillCartObject(unserialize($this->cartModel->data));
                 $this->cartModel->touch('last_use_date');
+                yii::$app->response->cookies->add(new yii\web\Cookie([
+                    'name' => 'cart',
+                    'value' => $this->id,
+                    'expire' => time() + $this->validityPeriod,
+                ]));
             }
             else
             {
-                $cookies->remove('cart');
+                yii::$app->response->cookies->remove('cart');
                 $this->cartModel = new Cart();
             }
         }
@@ -171,6 +177,14 @@ class ShopCart extends yii\base\Component
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return ShopCartItem[]
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 
     /**

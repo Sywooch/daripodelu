@@ -1874,11 +1874,19 @@ table.shop-cart tbody tr:last-child td {
 
 table.shop-cart td.name-box {}
 
-table.shop-cart td.name-box img {
+table.shop-cart td.name-box .img-box {
     display: block;
     float: left;
     width: 115px;
-    height: auto;
+    height: 115px;
+    line-height: 115px;
+    text-align: center;
+}
+
+table.shop-cart td.name-box .img-box img {
+    max-width: 115px;
+    max-height: 115px;
+    vertical-align: middle;
 }
 
 table.shop-cart td.name-box .name,

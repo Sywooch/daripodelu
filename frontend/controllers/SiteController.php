@@ -54,7 +54,7 @@ class SiteController extends Controller
     {
         if ($action->id == 'error')
         {
-            $this->layout = 'errors.php';
+            $this->layout = 'main-2.php';
         }
 
         return parent::beforeAction($action);

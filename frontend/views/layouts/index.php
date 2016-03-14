@@ -15,12 +15,12 @@ $feedbackModel = $this->params['feedbackModel'];
             <nav class="main-nav container">
                 <ul class="nav-catalogue">
                     <li>
-                        <a href="/catalogue.html">Каталог продукции</a>
+                        <a href="<?= Url::to(['catalogue/index']) ?>">Каталог продукции</a>
                     </li>
                 </ul>
                 <ul class="shop-cart">
                     <li>
-                        <a href="/cart.html">Корзина:  <span class="cart-total-price"><?= yii::$app->cart->getTotalPrice(); ?></span> руб.</a>
+                        <a href="<?= Url::to(['cart/index']) ?>">Корзина:  <span class="cart-total-price"><?= yii::$app->cart->getTotalPrice(); ?></span> руб.</a>
                     </li>
                 </ul>
                 <ul class="main-menu inl-blck">

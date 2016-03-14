@@ -15,12 +15,12 @@ use frontend\widgets\BlockWidget;
                     <nav class="main-nav">
                         <ul class="nav-catalogue">
                             <li>
-                                <a href="/catalogue.html">Каталог продукции</a>
+                                <a href="<?= Url::to(['catalogue/index']) ?>">Каталог продукции</a>
                             </li>
                         </ul>
                         <ul class="shop-cart">
                             <li>
-                                <a href="/cart.html">Корзина:  21 450 руб.</a>
+                                <a href="<?= Url::to(['cart/index']) ?>">Корзина:  <span class="cart-total-price"><?= yii::$app->cart->getTotalPrice(); ?></span> руб.</a>
                             </li>
                         </ul>
                         <ul class="main-menu inl-blck">
@@ -63,6 +63,7 @@ use frontend\widgets\BlockWidget;
             </div>
         </div>
     </div>
+    <div class="footer-box">
         <div class="ft-lines"></div>
         <footer class="container">
             <div class="copyright"><?= BlockWidget::widget(['position' => 'footer']) ?></div>

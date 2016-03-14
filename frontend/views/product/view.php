@@ -112,6 +112,7 @@ use frontend\widgets\BlockWidget;
                     price = 0;
                 }
             }
+            console.log(price);
 
             str = str.replace(re, "");
             $(eventTarget).val(str);

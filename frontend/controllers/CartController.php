@@ -11,6 +11,12 @@ use frontend\models\Product;
 
 class CartController extends Controller
 {
+    public $layout = 'main-2.php';
+    private $heading;
+    private $metaTitle;
+    private $metaDescription;
+    private $metaKeywords;
+
     public function actionAdd()
     {
         $result = ['status' => 'not_success', 'rslt' => null, 'msg' => 'Method is not Post'];
@@ -78,7 +84,35 @@ class CartController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $cart = yii::$app->cart;
+        $productIds = [];
+        foreach ($cart->items as $cartItem)
+        {
+            $productIds[] = $cartItem->productId;
+        }
+
+        $products = Product::find()->where(['id' => $productIds])->all();
+
+        $this->heading = yii::t('app', 'Cart');
+        $this->metaTitle = $this->heading . ' | ' . Yii::$app->config->siteName;
+        $this->metaDescription = yii::$app->config->siteMetaDescript;
+        $this->metaKeywords = yii::$app->config->siteMetaKeywords;
+
+        $this->view->registerMetaTag([
+            'name' => 'description',
+            'content' => $this->metaDescription,
+        ]);
+        $this->view->registerMetaTag([
+            'name' => 'keywords',
+            'content' => $this->metaKeywords,
+        ]);
+        $this->view->title = $this->metaTitle;
+
+        return $this->render('index', [
+            'heading' => $this->heading,
+            'products' => $products,
+            'cart' => $cart,
+        ]);
     }
 
 }

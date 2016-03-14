@@ -3,6 +3,7 @@ return [
     'adminEmail' => 'ratmir85@gmail.com',
     'baseUploadURL' => '/uploads',
     'cacheNavExpire' => 4 * 3600,  //The number of seconds in which the cache of navigation menu will expire. 0 means never expire.
+    'cartCookieValidityPeriod' => 91 * 24 * 60 * 60,
     'gate' => [
         'product' => 'http://ratmir3025.tmweb.ru/downloads/current/product.xml',
         'tree' => 'http://ratmir3025.tmweb.ru/downloads/current/tree.xml',
