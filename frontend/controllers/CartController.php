@@ -7,11 +7,12 @@ use yii\web\Controller;
 use yii\helpers\Json;
 use frontend\components\cart\ShopCartItem;
 use frontend\components\cart\ShopCartItemSize;
+use frontend\models\OrderForm;
 use frontend\models\Product;
 
 class CartController extends Controller
 {
-    public $layout = 'main-2.php';
+    public $layout = 'main-3.php';
     private $heading;
     private $metaTitle;
     private $metaDescription;
@@ -84,6 +85,7 @@ class CartController extends Controller
 
     public function actionIndex()
     {
+        $orderForm = new OrderForm();
         $cart = yii::$app->cart;
         $productIds = [];
         foreach ($cart->items as $cartItem)
@@ -112,7 +114,48 @@ class CartController extends Controller
             'heading' => $this->heading,
             'products' => $products,
             'cart' => $cart,
+            'orderForm' => $orderForm,
         ]);
     }
 
+    public function actionDeletesize($productId, $sizeCode)
+    {
+        yii::$app->cart->removeSize($productId, $sizeCode);
+
+        return $this->actionIndex();
+    }
+
+    public function actionChangequantity()
+    {
+        if (yii::$app->request->isPost && yii::$app->request->post('item') !== null)
+        {
+            $items = yii::$app->request->post('item');
+            if (is_array($items))
+            {
+                foreach ($items as $item)
+                {
+                    $cartItem = yii::$app->cart->getItemByProductId($item['product']);
+                    if ( ! is_null($cartItem))
+                    {
+                        if (is_array($item['size']))
+                        {
+                            foreach ($item['size'] as $key => $quantity)
+                            {
+                                list($sizeId, $sizeCode) = explode('_', $key, 2);
+                                $cartItemSize = $cartItem->getSizeByCode($sizeCode);
+                                if ( !is_null($cartItemSize) && $cartItemSize->quantity != $quantity)
+                                {
+                                    $cartItemSize->quantity = (int) $quantity;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        yii::$app->cart->saveChanges();
+
+        return $this->actionIndex();
+    }
 }

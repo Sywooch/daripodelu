@@ -61,6 +61,11 @@ return [
                     'suffix' => null,
                 ],
                 [
+                    'pattern' => 'cart/delete-size/<productId:[\d]+>_<sizeCode:[A-Za-z0-9_]+>',
+                    'route' => 'cart/deletesize',
+                    'suffix' => '.html',
+                ],
+                [
                     'pattern' => 'catalogue/<uri:[\w\d\-]+>/filter/<filterParams:[\d]+\.[\d]+(\-[\d]+\.[\d]+)*>/page<page:\d+>',
                     'route' => 'catalogue/view',
                     'suffix' => '.html',

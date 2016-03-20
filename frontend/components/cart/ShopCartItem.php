@@ -50,6 +50,28 @@ class ShopCartItem extends Object
     }
 
     /**
+     * Returns info about size bu size code
+     *
+     * @param string $sizeCode
+     * @return \frontend\components\cart\ShopCartItemSize|null
+     */
+    public function getSizeByCode($sizeCode)
+    {
+        $result = null;
+        $sizeCount = count($this->size);
+        for ($i = 0; $i < $sizeCount; $i++)
+        {
+            if ($this->size[$i]->sizeCode == $sizeCode)
+            {
+                $result = $this->size[$i];
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param \frontend\components\cart\ShopCartItemSize $size
      */
     public function setSize(ShopCartItemSize $size)
@@ -75,6 +97,25 @@ class ShopCartItem extends Object
             if ( ! is_null($size))
             {
                 $this->size[] = $size;
+            }
+        }
+    }
+
+    /**
+     * Removes size
+     *
+     * Removes size with code $sizeCode
+     *
+     * @param string $sizeCode
+     */
+    public function removeSize($sizeCode)
+    {
+        $sizeCount = count($this->size);
+        for ($i = 0; $i < $sizeCount; $i++)
+        {
+            if ($this->size[$i]->sizeCode == $sizeCode)
+            {
+                unset($this->size[$i]);
             }
         }
     }

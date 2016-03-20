@@ -107,23 +107,61 @@ class ShopCart extends yii\base\Component
             }
         }
 
-        $this->cartModel->data = serialize($this->toArray());
-        if ($this->cartModel->save())
+        return $this->saveChanges();
+    }
+
+    /**
+     * Removes size
+     *
+     * Removes size with code $sizeCode in item with product ID $productId
+     *
+     * @param int $productId
+     * @param string $sizeCode
+     * @param bool|true $saveChanges If true, changes saves in DB
+     */
+    public function removeSize($productId, $sizeCode, $saveChanges = true)
+    {
+        $itemsCount = count($this->items);
+        for ($i = 0; $i < $itemsCount; $i++)
         {
-            $this->id = $this->cartModel->id;
-            yii::$app->response->cookies->add(new yii\web\Cookie([
-                'name' => 'cart',
-                'value' => $this->id,
-                'expire' => time() + $this->validityPeriod,
-            ]));
-
-            $this->fillCartObject(unserialize($this->cartModel->data));
-
-            return true;
+            if ($this->items[$i]->productId == $productId)
+            {
+                $this->items[$i]->removeSize($sizeCode);
+                if (count($this->items[$i]->size) == 0)
+                {
+                    $this->removeItem($productId, false);
+                }
+            }
         }
-        else
+
+        if ($saveChanges === true)
         {
-            return false;
+            $this->saveChanges();
+        }
+    }
+
+    /**
+     * Removes item
+     *
+     * Removes item with product ID $productId
+     *
+     * @param int $productId
+     * @param bool|true $saveChanges
+     */
+    public function removeItem($productId, $saveChanges = true)
+    {
+        $itemsCount = count($this->items);
+        for ($i = 0; $i < $itemsCount; $i++)
+        {
+            if ($this->items[$i]->productId == $productId)
+            {
+                unset($this->items[$i]);
+            }
+        }
+
+        if ($saveChanges === true)
+        {
+            $this->saveChanges();
         }
     }
 
@@ -185,6 +223,81 @@ class ShopCart extends yii\base\Component
     public function getItems()
     {
         return $this->items;
+    }
+
+    /**
+     * Returns the cart item by product ID
+     *
+     * @param int $productId
+     * @return \frontend\components\cart\ShopCartItem|null
+     */
+    public function getItemByProductId($productId)
+    {
+        $result = null;
+        $cartItemsCount = count($this->items);
+        for ($i = 0; $i < $cartItemsCount; $i++)
+        {
+            if ($this->items[$i]->productId == $productId)
+            {
+                $result = $this->items[$i];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Saves changes in DB
+     *
+     * @param bool $validate
+     * @return bool
+     */
+    public function saveChanges($validate = true)
+    {
+        if ($validate)
+        {
+            $this->validate();
+        }
+
+        $this->cartModel->data = serialize($this->toArray());
+        if ($this->cartModel->save())
+        {
+            $this->id = $this->cartModel->id;
+            yii::$app->response->cookies->add(new yii\web\Cookie([
+                'name' => 'cart',
+                'value' => $this->id,
+                'expire' => time() + $this->validityPeriod,
+            ]));
+
+            $this->fillCartObject(unserialize($this->cartModel->data));
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    protected function validate()
+    {
+        $itemsCount = count($this->items);
+        for ($i = 0; $i < $itemsCount; $i++)
+        {
+            $sizeCount = count($this->items[$i]->size);
+            for ($j = 0; $j < $sizeCount; $j++)
+            {
+                if ($this->items[$i]->size[$j]->quantity == 0)
+                {
+                    $this->items[$i]->removeSize($this->items[$i]->size[$j]->sizeCode);
+                }
+            }
+
+            if (count($this->items[$i]->size) == 0)
+            {
+                $this->removeItem($this->items[$i]->productId, false);
+            }
+        }
     }
 
     /**

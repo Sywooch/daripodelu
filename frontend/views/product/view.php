@@ -112,7 +112,6 @@ use frontend\widgets\BlockWidget;
                     price = 0;
                 }
             }
-            console.log(price);
 
             str = str.replace(re, "");
             $(eventTarget).val(str);
@@ -270,6 +269,7 @@ use frontend\widgets\BlockWidget;
                     if (data.status == "success")
                     {
                         changeTotalPrice(data.rslt);
+                        $(eventTarget).find("input.size-count").val("");
                     };
                 },
                 error: function () {
