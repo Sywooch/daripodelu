@@ -102,6 +102,7 @@ $this->params['breadcrumbs'][] = $heading;
         </div>
     </div>
 </div>
+<?php if ($cart->getItemsCount() > 0): ?>
 <div class="row">
     <div class="col-10">
         <div class="checkout-form-block">
@@ -119,17 +120,16 @@ $this->params['breadcrumbs'][] = $heading;
                         <div class="input-file-item">
                             <input class="file-field" type="text" value="">
                             <span class="img-btn attach-item" title="Прикрепить еще"></span>
-                            <?= Html::activeFileInput($orderForm, 'fileOne', ['accept' => '.cdr,.ai,.psd,.tif,image/*,application/pdf']) ?>
+                            <?= Html::activeFileInput($orderForm, 'fileOne', ['accept' => '.psd, .tif, image/*, application/pdf, application/postscript, image/x-coreldraw, image/x-photoshop']) ?>
                         </div>
                         <div class="input-file-item">
                             <input class="file-field" type="text" value="">
                             <span class="img-btn attach-item" title="Прикрепить еще"></span>
-                            <?= Html::activeFileInput($orderForm, 'fileTwo', ['accept' => '.cdr,.ai,.psd,.tif,image/*,application/pdf']) ?>
+                            <?= Html::activeFileInput($orderForm, 'fileTwo', ['accept' => '.psd, .tif, image/*, application/pdf, application/postscript, image/x-coreldraw, image/x-photoshop']) ?>
                         </div>
                     </div>
                     <div class="clear"></div>
                     <div class="btn-group">
-<!--                        <button class="btn btn-default" type="submit">Отправить на расчет</button>-->
                         <?= Html::submitButton(
                             'Отправить на расчет',
                             ['class' => 'btn btn-default', 'name' => 'saveSettings']
@@ -141,6 +141,7 @@ $this->params['breadcrumbs'][] = $heading;
         </div>
     </div>
 </div>
+<?php endif; ?>
 <?php $this->registerJs('
     $("body").on("keyup", function(event){
         var eventTarget = event.target;

@@ -3,8 +3,9 @@
 namespace frontend\controllers;
 
 use yii;
-use yii\web\Controller;
 use yii\helpers\Json;
+use yii\web\Controller;
+use yii\web\UploadedFile;
 use frontend\components\cart\ShopCartItem;
 use frontend\components\cart\ShopCartItemSize;
 use frontend\models\OrderForm;
@@ -86,6 +87,16 @@ class CartController extends Controller
     public function actionIndex()
     {
         $orderForm = new OrderForm();
+        if ($orderForm->load(yii::$app->request->post()))
+        {
+            $orderForm->fileOne = UploadedFile::getInstance($orderForm, 'fileOne');
+            $orderForm->fileTwo = UploadedFile::getInstance($orderForm, 'fileTwo');
+            if ($orderForm->save(yii::$app->cart))
+            {
+                $orderForm = new OrderForm();
+            }
+        }
+
         $cart = yii::$app->cart;
         $productIds = [];
         foreach ($cart->items as $cartItem)

@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
+use backend\models\Order;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -26,6 +27,7 @@ BootboxAsset::overrideSystemConfirm();
     <?php $this->beginBody() ?>
     <div class="wrap">
         <?php
+
             NavBar::begin([
                 'brandLabel' => 'Панель администратора',
                 'brandUrl' => Yii::$app->homeUrl,
@@ -33,10 +35,16 @@ BootboxAsset::overrideSystemConfirm();
                     'class' => 'navbar-inverse navbar-fixed-top',
                 ],
             ]);
-            
+
+            $newOrdersCount = Order::getNewOrdersCount();
+            $newOrdersCountString = ($newOrdersCount > 0) ? ' +' . $newOrdersCount : '';
+
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-left', 'style' => 'margin-left: 40px;'],
                 'items' => [
+                    [
+                        'label' => 'Заказы' . $newOrdersCountString, 'url' => ['/order/index']
+                    ],
                     [
                         'label' => 'Каталог',
                         'items' => [

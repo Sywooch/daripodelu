@@ -142,3 +142,142 @@ tr.ui-sortable-placeholder {
     background: none;
     opacity: 1;
 }
+
+.table-striped > tbody > tr.new td.colored {
+    background: #1bbcf1;
+    background: -moz-linear-gradient(top,  #1bbcf1 0%, #0ba4ce 100%);
+    background: -webkit-linear-gradient(top,  #1bbcf1 0%,#0ba4ce 100%);
+    background: linear-gradient(to bottom,  #1bbcf1 0%,#0ba4ce 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1bbcf1', endColorstr='#0ba4ce',GradientType=0 );
+    color: #fff;
+}
+
+.table-striped > tbody > tr.wait td.colored {
+    background: #fecc23;
+    background: -moz-linear-gradient(top,  #fecc23 0%, #e6b30b 100%);
+    background: -webkit-linear-gradient(top,  #fecc23 0%,#e6b30b 100%);
+    background: linear-gradient(to bottom,  #fecc23 0%,#e6b30b 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fecc23', endColorstr='#e6b30b',GradientType=0 );
+}
+
+.table-striped > tbody > tr.processed td.colored {
+    background: #a4ce4d;
+    background: -moz-linear-gradient(top,  #a4ce4d 0%, #8cb535 100%);
+    background: -webkit-linear-gradient(top,  #a4ce4d 0%,#8cb535 100%);
+    background: linear-gradient(to bottom,  #a4ce4d 0%,#8cb535 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a4ce4d', endColorstr='#8cb535',GradientType=0 );
+    color: #fff;
+}
+
+.order-info {}
+
+.order-info dt {}
+
+.order-info dd {
+    margin-bottom: 25px;
+}
+
+table.shop-cart {
+    margin-bottom: 55px;
+    width: 99%;
+}
+
+table.shop-cart thead tr {}
+
+table.shop-cart td {
+    padding-left: 10px;
+}
+
+table.shop-cart th {
+    font-size: 13px;
+    padding-left: 10px;
+    padding-bottom: 15px;
+    text-align: left;
+}
+
+table.shop-cart tbody tr:last-child td {
+    padding-bottom: 17px;
+}
+
+table.shop-cart td.box {
+    padding-left: 0px;
+}
+
+table.shop-cart td.box .img-box {
+    display: block;
+    float: left;
+    width: 115px;
+    height: 115px;
+    line-height: 115px;
+    text-align: center;
+}
+
+table.shop-cart td.box .img-box img {
+    max-width: 115px;
+    max-height: 115px;
+    vertical-align: middle;
+}
+
+table.shop-cart td.box .name,
+table.shop-cart td.box .prop-value {
+    line-height: 120%;
+    margin-left: 127px;
+    vertical-align: top;
+}
+
+table.shop-cart td.item-price {
+    font-size: 14px;
+    width: 180px;
+}
+
+table.shop-cart td.size {
+    width: 150px;
+}
+
+table.shop-cart td.count-field-box {
+    padding: 0px 0 0px 10px;
+    width: 140px;
+}
+
+table.shop-cart td.count-field-box input {
+    height: 23px;
+    line-height: 23px;
+    margin-right: 14px;
+    padding: 0 2px;
+    width: 70px;
+}
+
+table.shop-cart th.price,
+table.shop-cart td.price,
+table.shop-cart td.total-price {
+    padding-right: 14px;
+    text-align: right;
+    width: 200px;
+}
+
+table.shop-cart td.price,
+table.shop-cart td.total-price {
+    font-size: 14px;
+}
+
+table.shop-cart td.price .small,
+table.shop-cart td.total-price .small {
+    font-size: 14px;
+}
+
+table.shop-cart td.delete-link-box {
+    width: 30px;
+}
+
+table.shop-cart td.total-label {
+    padding-right: 10px;
+    text-align: right;
+}
+
+table.shop-cart td.total-price {
+    padding: 20px 14px 20px 0;
+}
+
+table.shop-cart tr td.delimiter {
+    height: 28px;
+}

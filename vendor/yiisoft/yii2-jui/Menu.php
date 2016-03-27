@@ -10,7 +10,7 @@ namespace yii\jui;
 use yii\helpers\Json;
 
 /**
- * MenuTree renders a menu jQuery UI widget.
+ * Menu renders a menu jQuery UI widget.
  *
  * @see http://api.jqueryui.com/menu/
  * @author Alexander Kochetov <creocoder@gmail.com>

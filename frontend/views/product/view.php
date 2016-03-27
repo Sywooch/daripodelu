@@ -270,6 +270,9 @@ use frontend\widgets\BlockWidget;
                     {
                         changeTotalPrice(data.rslt);
                         $(eventTarget).find("input.size-count").val("");
+                        $(eventTarget).find(".total-box .total-info").hide();
+                        $(eventTarget).find(".total-info .total-count").text("0");
+                        $(eventTarget).find(".total-info .total-price").html(decoratePrice(0, "руб.", ","));
                     };
                 },
                 error: function () {

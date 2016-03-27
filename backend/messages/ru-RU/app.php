@@ -95,5 +95,8 @@ return [
     'Product' => 'Товар',
     'Create category' => 'Создать категорию',
     'Images can be added only after the category will be saved.' => 'Изображения могут быть добавлены только после того, как категория будет сохранена.',
+    'Orders' => 'Заказы',
+    'Order' => 'Заказ',
+    'Update order' => 'Редактировать заказ',
     '' => '',
 ];
