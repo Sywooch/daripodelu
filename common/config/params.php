@@ -1,5 +1,7 @@
 <?php
 return [
+    'protocol' => 'http://',
+    'site' => 'daripodelu.loc',
     'adminEmail' => 'ratmir85@gmail.com',
     'baseUploadURL' => '/uploads',
     'cacheNavExpire' => 4 * 3600,  //The number of seconds in which the cache of navigation menu will expire. 0 means never expire.

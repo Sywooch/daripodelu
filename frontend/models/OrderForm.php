@@ -126,9 +126,43 @@ class OrderForm extends Model
                 $this->fileTwo->saveAs($path . '/' . $order->id . '_2.' . $this->fileTwo->extension);
             }
 
+            $mail = [
+                'client' => [
+                    'name' => $order->fio,
+                    'email' => $order->email,
+                    'phone' => $order->phone,
+                ],
+                'order' => [
+                    'id' => $order->id,
+                    'content' => unserialize($order->data),
+                    'date' => $order->order_date,
+                ]
+            ];
+
+            $this->sendMailToAdmin($mail);
+            $this->sendMailToClient($mail);
+
             return true;
         }
 
         return false;
+    }
+
+    protected function sendMailToClient($mail)
+    {
+        return Yii::$app->mailer->compose(['html' => '@app/views/mail-templates/order-mail-client'], ['mail' => $mail])
+            ->setTo($mail['client']['email'])
+            ->setFrom([yii::$app->config->siteEmail => yii::$app->config->siteName])
+            ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName )
+            ->send();
+    }
+
+    protected function sendMailToAdmin($mail)
+    {
+        return Yii::$app->mailer->compose(['html' => '@app/views/mail-templates/order-mail-admin'], ['mail' => $mail])
+            ->setTo(yii::$app->config->siteEmail)
+            ->setFrom([yii::$app->config->siteEmail => yii::$app->config->siteName])
+            ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName )
+            ->send();
     }
 }

@@ -38,6 +38,7 @@ $totalPrice = 0
                     <dt>Содержимое заказа</dt>
                     <dd>
                         <table class="table-bordered shop-cart">
+<!--                        <table border="1">-->
                             <thead>
                             <tr>
                                 <th></th>
@@ -50,11 +51,6 @@ $totalPrice = 0
                             </thead>
                             <tbody>
                             <?php foreach ($model->dataArr as $key => $item): ?>
-                                <? if ($key > 0): ?>
-                                    <tr>
-                                        <td class="delimiter" colspan="6"></td>
-                                    </tr>
-                                <? endif ?>
                                 <tr>
                                     <td class="box"<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?>>
                                         <div class="img-box"><img src="<?= $item['image'] ?>" alt="<?= $item['name'] ?>"></div>

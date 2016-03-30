@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Order;
 use yii;
 use yii\helpers\Json;
 use yii\web\Controller;
@@ -168,5 +169,57 @@ class CartController extends Controller
         yii::$app->cart->saveChanges();
 
         return $this->actionIndex();
+    }
+
+    public function actionMail($id)
+    {
+        $mail = [];
+        /* @var $order \frontend\models\Order */
+        $order = Order::findOne($id);
+
+        $mail = [
+            'client' => [
+                'name' => $order->fio,
+                'email' => $order->email,
+                'phone' => $order->phone,
+            ],
+            'order' => [
+                'id' => $order->id,
+                'content' => unserialize($order->data),
+                'date' => $order->order_date,
+            ]
+        ];
+
+        $this->layout = 'empty.php';
+
+        return $this->render('/mail-templates/order-mail-client', [
+            'mail' => $mail,
+        ]);
+    }
+
+    public function actionMailadmin($id)
+    {
+        $mail = [];
+        /* @var $order \frontend\models\Order */
+        $order = Order::findOne($id);
+
+        $mail = [
+            'client' => [
+                'name' => $order->fio,
+                'email' => $order->email,
+                'phone' => $order->phone,
+            ],
+            'order' => [
+                'id' => $order->id,
+                'content' => unserialize($order->data),
+                'date' => $order->order_date,
+            ]
+        ];
+
+        $this->layout = 'empty.php';
+
+        return $this->render('/mail-templates/order-mail-admin', [
+            'mail' => $mail,
+        ]);
     }
 }

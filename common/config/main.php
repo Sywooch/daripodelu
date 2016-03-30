@@ -61,6 +61,16 @@ return [
                     'suffix' => null,
                 ],
                 [
+                    'pattern' => 'mail/<id:[\d]+>',
+                    'route' => 'cart/mail',
+                    'suffix' => '.html',
+                ],
+                [
+                    'pattern' => 'mailadmin/<id:[\d]+>',
+                    'route' => 'cart/mailadmin',
+                    'suffix' => '.html',
+                ],
+                [
                     'pattern' => 'cart/delete-size/<productId:[\d]+>_<sizeCode:[A-Za-z0-9_]+>',
                     'route' => 'cart/deletesize',
                     'suffix' => '.html',

@@ -124,7 +124,23 @@ class OrderController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = Order::find()->where(['id' => (int) $id])->andWhere(['or', ['status' => Order::STATUS_CANCELED], ['status' => Order::STATUS_ARCHIVE]])->one();
+        $files = [];
+
+        if ( ! is_null($model))
+        {
+            $path = $model->getDirPath();
+            $modelId = $model->id;
+            if ($model->delete())
+            {
+                $files = glob($path . '/' . $modelId . '_*.*');
+                $filesCount = count($files);
+                for ($i = 0; $i < $filesCount; $i++)
+                {
+                    @unlink($files[$i]);
+                }
+            }
+        }
 
         return $this->redirect(['index']);
     }

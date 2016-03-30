@@ -14,6 +14,7 @@ class SettingsForm extends Model
 
     public $siteName;
     public $siteAdminEmail;
+    public $siteEmail;
     public $siteMetaDescription;
     public $siteMetaKeywords;
     public $sitePhone;
@@ -26,6 +27,7 @@ class SettingsForm extends Model
     private $conformityVars = [
         'siteName' => 'SITE_NAME',
         'siteAdminEmail' => 'SITE_ADMIN_EMAIL',
+        'siteEmail' => 'SITE_EMAIL',
         'siteMetaDescription' => 'SITE_META_DESCRIPT',
         'siteMetaKeywords' => 'SITE_META_KEYWORDS',
         'newsPerPage' => 'NEWS_ITEMS_PER_PAGE',
@@ -40,11 +42,11 @@ class SettingsForm extends Model
     public function rules()
     {
         return [
-            [['siteName', 'siteAdminEmail', 'siteMetaDescription', 'siteMetaKeywords', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'string'],
+            [['siteName', 'siteAdminEmail', 'siteEmail', 'siteMetaDescription', 'siteMetaKeywords', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'string'],
             [['siteName', 'newsPerPage', 'newsPerHome', 'productsPerPage', 'gateLogin', 'gatePassword'], 'required'],
             [['newsPerPage', 'newsPerHome', 'productsPerPage'], 'integer'],
-            ['siteAdminEmail', 'email'],
-            [['siteName', 'siteAdminEmail', 'siteMetaDescription', 'siteMetaKeywords', 'newsPerPage', 'newsPerHome', 'productsPerPage', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'trim'],
+            [['siteAdminEmail', 'siteEmail'], 'email'],
+            [['siteName', 'siteAdminEmail', 'siteEmail', 'siteMetaDescription', 'siteMetaKeywords', 'newsPerPage', 'newsPerHome', 'productsPerPage', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'trim'],
         ];
     }
 
@@ -59,6 +61,7 @@ class SettingsForm extends Model
 
         $model->siteName = Yii::$app->config->get('SITE_NAME');
         $model->siteAdminEmail = Yii::$app->config->get('SITE_ADMIN_EMAIL');
+        $model->siteEmail = Yii::$app->config->get('SITE_EMAIL');
         $model->siteMetaDescription = Yii::$app->config->get('SITE_META_DESCRIPT');
         $model->siteMetaKeywords = Yii::$app->config->get('SITE_META_KEYWORDS');
         $model->sitePhone = Yii::$app->config->get('SITE_PHONE');
@@ -80,6 +83,7 @@ class SettingsForm extends Model
         return [
             'siteName' => $items['SITE_NAME']->label,
             'siteAdminEmail' => $items['SITE_ADMIN_EMAIL']->label,
+            'siteEmail' => $items['SITE_EMAIL']->label,
             'siteMetaDescription' => $items['SITE_META_DESCRIPT']->label,
             'siteMetaKeywords' => $items['SITE_META_KEYWORDS']->label,
             'sitePhone' => $items['SITE_PHONE']->label,

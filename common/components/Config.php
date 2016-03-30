@@ -12,6 +12,7 @@ use common\models\Settings;
  *
  * @property string $siteName
  * @property string $siteAdminEmail
+ * @property string $siteEmail
  * @property string $siteMetaDescription
  * @property string $siteMetaKeywords
  * @property integer $newsPerPage

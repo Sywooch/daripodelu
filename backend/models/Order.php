@@ -41,6 +41,7 @@ class Order extends OrderCommon
             self::STATUS_WAIT => 'В обработке',
             self::STATUS_PROCESSED => 'Обработан',
             self::STATUS_CANCELED => 'Отменен',
+            self::STATUS_ARCHIVE => 'В архиве',
         );
     }
 

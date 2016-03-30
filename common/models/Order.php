@@ -25,15 +25,19 @@ abstract class Order extends ActiveRecord
     /**
      * The order in waiting8
      */
-    const STATUS_WAIT = 1;
+    const STATUS_WAIT = 10;
     /**
      * The order processed
      */
-    const STATUS_PROCESSED = 3;
+    const STATUS_PROCESSED = 20;
     /**
      * The order canceled
      */
     const STATUS_CANCELED = 99;
+    /**
+     * The order in archive
+     */
+    const STATUS_ARCHIVE = 100;
 
     /**
      * @inheritdoc

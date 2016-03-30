@@ -169,6 +169,14 @@ tr.ui-sortable-placeholder {
     color: #fff;
 }
 
+.table-striped > tbody > tr.archive td.colored {
+    opacity: 0.2;
+}
+
+.table-striped > tbody > tr.archive:hover td.colored {
+    opacity: 1;
+}
+
 .order-info {}
 
 .order-info dt {}
@@ -194,6 +202,8 @@ table.shop-cart th {
     padding-bottom: 15px;
     text-align: left;
 }
+
+table.shop-cart tbody tr {}
 
 table.shop-cart tbody tr:last-child td {
     padding-bottom: 17px;

@@ -46,6 +46,8 @@ if( Yii::$app->session->hasFlash('success') )
 
         <?= $form->field($model, 'siteAdminEmail')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']); ?>
 
+        <?= $form->field($model, 'siteEmail')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']); ?>
+
         <?= $form->field($model, 'sitePhone')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']); ?>
 
         <?= $form->field($model, 'siteWorkSchedule')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']); ?>

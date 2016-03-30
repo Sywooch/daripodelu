@@ -41,7 +41,7 @@ if( Yii::$app->session->hasFlash('success') )
     ]);
 }
 ?>
-
+<div class="alert alert-info" role="alert">Только заказ в статусе <strong>"<?= Order::getStatusName(Order::STATUS_CANCELED); ?>"</strong> или <strong>"<?= Order::getStatusName(Order::STATUS_ARCHIVE); ?>"</strong> можно удалить.</div>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -89,8 +89,28 @@ if( Yii::$app->session->hasFlash('success') )
         ],
         [
             'class' => ActionColumn::className(),
-            'template' => '{update} {delete}',
             'contentOptions' => ['style'=>'width: 50px'],
+            'template' => '{update} {delete}',
+            'buttons' => [
+                'update' => function ($url) {
+                    $options = [
+                        'title' => Yii::t('kvgrid', 'Update'),
+                        'data-pjax' => '0'
+                    ];
+
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, $options);
+                },
+                'delete' => function ($url, $model) {
+                    $options = [
+                        'title' => Yii::t('kvgrid', 'Delete'),
+                        'data-confirm' => Yii::t('kvgrid', 'Are you sure to delete this item?'),
+                        'data-method' => 'post',
+                        'data-pjax' => '0'
+                    ];
+
+                    return ($model->status == Order::STATUS_ARCHIVE || $model->status == Order::STATUS_CANCELED) ? Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, $options) : false;
+                },
+            ],
         ],
     ],
     'rowOptions' => function ($model) {
@@ -105,6 +125,9 @@ if( Yii::$app->session->hasFlash('success') )
                 break;
             case Order::STATUS_PROCESSED :
                 $options = ['class' => 'status processed',];
+                break;
+            case Order::STATUS_ARCHIVE :
+                $options = ['class' => 'status archive',];
                 break;
             case Order::STATUS_CANCELED :
                 $options = ['class' => 'status',];
