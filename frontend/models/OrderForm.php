@@ -150,7 +150,13 @@ class OrderForm extends Model
 
     protected function sendMailToClient($mail)
     {
-        return Yii::$app->mailer->compose(['html' => '@app/views/mail-templates/order-mail-client'], ['mail' => $mail])
+        return Yii::$app->mailer->compose(
+                ['html' => '@app/views/mail-templates/order-mail-client'],
+                [
+                    'mail' => $mail,
+                    'imageFileName' => yii::getAlias('@app/web/img/logo-min.png'),
+                ]
+            )
             ->setTo($mail['client']['email'])
             ->setFrom([yii::$app->config->siteEmail => yii::$app->config->siteName])
             ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName )
@@ -159,7 +165,13 @@ class OrderForm extends Model
 
     protected function sendMailToAdmin($mail)
     {
-        return Yii::$app->mailer->compose(['html' => '@app/views/mail-templates/order-mail-admin'], ['mail' => $mail])
+        return Yii::$app->mailer->compose(
+                ['html' => '@app/views/mail-templates/order-mail-admin'],
+                [
+                    'mail' => $mail,
+                    'imageFileName' => yii::getAlias('@app/web/img/logo-min.png'),
+                ]
+            )
             ->setTo(yii::$app->config->siteEmail)
             ->setFrom([yii::$app->config->siteEmail => yii::$app->config->siteName])
             ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName )

@@ -24,7 +24,9 @@ $imgData = 'data:image/' . $type . ';base64,' . base64_encode($data);
     <tbody>
     <tr>
         <td style="text-align: center; padding: 10px 0 30px;">
-            <a href="<?= yii::$app->params['protocol']; ?><?= yii::$app->params['site']; ?>/" target="_blank"><img src="<?= $imgData; ?>" style="height: 70px;" alt="<?= Html::encode(yii::$app->config->siteName); ?>"></a>
+            <a href="<?= yii::$app->params['protocol']; ?><?= yii::$app->params['site']; ?>/" target="_blank">
+                <img src="<?= $message->embed($imageFileName); ?>" style="height: 70px;" alt="<?= Html::encode(yii::$app->config->siteName); ?>">
+            </a>
         </td>
     </tr>
     <tr>

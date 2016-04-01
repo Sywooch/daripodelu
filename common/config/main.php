@@ -48,9 +48,6 @@ return [
                 ],
             ],
         ],
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-        ],
         'session' => [
             'class' => 'yii\web\DbSession',
         ],
