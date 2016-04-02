@@ -87,7 +87,12 @@ $imgData = 'data:image/' . $type . ';base64,' . base64_encode($data);
                     <?php endif; ?>
                     <tr>
                         <td<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?> style="width: 80px; padding: 0 5px;">
-                            <div><img src="<?= $item['image'] ?>" alt="<?= $item['name'] ?>" style="max-height: 80px; max-width: 80px; padding: 0 5px;"></div>
+                            <?php /*<div><img src="<?= $item['image'] ?>" alt="<?= $item['name'] ?>" style="max-height: 80px; max-width: 80px; padding: 0 5px;"></div> */?>
+                            <?php
+                            $type = mb_substr($str, 5, mb_strpos($str, ';', null, 'UTF-8') - 5, 'UTF-8');
+                            ?>
+                            ?>
+                            <div><img src="<?= $message->embedContent($item['image'], ['fileName' => $item['productId'] . '.' . $type, 'contentType' => $type]); ?>" alt="<?= $item['name'] ?>" style="max-height: 80px; max-width: 80px; padding: 0 5px;"></div>
                         </td>
                         <td<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?> style="width: 120px; padding: 0 10px 0 5px;">
                             <a href="<?= yii::$app->params['protocol']; ?><?= yii::$app->params['site']; ?>/product/<?= $item['productId']; ?>.html" target="_blank"><?= $item['name'] ?></a>
