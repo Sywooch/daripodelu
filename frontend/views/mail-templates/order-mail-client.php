@@ -4,6 +4,7 @@ use yii\helpers\Html;
 
 $client = $mail['client'];
 $order = $mail['order'];
+$images = $mail['images'];
 
 $totalSum = 0;
 foreach ($order['content'] as $item)
@@ -14,10 +15,7 @@ foreach ($order['content'] as $item)
     }
 }
 
-$logoPath = yii::getAlias('@app/web/img/logo-min.png');
-$type = pathinfo($logoPath, PATHINFO_EXTENSION);
-$data = file_get_contents($logoPath);
-$imgData = 'data:image/' . $type . ';base64,' . base64_encode($data);
+/* @var $message \yii\swiftmailer\Message */
 
 ?>
 <table border="0" cellpadding="0" cellspacing="0" width="600px" style="background: white; font-family: 'Open Sans', Sans-Serif; font-size: 14px;">
@@ -25,7 +23,7 @@ $imgData = 'data:image/' . $type . ';base64,' . base64_encode($data);
     <tr>
         <td style="text-align: center; padding: 10px 0 30px;">
             <a href="<?= yii::$app->params['protocol']; ?><?= yii::$app->params['site']; ?>/" target="_blank">
-                <img src="<?= $message->embed($imageFileName); ?>" style="height: 70px;" alt="<?= Html::encode(yii::$app->config->siteName); ?>">
+                <img src="<?= $message->embed($logoMin); ?>" style="height: 70px;" alt="<?= Html::encode(yii::$app->config->siteName); ?>">
             </a>
         </td>
     </tr>
@@ -87,11 +85,7 @@ $imgData = 'data:image/' . $type . ';base64,' . base64_encode($data);
                     <?php endif; ?>
                     <tr>
                         <td<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?> style="width: 80px; padding: 0 5px;">
-                            <?php /*<div><img src="<?= $item['image'] ?>" alt="<?= $item['name'] ?>" style="max-height: 80px; max-width: 80px; padding: 0 5px;"></div> */?>
-                            <?php
-                            $type = mb_substr($str, 5, mb_strpos($str, ';', null, 'UTF-8') - 5, 'UTF-8');
-                            ?>
-                            <div><img src="<?= $message->embedContent(base64_decode($item['image']), ['fileName' => $item['productId'] . '.' . $type, 'contentType' => $type]); ?>" alt="<?= $item['name'] ?>" style="max-height: 80px; max-width: 80px; padding: 0 5px;"></div>
+                            <div><img src="<?= $message->embed($images[$item['productId']]); ?>" alt="<?= $item['name'] ?>" style="max-height: 80px; max-width: 80px; padding: 0 5px;"></div>
                         </td>
                         <td<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?> style="width: 120px; padding: 0 10px 0 5px;">
                             <a href="<?= yii::$app->params['protocol']; ?><?= yii::$app->params['site']; ?>/product/<?= $item['productId']; ?>.html" target="_blank"><?= $item['name'] ?></a>

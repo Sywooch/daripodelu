@@ -126,6 +126,12 @@ class OrderForm extends Model
                 $this->fileTwo->saveAs($path . '/' . $order->id . '_2.' . $this->fileTwo->extension);
             }
 
+            $images = [];
+            foreach ($products as $product)
+            {
+                $images[$product->id] = $product->smallImagePath;
+            }
+
             $mail = [
                 'client' => [
                     'name' => $order->fio,
@@ -136,7 +142,8 @@ class OrderForm extends Model
                     'id' => $order->id,
                     'content' => unserialize($order->data),
                     'date' => $order->order_date,
-                ]
+                ],
+                'images' => $images,
             ];
 
             $this->sendMailToAdmin($mail);
@@ -154,7 +161,7 @@ class OrderForm extends Model
                 ['html' => '@app/views/mail-templates/order-mail-client'],
                 [
                     'mail' => $mail,
-                    'imageFileName' => yii::getAlias('@app/web/img/logo-min.png'),
+                    'logoMin' => yii::getAlias('@app/web/img/logo-min.png'),
                 ]
             )
             ->setTo($mail['client']['email'])
@@ -169,7 +176,7 @@ class OrderForm extends Model
                 ['html' => '@app/views/mail-templates/order-mail-admin'],
                 [
                     'mail' => $mail,
-                    'imageFileName' => yii::getAlias('@app/web/img/logo-min.png'),
+                    'logoMin' => yii::getAlias('@app/web/img/logo-min.png'),
                 ]
             )
             ->setTo(yii::$app->config->siteEmail)
