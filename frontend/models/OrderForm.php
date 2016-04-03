@@ -106,6 +106,7 @@ class OrderForm extends Model
         $order->status = Order::STATUS_NEW;
         if ($order->save())
         {
+            $order = Order::findOne($order->id);
             if ( ! is_null($this->fileOne) && $this->fileOne instanceof UploadedFile)
             {
                 $path = $order->getDirPath();
@@ -145,6 +146,8 @@ class OrderForm extends Model
                 ],
                 'images' => $images,
             ];
+
+            echo '[ ', $order->order_date, ' ]';
 
             $this->sendMailToAdmin($mail);
             $this->sendMailToClient($mail);
