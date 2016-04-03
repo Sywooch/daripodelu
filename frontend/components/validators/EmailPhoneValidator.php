@@ -65,8 +65,9 @@ class EmailPhoneValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         $emailValidator = new EmailValidator();
-        $matchValidator = new RegularExpressionValidator();
-        $matchValidator->pattern = '/^' . $this->phonePattern .  '$/';
+        $matchValidator = new RegularExpressionValidator([
+            'pattern' => '/^' . $this->phonePattern .  '$/',
+        ]);
         if ( ! $emailValidator->validate($model->$attribute) && ! $matchValidator->validate($model->$attribute))
         {
             $this->addError($attribute, $this->message);

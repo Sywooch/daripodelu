@@ -206,3 +206,60 @@ function changeTotalPrice($totalPrice)
         totalPriceContainer.text($totalPrice);
     }
 }
+
+function showModal(id, header, body)
+{
+    var modal = $('<div />'),
+        modalContent = $('<div />'),
+        modalHeader = $('<div />'),
+        modalBody = $('<div />'),
+        closeBtn = $('<button />'),
+        overlay = $('<div />'),
+        modalDialog = $('<div />'),
+        top = '';
+
+    modal.attr({
+        id: id,
+        role: "dialog",
+        tabindex: "-1"
+    }).addClass('fade modal');
+
+    modalDialog.addClass('modal-dialog');
+    modalDialog.css('opacity', 0);
+    modalContent.addClass('modal-content');
+    modalHeader.addClass('modal-header');
+    modalBody.addClass('modal-body');
+    modalBody.html(body);
+    closeBtn.attr({
+        type: "button",
+        title: "Закрыть"
+    }).addClass('close');
+    closeBtn.text('×');
+    overlay.addClass('modal-overlay');
+    overlay.css('display', 'none');
+
+    modalHeader.append(
+        closeBtn,
+        '<h2>' + header + '<h2>'
+    )
+    modalContent.append(modalHeader, modalBody);
+    modalDialog.append(modalContent);
+    modal.append(overlay, modalDialog);
+
+    $('body').append(modal);
+    top = modalDialog.offset().top;
+    modalDialog.css('top', '-10px');
+
+    closeBtn.on('click', function(){
+        modal.fadeOut(200, 'swing', function(){
+            modal.remove();
+        });
+    });
+    overlay.on('click', function(){ closeBtn.click(); });
+
+    overlay.fadeIn(200);
+    modalDialog.animate({
+        top: top + 'px',
+        opacity: 1
+    }, 400);
+}

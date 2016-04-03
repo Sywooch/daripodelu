@@ -1,6 +1,7 @@
 <?php
 
 use yii;
+use yii\helpers\Html;
 
 /* @var $mail frontend\models\FeedbackForm */
 ?>
@@ -19,7 +20,6 @@ use yii;
             <p style="margin: 0; padding: 0 0 5px 0;">---------------------------------------------------------------------</p>
             <p style="margin: 0; padding: 0 0 15px 0;"><b>E-mail или номер телефона:</b> <?= Html::encode($mail->emailPhone); ?></p>
             <p style="margin: 0; padding: 0 0 15px 0;">---------------------------------------------------------------------</p>
-            <p style="margin: 0; padding: 20px 0 10px 0;">C уважением,<br>ГБУ РД "Туристский центр "Золотые пески"</p>
         </td>
     </tr>
     </tbody>

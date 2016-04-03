@@ -98,5 +98,6 @@ return [
     'Orders' => 'Заказы',
     'Order' => 'Заказ',
     'Update order' => 'Редактировать заказ',
+    'Messages from feedback forms, and reports of new orders are sent to this email address. Also, this email address is used in letters for reply.' => 'Сообщения из форм обратной связи, а также сообщения о новых заказах отправляются на этот адрес электронной почты. Кроме того, этот адрес электронной почты используется в письмах для ответа.',
     '' => '',
 ];

@@ -94,7 +94,13 @@ class CartController extends Controller
             $orderForm->fileTwo = UploadedFile::getInstance($orderForm, 'fileTwo');
             if ($orderForm->save(yii::$app->cart))
             {
-                $orderForm = new OrderForm();
+                $orderInfo = serialize([
+                    'name' => $orderForm->name,
+                    'phone' => $orderForm->phone,
+                    'email' => $orderForm->email,
+                ]);
+                yii::$app->session->setFlash('order', $orderInfo);
+                $this->redirect(['cart/success']);
             }
         }
 
@@ -127,6 +133,23 @@ class CartController extends Controller
             'products' => $products,
             'cart' => $cart,
             'orderForm' => $orderForm,
+        ]);
+    }
+
+    public function actionSuccess()
+    {
+        $order = yii::$app->session->getFlash('order', null);
+        if (is_null($order))
+        {
+            throw new yii\web\NotFoundHttpException;
+        }
+        else
+        {
+            $orderInfo = unserialize($order);
+        }
+
+        return $this->render('success', [
+            'orderInfo' => $orderInfo
         ]);
     }
 

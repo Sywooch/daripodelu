@@ -276,6 +276,78 @@ ul.no-ls li, ol.no-ls li {
     margin-top: 40px;
 }
 
+.modal {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 5000;
+}
+
+.modal-overlay {
+    background: #000;
+    opacity: 0.3;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 5010;
+}
+
+.modal-dialog {
+    width: 400px;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    z-index: 5020;
+    margin-left: -200px;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    position: relative;
+}
+
+.modal button.close {
+    -webkit-appearance: none;
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+}
+
+.modal .close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .2;
+}
+
+.modal-body {
+    position: relative;
+    padding: 15px;
+}
+
+.modal-body p {
+    line-height: 140%;
+    margin-bottom: 20px;
+}
+
 /*--Colors------------------------------------------------------------------------------------------------------------*/
 html, body {
     color: #000;

@@ -47,7 +47,6 @@ class FeedbackForm extends Model
         return Yii::$app->mailer->compose(['html' => '@app/views/mail-templates/mail-to-admin'], ['mail' => $this])
             ->setTo($email)
             ->setSubject($this->subject)
-            ->setTextBody($this->body)
             ->send();
     }
 }

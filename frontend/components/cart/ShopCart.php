@@ -279,6 +279,30 @@ class ShopCart extends yii\base\Component
         }
     }
 
+    /**
+     * Clears the shop's cart
+     *
+     * @return false|int the number of carts deleted, or false if the deletion is unsuccessful for some reason.
+     * Note that it is possible the number of carts deleted is 0, even though the deletion execution is successful.
+     * @throws \Exception in case delete failed
+     */
+    public function clear()
+    {
+        $result = $this->cartModel->delete();
+        if ($result)
+        {
+            yii::$app->response->cookies->remove('cart');
+            $this->removeItems();
+        }
+
+        return $result;
+    }
+
+    protected function removeItems()
+    {
+        $this->items = [];
+    }
+
     protected function validate()
     {
         $itemsCount = count($this->items);

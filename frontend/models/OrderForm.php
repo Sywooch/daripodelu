@@ -147,10 +147,10 @@ class OrderForm extends Model
                 'images' => $images,
             ];
 
-            echo '[ ', $order->order_date, ' ]';
-
             $this->sendMailToAdmin($mail);
             $this->sendMailToClient($mail);
+
+            yii::$app->cart->clear();
 
             return true;
         }

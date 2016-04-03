@@ -107,4 +107,13 @@ $feedbackModel = $this->params['feedbackModel'];
             <div class="copyright"><?= BlockWidget::widget(['position' => 'footer']) ?></div>
         </footer>
     </div>
+<?php
+$alert = yii::$app->session->getFlash('msg_send_success', null);
+if ( ! is_null($alert))
+{
+    $this->registerJs('
+        showModal("sendSuccessModal", "Сообщение отправлено!", "<p>В ближайшее время наш оператор свяжется с вами для подтверждения заказа.</p>");
+    ', yii\web\View::POS_READY);
+}
+?>
 <?php $this->endContent(); ?>
