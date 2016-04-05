@@ -1,7 +1,6 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use frontend\widgets\BlockWidget;
@@ -27,13 +26,19 @@ $feedbackModel = $this->params['feedbackModel'];
                 </ul>
                 <ul class="main-menu inl-blck">
                     <li>
-                        <a href="<?= Url::to(['page/view', 'id' => 1]); ?>">Методы нанесения</a>
-                    </li>
-                    <li>
                         <a href="<?= Url::to(['page/view', 'id' => 2]); ?>">«Дари по делу»</a>
                     </li>
                     <li>
-                        <a href="#">Контактная информация</a>
+                        <a href="<?= Url::to(['page/view', 'id' => 1]); ?>">Методы нанесения</a>
+                    </li>
+                    <li>
+                        <a href="<?= Url::to(['article/index']); ?>">Полезные статьи</a>
+                    </li>
+                    <li>
+                        <a href="<?= Url::to(['news/index']); ?>">Новости</a>
+                    </li>
+                    <li>
+                        <a href="<?= Url::to(['contact/index']); ?>">Контакты</a>
                     </li>
                 </ul>
             </nav>

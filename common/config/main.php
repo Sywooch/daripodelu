@@ -35,6 +35,7 @@ return [
             'sizes' => [
                 '36' => [36],
                 '36x36' => [36, 36],
+                '280x200' => [280, 200],
             ],
         ],
         'i18n' => [
@@ -59,16 +60,6 @@ return [
                     'pattern' => 'thumbs/<path:.*>',
                     'route' => 'site/thumb',
                     'suffix' => null,
-                ],
-                [
-                    'pattern' => 'mail/<id:[\d]+>',
-                    'route' => 'cart/mail',
-                    'suffix' => '.html',
-                ],
-                [
-                    'pattern' => 'mailadmin/<id:[\d]+>',
-                    'route' => 'cart/mailadmin',
-                    'suffix' => '.html',
                 ],
                 [
                     'pattern' => 'cart/delete-size/<productId:[\d]+>_<sizeCode:[A-Za-z0-9_]+>',

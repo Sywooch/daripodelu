@@ -77,8 +77,8 @@ class EmailPhoneValidator extends Validator
     public function clientValidateAttribute($model, $attribute, $view)
     {
         $options = [
-            'pattern' => new JsExpression('/^(' . $this->emailPattern . ')|(' . $this->phonePattern . ')$/'),
-            'fullPattern' => new JsExpression('/^(' . $this->fullEmailPattern . ')|(' . $this->phonePattern . ')$/'),
+            'pattern' => new JsExpression('/^((' . $this->emailPattern . ')|(' . $this->phonePattern . '))$/'),
+            'fullPattern' => new JsExpression('/^((' . $this->fullEmailPattern . ')|(' . $this->phonePattern . '))$/'),
             'allowName' => $this->allowName,
             'message' => Yii::$app->getI18n()->format($this->message, [
                 'attribute' => $model->getAttributeLabel($attribute),

@@ -73,6 +73,10 @@ if( Yii::$app->session->hasFlash('success') )
 
         <?= $form->field($model, 'newsPerHome')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 
+        <?= $form->field($model, 'articlesPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
+
+        <?= $form->field($model, 'articlesPerHome')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
+
         <?= $form->field($model, 'productsPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 
         <?= $form->field($model, 'gateLogin')->textInput(['maxlength' => 255, 'style' => 'max-width: 200px;']); ?>

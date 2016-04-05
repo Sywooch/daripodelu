@@ -55,11 +55,10 @@ BootboxAsset::overrideSystemConfirm();
                     [
                         'label' => 'Контент',
                         'items' => [
-                            ['label' => 'Страницы', 'url' => ['/page/index']],
+                            ['label' => 'Статичные страницы', 'url' => ['/page/index']],
                             ['label' => 'Новости', 'url' => ['/news/index']],
+                            ['label' => 'Статьи', 'url' => ['/article/index']],
                             ['label' => 'Блоки', 'url' => ['/block/index']]
-//                            ['label' => 'Фотогалерея', 'url' => ['/gallery/index']],
-//                            ['label' => 'Баннеры', 'url' => ['/banners/index']],
                         ]
                     ],
                     ['label' => 'Настройки', 'url' => ['/settings/index']],

@@ -276,6 +276,11 @@ ul.no-ls li, ol.no-ls li {
     margin-top: 40px;
 }
 
+.article-line {
+    background: url("../img/article-line.jpg") center 0px no-repeat;
+    height: 15px;
+}
+
 .modal {
     width: 100%;
     height: 100%;
@@ -417,6 +422,9 @@ ul.shop-cart li a,
 .product .order-table th,
 .add-item-box .add-item-link,
 .no-photo,
+.articles-item time,
+.article-date,
+.articles-item a:hover .title .underscore,
 h1,
 .h1,
 h2,
@@ -441,6 +449,7 @@ h6,
 }
 
 .articles-inf-block .more span,
+.articles-item .title span,
 .main-ctg-list a span,
 .ctg-list a,
 .products-list .product-item a.name span,
@@ -703,7 +712,8 @@ table.shop-cart tfoot tr {
 .main-ctg-list a span,
 .products-list .product-item a.name span,
 .additional-links-box a span,
-.articles-inf-block .more span {
+.articles-inf-block .more span,
+.articles-item .title .underscore {
     background-image: linear-gradient(#ff80ab, #ff80ab);
     background-position: 0 99%;
     background-size: 100% 1px;
@@ -766,6 +776,7 @@ ul.secondary-nav-menu li,
 .filter-box .btn,
 .add-item-box .add-item-link,
 .constructor-links-box a.item,
+.articles-item .underscore,
 table.shop-cart td.item-price,
 table.shop-cart td.price,
 table.shop-cart td.total-price {
@@ -794,6 +805,14 @@ table.shop-cart td.total-price {
     height: 158px;
     margin: 0 auto;
     padding-top: 57px;
+    vertical-align: middle;
+}
+
+.no-photo_280x200 {
+    width: 280px;
+    height: 200px;
+    margin: 0 auto;
+    padding-top: 77px;
     vertical-align: middle;
 }
 
@@ -869,13 +888,13 @@ ul.shop-cart li a {
 
 ul.main-menu {
     /*text-align: center;*/
-    padding-left: 99px;
+    padding-left: 17px;
     width: 760px;
 }
 
 ul.main-menu li {
     font-size: 21px;
-    margin: 0 19px;
+    margin: 0 16px;
 }
 
 ul.main-menu li a {
@@ -1916,6 +1935,66 @@ ul.secondary-nav-menu li a:hover {
     right: 9px;
     top: 50%;
     margin-top: -9px;
+}
+
+.articles-list {
+    word-spacing: -0.25em;
+    float: left;
+    margin-left: -15px;
+    width: 1250px;
+}
+
+.articles-list:after {
+    content: " ";
+    display: table;
+    clear: both;
+}
+
+.articles-item {
+    display: inline-block;
+    width: 280px;
+    vertical-align: top;
+    margin: 0 15px 37px;
+    word-spacing: normal;
+}
+
+.articles-item a {
+    text-decoration: none;
+}
+
+.articles-item .title {
+    display: block;
+    line-height: 24px;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 11px;
+}
+
+.articles-item .title .underscore {
+    font-size: 24px;
+}
+
+.articles-item a:hover .title .underscore {
+    background: none;
+    border-bottom: none;
+}
+
+.articles-item time {
+    display: block;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 300;
+}
+
+.article-date {
+    display: block;
+    font-weight: 300;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.article {
+    padding: 0 0 44px;
 }
 
 table.shop-cart {

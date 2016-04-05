@@ -2,11 +2,12 @@
 
 namespace frontend\controllers;
 
-use Yii;
+use yii;
 use yii\data\Pagination;
 use yii\helpers\Html;
-use app\models\News;
 use common\models\SEOInformation;
+use frontend\models\FeedbackForm;
+use frontend\models\News;
 
 class NewsController extends \yii\web\Controller
 {
@@ -19,6 +20,9 @@ class NewsController extends \yii\web\Controller
     {
         if (parent::beforeAction($action))
         {
+            $feedbackModel = new FeedbackForm();
+            $this->getView()->params['feedbackModel'] = $feedbackModel;
+
             $this->heading = Yii::t('app', 'News');
             $this->metaTitle = $this->heading . ' | ' . Yii::$app->config->siteName;
             $this->metaDescription = Yii::$app->config->siteMetaDescript;
@@ -41,7 +45,7 @@ class NewsController extends \yii\web\Controller
 
     public function actionIndex()
     {
-        $query = News::find()->where(['status' => News::STATUS_ACTIVE])->orderBy('published_date DESC');
+        $query = News::find()->with('mainPhoto')->where(['status' => News::STATUS_ACTIVE])->orderBy('published_date DESC');
         $countQuery = clone $query;
         $pages = new Pagination([
             'defaultPageSize' => Yii::$app->config->newsItemsPerPage,
@@ -71,6 +75,8 @@ class NewsController extends \yii\web\Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $lastNews = News::find()->with('mainPhoto')->where(['status' => News::STATUS_ACTIVE])->andWhere(['not', ['id' => $id]])->orderBy('published_date DESC')->limit(4)->all();
+
         $this->view->registerMetaTag([
             'name' => 'description',
             'content' => isset($model->meta_description) && !empty($model->meta_description)? $model->meta_description : $this->metaDescription,
@@ -84,6 +90,7 @@ class NewsController extends \yii\web\Controller
         return $this->render('view', [
             'heading' => $this->heading,
             'model' => $model,
+            'lastNews' => $lastNews,
         ]);
     }
 

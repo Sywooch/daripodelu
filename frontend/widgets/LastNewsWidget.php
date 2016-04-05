@@ -4,7 +4,7 @@ namespace frontend\widgets;
 
 use yii;
 use yii\base\Widget;
-use app\models\News;
+use frontend\models\News;
 
 class LastNewsWidget extends Widget {
 

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use yii\helpers\Html;
 use app\models\Page;
+use frontend\models\FeedbackForm;
 
 class PageController extends \yii\web\Controller {
 
@@ -15,6 +16,9 @@ class PageController extends \yii\web\Controller {
 
     public function actionView($id)
     {
+        $feedbackModel = new FeedbackForm();
+        $this->getView()->params['feedbackModel'] = $feedbackModel;
+
         $model = $this->findModel($id);
         $this->view->registerMetaTag([
             'name' => 'description',
@@ -24,7 +28,7 @@ class PageController extends \yii\web\Controller {
             'name' => 'keywords',
             'content' => isset($model->meta_keywords) && !empty($model->meta_keywords)? $model->meta_keywords : Yii::$app->config->siteMetaKeywords,
         ]);
-        $this->view->title = isset($model->meta_title) && !empty($model->meta_title)? $model->meta_title . ' :: ' . Yii::$app->config->siteName : $model->name . ' :: ' . Yii::$app->config->siteName;
+        $this->view->title = isset($model->meta_title) && !empty($model->meta_title)? $model->meta_title . ' | ' . Yii::$app->config->siteName : $model->name . ' | ' . Yii::$app->config->siteName;
 
         return $this->render('view', [
             'model' => $model,

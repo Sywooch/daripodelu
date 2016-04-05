@@ -1,9 +1,11 @@
 <?php
 
-namespace app\models;
+namespace frontend\models;
 
 use Yii;
+use backend\behaviors\ImagesBehavior;
 use common\components\ActiveRecord;
+use common\models\Image;
 
 /**
  * This is the model class for table "{{%news}}".
@@ -19,6 +21,7 @@ use common\components\ActiveRecord;
  * @property string $created_date
  * @property string $last_update_date
  * @property string $status
+ * @property \common\models\Image $mainPhoto
  */
 class News extends ActiveRecord
 {
@@ -44,6 +47,17 @@ class News extends ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'photo' => [
+                'class' => ImagesBehavior::className(),
+                'model' => 'news',
+                'ownerIdAttribute' => 'id',
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -62,6 +76,16 @@ class News extends ActiveRecord
             'last_update_date' => Yii::t('app', 'Дата последнего обновления'),
             'status' => Yii::t('app', 'Статус'),
         ];
+    }
+
+    public function getMainPhoto()
+    {
+        return $this->hasOne(Image::className(), ['owner_id' => 'id'])->andWhere(['model' => 'news'])->andWhere(['ctg_id' => 0])->andWhere(['is_main' => Image::IS_MAIN]);
+    }
+
+    public function getImages()
+    {
+        return $this->hasMany(Image::className(), ['owner_id' => 'id'])->andWhere(['model' => 'gallery'])->andWhere(['ctg_id' => 0])->andWhere(['status' => Image::STATUS_ACTIVE]);
     }
 
     /**

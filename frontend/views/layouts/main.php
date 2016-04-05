@@ -28,13 +28,19 @@ $feedbackModel = $this->params['feedbackModel'];
                         </ul>
                         <ul class="main-menu inl-blck">
                             <li>
-                                <a href="<?= Url::to(['page/view', 'id' => 1]); ?>">Методы нанесения</a>
-                            </li>
-                            <li>
                                 <a href="<?= Url::to(['page/view', 'id' => 2]); ?>">«Дари по делу»</a>
                             </li>
                             <li>
-                                <a href="#">Контактная информация</a>
+                                <a href="<?= Url::to(['page/view', 'id' => 1]); ?>">Методы нанесения</a>
+                            </li>
+                            <li>
+                                <a href="<?= Url::to(['article/index']); ?>">Полезные статьи</a>
+                            </li>
+                            <li>
+                                <a href="<?= Url::to(['news/index']); ?>">Новости</a>
+                            </li>
+                            <li>
+                                <a href="<?= Url::to(['contact/index']); ?>">Контакты</a>
                             </li>
                         </ul>
                     </nav>
@@ -65,6 +71,9 @@ $feedbackModel = $this->params['feedbackModel'];
                 </div>
             </div>
         </div>
+        <?php if (isset($this->blocks['article'])): ?>
+            <?= $this->blocks['article'] ?>
+        <?php endif; ?>
     </div>
     <div class="before-ft-lines"></div>
     <div class="footer-box">

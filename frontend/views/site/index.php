@@ -2,8 +2,9 @@
 
 use frontend\widgets\BlockWidget;
 use frontend\widgets\CatalogueWidget;
-/* @var $this yii\web\View */
+use frontend\widgets\LastNewsWidget;
 
+/* @var $this yii\web\View */
 ?>
 <div class="bd-box">
     <div class="container">
@@ -41,7 +42,10 @@ use frontend\widgets\CatalogueWidget;
             </section>
         </div>
         <div class="inf-col inf-col-3">
-            <section class="news-inf-block">
+            <?= LastNewsWidget::widget([
+                'quantity' => intval(Yii::$app->config->newsItemsPerHome),
+            ]); ?>
+            <!--<section class="news-inf-block">
                 <h2>Новости</h2>
                 <ul class="news-list-box">
                     <li>
@@ -69,7 +73,7 @@ use frontend\widgets\CatalogueWidget;
                         <a href="#">Толстой и мир. «Кенгуру» и боксер<span class="panel"></span></a>
                     </li>
                 </ul>
-            </section>
+            </section>-->
         </div>
         <div class="clear"></div>
     </div>
