@@ -12,6 +12,16 @@ use frontend\widgets\BlockWidget;
 /* @var $model frontend\models\Product */
 /* @var $slaveProduct frontend\models\SlaveProduct */
 /* @var $productAttachment frontend\models\ProductAttachment */
+/* @var $prints frontend\models\PrintKind[] */
+
+$printsArr = [];
+foreach ($prints as $print)
+{
+    $printsArr[$print->name] = [
+        'name' => $print->description,
+        'link' => $print->printLink->link,
+    ];
+}
 ?>
 <div class="col-10">
     <div class="main-content" itemscope itemtype="http://schema.org/Product">
@@ -72,13 +82,9 @@ use frontend\widgets\BlockWidget;
                     </dl>
                     <section class="additional-links-box">
                         <h5 class="h2">Возможные виды нанесения:</h5>
-                        <p><a href="#"><span>F2-Флекс</span></a></p>
-                        <p><a href="#"><span>IS2-Шеврон с пришиванием</span></a></p>
-                        <p><a href="#"><span>IS1-Шеврон с припариванием</span></a></p>
-                        <p><a href="#"><span>DTG2-Полноцвет по цветному текстилю</span></a></p>
-                        <p><a href="#"><span>B-Шелкография</span></a></p>
-                        <p><a href="#"><span>F1-Флекс</span></a></p>
-                        <p><a href="#"><span>I-Вышивка</span></a></p>
+                        <?php foreach ($prints as $print): ?>
+                            <p><a href="<?= $print->printLink->link; ?>"><span><?= $print->name; ?>-<?= $print->description; ?></span></a></p>
+                        <?php endforeach; ?>
                     </section>
                     <div class="constructor-links-box">
                         <strong class="h2">Конструктор:</strong>

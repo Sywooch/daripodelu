@@ -91,7 +91,7 @@ class PageController extends Controller
 
                 if ( !$model->saveAlias())
                 {
-                    Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
+                    Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of page.'));
                 }
 
                 if (isset($_POST['savePage']))

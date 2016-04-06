@@ -49,6 +49,7 @@ BootboxAsset::overrideSystemConfirm();
                         'label' => 'Каталог',
                         'items' => [
                             ['label' => 'Категории', 'url' => ['/catalogue/index']],
+                            ['label' => 'Методы нанесения', 'url' => ['/printlink/index']],
                         ],
                     ],
                     ['label' => 'Меню', 'url' => ['/menutree/index']],

@@ -32,6 +32,10 @@ use yii\helpers\Url;
  * @property integer $show_in_menu
  * @property integer $show_as_link
  * @property integer $status
+ *
+ * @method \yii\db\ActiveQuery children
+ * @method \yii\db\ActiveQuery parents
+ * @method \yii\db\ActiveQuery leaves
  */
 class MenuTree extends ActiveRecord
 {

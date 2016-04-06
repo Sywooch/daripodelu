@@ -108,5 +108,8 @@ return [
     'Introductory text is displayed after the article title in the articles list. If the field is empty, after the news title are displayed first phrases of the main text.' => 'Вводный текст отображается после заголовка статьи в списке статей. Если поле пустое, в качестве вводного текста выводятся первые фразы основного текста.',
     'Publication date article. The later date and time of publication, the higher is the article in the list.' => 'Дата публикации статьи. Чем новее дата и время публикации, тем выше расположена статьи в списке.',
     'Images can be added only after the article will be saved.' => 'Изображения могут быть добавлены только после того, как статья¡ будет сохранена.',
+    'Prints' => 'Методы нанесения',
+    'Update print' => 'Редактирование метода нанесения',
+    'Add print' => 'Добавление метода нанесения',
     '' => '',
 ];

@@ -3,16 +3,18 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\PrintLink;
-use backend\models\PrintLinkSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use backend\models\PrintKind;
+use backend\models\PrintLink;
+use backend\models\PrintLinkSearch;
 
 /**
- * PrintLinkController implements the CRUD actions for PrintLink model.
+ * PrintlinkController implements the CRUD actions for PrintLink model.
  */
-class PrintLinkController extends Controller
+class PrintlinkController extends Controller
 {
     /**
      * @inheritdoc
@@ -38,21 +40,12 @@ class PrintLinkController extends Controller
         $searchModel = new PrintLinkSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $printsKind = PrintKind::find()->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single PrintLink model.
-     * @param string $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+            'printsKind' => $printsKind,
         ]);
     }
 
@@ -65,11 +58,39 @@ class PrintLinkController extends Controller
     {
         $model = new PrintLink();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->code]);
-        } else {
+        if ($model->load(Yii::$app->request->post()))
+        {
+            if ($model->save())
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The link added successfully.'));
+
+                if (isset($_POST['savePrintLink']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
+        }
+        else
+        {
+
+            $existsPrintLinks = PrintLink::find()->all();
+            $existsPrintLinkCodes = ArrayHelper::getColumn($existsPrintLinks, 'code');
+
+            $printsKind = PrintKind::find()->where(['not', ['name' => $existsPrintLinkCodes]])->all();
+
             return $this->render('create', [
                 'model' => $model,
+                'prints' => $printsKind,
             ]);
         }
     }
@@ -84,9 +105,12 @@ class PrintLinkController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->code]);
-        } else {
+        }
+        else
+        {
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -115,9 +139,12 @@ class PrintLinkController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = PrintLink::findOne($id)) !== null) {
+        if (($model = PrintLink::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

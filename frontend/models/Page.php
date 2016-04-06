@@ -17,6 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $last_update_date
  * @property string $created_date
  * @property integer $status
+ * @method \common\models\MenuTree getAliasModel
  */
 class Page extends \common\components\ActiveRecord
 {

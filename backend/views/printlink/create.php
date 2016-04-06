@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\PrintLink */
 
-$this->title = Yii::t('app', 'Create Print Link');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Print Links'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Add print');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Prints'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="print-link-create">
@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'prints' => $prints,
     ]) ?>
 
 </div>

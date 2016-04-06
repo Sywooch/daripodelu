@@ -2,12 +2,14 @@
 
 namespace frontend\controllers;
 
+use frontend\models\PrintLink;
 use yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use common\models\SEOInformation;
 use frontend\models\FeedbackForm;
 use frontend\models\Product;
+use frontend\models\PrintKind;
 
 class ProductController extends \yii\web\Controller
 {
@@ -32,13 +34,22 @@ class ProductController extends \yii\web\Controller
     public function actionView($id)
     {
         $model = Product::find()
-            ->with(['catalogue', 'productAttachments', 'productPrints', 'slaveProducts', 'groupProducts'])
+            ->with(['catalogue', 'productAttachments', 'productPrints', 'slaveProducts', 'groupProducts', 'productPrints'])
             ->andWhere(['id' => $id])->one();
+        /* @var $model Product */
 
         if ($model === null)
         {
             throw new NotFoundHttpException();
         }
+
+        $printCodes = [];
+        foreach ($model->productPrints as $productPrint)
+        {
+            $printCodes[] = $productPrint->print_id;
+        }
+
+        $prints = PrintKind::find()->with('printLink')->andWhere(['name' => $printCodes])->all();
 
         if (yii::$app->request->isAjax)
         {
@@ -46,7 +57,6 @@ class ProductController extends \yii\web\Controller
         }
         else
         {
-            /* @var $model Product */
             $this->heading = $model->name;
             $this->metaTitle = $this->heading . ' | ' . $model->catalogue->name . ' | ' . Yii::$app->config->siteName;
             $this->metaDescription = Yii::$app->config->siteMetaDescript;
@@ -74,6 +84,7 @@ class ProductController extends \yii\web\Controller
             return $this->render('view', [
                 'heading' => $this->heading,
                 'model' => $model,
+                'prints' => $prints,
             ]);
         }
     }

@@ -5,6 +5,8 @@ namespace frontend\controllers;
 use Yii;
 use yii\helpers\Html;
 use app\models\Page;
+use backend\behaviors\ContentAliasBehavior;
+use common\models\MenuTree;
 use frontend\models\FeedbackForm;
 
 class PageController extends \yii\web\Controller {
@@ -20,6 +22,33 @@ class PageController extends \yii\web\Controller {
         $this->getView()->params['feedbackModel'] = $feedbackModel;
 
         $model = $this->findModel($id);
+        $model->attachBehavior('alias', [
+            'class' => ContentAliasBehavior::className(),
+            'controllerId' => 'page',
+            'actionId' => 'view',
+            'itemIdAttribute' => 'id',
+        ]);
+
+        $children = [];
+        if ($id == 1)
+        {
+            $children = $model->getAliasModel()->children()->all();
+        }
+        else
+        {
+            $parent = Page::findOne(1);
+            $parent->attachBehavior('alias', [
+                'class' => ContentAliasBehavior::className(),
+                'controllerId' => 'page',
+                'actionId' => 'view',
+                'itemIdAttribute' => 'id',
+            ]);
+            if ($model->getAliasModel()->isChildOf($parent->getAliasModel()))
+            {
+                $children = $parent->getAliasModel()->children()->all();
+            }
+        }
+
         $this->view->registerMetaTag([
             'name' => 'description',
             'content' => isset($model->meta_description) && !empty($model->meta_description)? $model->meta_description : Yii::$app->config->siteMetaDescript,
@@ -32,6 +61,7 @@ class PageController extends \yii\web\Controller {
 
         return $this->render('view', [
             'model' => $model,
+            'pages' => $children,
         ]);
     }
 

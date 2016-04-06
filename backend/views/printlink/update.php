@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\PrintLink */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
+$this->title = Yii::t('app', 'Update print: ', [
     'modelClass' => 'Print Link',
 ]) . $model->code;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Print Links'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Prints'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->code, 'url' => ['view', 'id' => $model->code]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'prints' => $prints,
     ]) ?>
 
 </div>

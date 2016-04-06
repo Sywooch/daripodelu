@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use frontend\models\PrintLink;
 
 /**
  * This is the model class for table "{{%print}}".
@@ -11,6 +12,7 @@ use Yii;
  * @property string $description
  *
  * @property ProductPrint[] $productPrints
+ * @property PrintLink[] $printLink
  */
 class PrintKind extends \yii\db\ActiveRecord
 {
@@ -51,5 +53,10 @@ class PrintKind extends \yii\db\ActiveRecord
     public function getProductPrints()
     {
         return $this->hasMany(ProductPrint::className(), ['print_id' => 'name']);
+    }
+
+    public function getPrintLink()
+    {
+        return $this->hasOne(PrintLink::className(), ['code' => 'name']);
     }
 }
