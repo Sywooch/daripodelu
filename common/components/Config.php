@@ -15,10 +15,10 @@ use common\models\Settings;
  * @property string $siteEmail
  * @property string $siteMetaDescription
  * @property string $siteMetaKeywords
- * @property integer $newsPerPage
- * @property integer $newsPerHome
- * @property integer $articlesPerPage
- * @property integer $articlesPerHome
+ * @property integer $newsItemsPerPage
+ * @property integer $newsItemsPerHome
+ * @property integer $articleItemsPerPage
+ * @property integer $articleItemsPerHome
  * @property integer $productsPerPage
  * @property string $gateLogin
  * @property string $gatePassword

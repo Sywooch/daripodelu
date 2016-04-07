@@ -69,13 +69,13 @@ if( Yii::$app->session->hasFlash('success') )
                     Yii::t('app', '<strong>Note:</strong>') . ' ' .
                     Yii::t('app', 'Words that best describe the content of the site. It can be both single words and phrases.')); ?>
 
-        <?= $form->field($model, 'newsPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
+        <?= $form->field($model, 'newsItemsPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 
-        <?= $form->field($model, 'newsPerHome')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
+        <?= $form->field($model, 'newsItemsPerHome')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 
-        <?= $form->field($model, 'articlesPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
+        <?= $form->field($model, 'articleItemsPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 
-        <?= $form->field($model, 'articlesPerHome')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
+        <?= $form->field($model, 'articleItemsPerHome')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 
         <?= $form->field($model, 'productsPerPage')->textInput(['maxlength' => 255, 'style' => 'max-width: 80px;']); ?>
 

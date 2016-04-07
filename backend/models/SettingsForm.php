@@ -19,10 +19,10 @@ class SettingsForm extends Model
     public $siteMetaKeywords;
     public $sitePhone;
     public $siteWorkSchedule;
-    public $newsPerPage;
-    public $newsPerHome;
-    public $articlesPerPage;
-    public $articlesPerHome;
+    public $newsItemsPerPage;
+    public $newsItemsPerHome;
+    public $articleItemsPerPage;
+    public $articleItemsPerHome;
     public $productsPerPage;
     public $gateLogin;
     public $gatePassword;
@@ -32,10 +32,10 @@ class SettingsForm extends Model
         'siteEmail' => 'SITE_EMAIL',
         'siteMetaDescription' => 'SITE_META_DESCRIPT',
         'siteMetaKeywords' => 'SITE_META_KEYWORDS',
-        'newsPerPage' => 'NEWS_ITEMS_PER_PAGE',
-        'newsPerHome' => 'NEWS_ITEMS_PER_HOME',
-        'articlesPerPage' => 'ARTICLE_ITEMS_PER_PAGE',
-        'articlesPerHome' => 'ARTICLE_ITEMS_PER_HOME',
+        'newsItemsPerPage' => 'NEWS_ITEMS_PER_PAGE',
+        'newsItemsPerHome' => 'NEWS_ITEMS_PER_HOME',
+        'articleItemsPerPage' => 'ARTICLE_ITEMS_PER_PAGE',
+        'articleItemsPerHome' => 'ARTICLE_ITEMS_PER_HOME',
         'productsPerPage' => 'PRODUCTS_PER_PAGE',
         'gateLogin' => 'GATE_LOGIN',
         'gatePassword' => 'GATE_PASSWORD',
@@ -47,10 +47,10 @@ class SettingsForm extends Model
     {
         return [
             [['siteName', 'siteAdminEmail', 'siteEmail', 'siteMetaDescription', 'siteMetaKeywords', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'string'],
-            [['siteName', 'newsPerPage', 'newsPerHome', 'articlesPerPage', 'articlesPerHome', 'productsPerPage', 'gateLogin', 'gatePassword'], 'required'],
-            [['newsPerPage', 'newsPerHome', 'articlesPerPage', 'articlesPerHome', 'productsPerPage'], 'integer'],
+            [['siteName', 'newsItemsPerPage', 'newsItemsPerHome', 'articleItemsPerPage', 'articleItemsPerHome', 'productsPerPage', 'gateLogin', 'gatePassword'], 'required'],
+            [['newsItemsPerPage', 'newsItemsPerHome', 'articleItemsPerPage', 'articleItemsPerHome', 'productsPerPage'], 'integer'],
             [['siteAdminEmail', 'siteEmail'], 'email'],
-            [['siteName', 'siteAdminEmail', 'siteEmail', 'siteMetaDescription', 'siteMetaKeywords', 'newsPerPage', 'newsPerHome', 'articlesPerPage', 'articlesPerHome', 'productsPerPage', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'trim'],
+            [['siteName', 'siteAdminEmail', 'siteEmail', 'siteMetaDescription', 'siteMetaKeywords', 'newsItemsPerPage', 'newsItemsPerHome', 'articleItemsPerPage', 'articleItemsPerHome', 'productsPerPage', 'gateLogin', 'gatePassword', 'sitePhone', 'siteWorkSchedule'], 'trim'],
         ];
     }
 
@@ -70,10 +70,10 @@ class SettingsForm extends Model
         $model->siteMetaKeywords = Yii::$app->config->get('SITE_META_KEYWORDS');
         $model->sitePhone = Yii::$app->config->get('SITE_PHONE');
         $model->siteWorkSchedule = Yii::$app->config->get('SITE_WORK_SCHEDULE');
-        $model->newsPerPage = Yii::$app->config->get('NEWS_ITEMS_PER_PAGE');
-        $model->newsPerHome = Yii::$app->config->get('NEWS_ITEMS_PER_HOME');
-        $model->articlesPerPage = Yii::$app->config->get('ARTICLE_ITEMS_PER_PAGE');
-        $model->articlesPerHome = Yii::$app->config->get('ARTICLE_ITEMS_PER_HOME');
+        $model->newsItemsPerPage = Yii::$app->config->get('NEWS_ITEMS_PER_PAGE');
+        $model->newsItemsPerHome = Yii::$app->config->get('NEWS_ITEMS_PER_HOME');
+        $model->articleItemsPerPage = Yii::$app->config->get('ARTICLE_ITEMS_PER_PAGE');
+        $model->articleItemsPerHome = Yii::$app->config->get('ARTICLE_ITEMS_PER_HOME');
         $model->productsPerPage = Yii::$app->config->get('PRODUCTS_PER_PAGE');
         $model->gateLogin = Yii::$app->config->get('GATE_LOGIN');
         $model->gatePassword = Yii::$app->config->get('GATE_PASSWORD');
@@ -94,10 +94,10 @@ class SettingsForm extends Model
             'siteMetaKeywords' => $items['SITE_META_KEYWORDS']->label,
             'sitePhone' => $items['SITE_PHONE']->label,
             'siteWorkSchedule' => $items['SITE_WORK_SCHEDULE']->label,
-            'newsPerPage' => $items['NEWS_ITEMS_PER_PAGE']->label,
-            'newsPerHome' => $items['NEWS_ITEMS_PER_HOME']->label,
-            'articlesPerPage' => $items['ARTICLE_ITEMS_PER_PAGE']->label,
-            'articlesPerHome' => $items['ARTICLE_ITEMS_PER_HOME']->label,
+            'newsItemsPerPage' => $items['NEWS_ITEMS_PER_PAGE']->label,
+            'newsItemsPerHome' => $items['NEWS_ITEMS_PER_HOME']->label,
+            'articleItemsPerPage' => $items['ARTICLE_ITEMS_PER_PAGE']->label,
+            'articleItemsPerHome' => $items['ARTICLE_ITEMS_PER_HOME']->label,
             'productsPerPage' => $items['PRODUCTS_PER_PAGE']->label,
             'gateLogin' => $items['GATE_LOGIN']->label,
             'gatePassword' => $items['GATE_PASSWORD']->label,

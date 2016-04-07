@@ -90,7 +90,7 @@ class Article extends ActiveRecord
 
     /**
      * @param $quantity int quantity of last article
-     * @return array|\yii\db\ActiveRecord[]
+     * @return \frontend\models\Article[]
      */
     public function getLastArticles($quantity)
     {

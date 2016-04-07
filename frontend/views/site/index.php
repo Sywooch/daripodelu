@@ -2,6 +2,7 @@
 
 use frontend\widgets\BlockWidget;
 use frontend\widgets\CatalogueWidget;
+use frontend\widgets\ArticlesWidget;
 use frontend\widgets\LastNewsWidget;
 
 /* @var $this yii\web\View */
@@ -25,55 +26,14 @@ use frontend\widgets\LastNewsWidget;
             </section>
         </div>
         <div class="inf-col inf-col-2">
-            <section class="articles-inf-block">
-                <h2>Полезные статьи</h2>
-                <ul class="uf-articles-list">
-                    <li>
-                        <a href="#">«Подрывники» проморынка. Как бороться с теми, кто играет не по правилам<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <a href="#">Где же кружка? Cамый эффективный промоинструмент в полном цвете<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <a href="#">Печать на силиконе? Да!<span class="panel"></span></a>
-                    </li>
-                </ul>
-                <a class="more" href="#"><span>Еще!</span></a>
-            </section>
+            <?= ArticlesWidget::widget([
+                'quantity' => intval(Yii::$app->config->articleItemsPerHome),
+            ]); ?>
         </div>
         <div class="inf-col inf-col-3">
             <?= LastNewsWidget::widget([
                 'quantity' => intval(Yii::$app->config->newsItemsPerHome),
             ]); ?>
-            <!--<section class="news-inf-block">
-                <h2>Новости</h2>
-                <ul class="news-list-box">
-                    <li>
-                        <time datetime="2015-05-22">22 мая</time>
-                        <a href="#">Тест-драйв: подводим итоги!<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <time datetime="2015-05-15">15 мая</time>
-                        <a href="#">Новинки июня. Часть II<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <time datetime="2015-05-14">14 мая</time>
-                        <a href="#">Толстой и мир. «Кенгуру» и боксер<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <time datetime="2015-05-13">13 мая</time>
-                        <a href="#">Тест-драйв: подводим итоги!<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <time datetime="2015-05-12">12 мая</time>
-                        <a href="#">Новинки июня. Часть II<span class="panel"></span></a>
-                    </li>
-                    <li>
-                        <time datetime="2015-05-04">04 мая</time>
-                        <a href="#">Толстой и мир. «Кенгуру» и боксер<span class="panel"></span></a>
-                    </li>
-                </ul>
-            </section>-->
         </div>
         <div class="clear"></div>
     </div>
