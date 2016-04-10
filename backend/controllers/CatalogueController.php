@@ -13,6 +13,7 @@ use yii\web\UploadedFile;
 use app\models\Image;
 use backend\models\Catalogue;
 use backend\models\CatalogueSearch;
+use backend\models\Counter;
 use common\models\SEOInformation;
 
 /**
@@ -137,12 +138,57 @@ class CatalogueController extends Controller
     public function actionCreate()
     {
         $model = new Catalogue();
+        $seoInfo = new SEOInformation();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post()))
+        {
+            $model->id = Counter::getNextNumber('catalogue_id');
+            $model->user_row = Catalogue::IS_USER_ROW;
+
+            if ($model->save())
+            {
+                Counter::incrementValue('catalogue_id');
+                if ($seoInfo->load(Yii::$app->request->post()))
+                {
+                    $seoInfo->controller_id = 'catalogue';
+                    $seoInfo->action_id = 'view';
+                    $seoInfo->item_id = $model->id;
+                    if (isset($_POST['SEOInformation']) && $seoInfo->save())
+                    {
+                        Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> SEO data saved successfully.'));
+                    }
+                    else
+                    {
+                        Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the SEO data.'));
+                    }
+                }
+
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Category saved successfully.'));
+                if (isset($_POST['saveCategory']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
+        }
+        else
+        {
+            $categories = Catalogue::find()->all();
+            $categoriesArr = $this->makeTreeForDroplist($categories);
+
             return $this->render('create', [
                 'model' => $model,
+                'seoInfo' => $seoInfo,
+                'categories' => $categoriesArr,
             ]);
         }
     }
@@ -199,7 +245,7 @@ class CatalogueController extends Controller
             {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveNews']))
+                if (isset($_POST['saveCategory']))
                 {
                     return $this->redirect(['index']);
                 }
@@ -217,9 +263,13 @@ class CatalogueController extends Controller
         }
         else
         {
+            $categories = Catalogue::find()->all();
+            $categoriesArr = $this->makeTreeForDroplist($categories);
+
             return $this->render('update', [
                 'model' => $model,
                 'seoInfo' => $seoInfo,
+                'categories' => $categoriesArr,
                 'tabIndex' => $tabIndex,
             ]);
         }
@@ -233,7 +283,16 @@ class CatalogueController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $id = $model->id;
+        if ($model->delete())
+        {
+            $seoInfo = SEOInformation::findModel('catalogue', 'view', $id);
+            if ( !is_null($seoInfo))
+            {
+                $seoInfo->delete();
+            }
+        }
 
         return $this->redirect(['index']);
     }
@@ -247,10 +306,35 @@ class CatalogueController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Catalogue::findOne($id)) !== null) {
+        if (($model = Catalogue::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @param \backend\models\Catalogue[] $categories
+     * @param int $parentId
+     * @param int $level
+     * @return array
+     */
+    protected function makeTreeForDroplist($categories, $parentId = 0, $level = 0)
+    {
+        $arr = [];
+        foreach ($categories as $category)
+        {
+            if ($category->parent_id == $parentId)
+            {
+                $arr[$category->id] = str_repeat('- - ', $level) . $category->name;
+//                $arr = array_merge($arr, $this->makeTreeForDroplist($categories, $category->id, $level + 1));
+                $arr = $arr + $this->makeTreeForDroplist($categories, $category->id, $level + 1);
+            }
+        }
+
+        return $arr;
     }
 }

@@ -13,11 +13,14 @@ use common\models\Image;
  * @property integer $parent_id
  * @property string $name
  * @property string $uri
+ * @property string $user_row
  *
  * @property Product[] $products
  */
 class Catalogue extends \yii\db\ActiveRecord
 {
+    const IS_USER_ROW = 1;
+
     /**
      * @inheritdoc
      */
@@ -32,9 +35,10 @@ class Catalogue extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'name', 'uri'], 'required'],
-            [['id', 'parent_id'], 'integer'],
-            [['name', 'uri'], 'string', 'max' => 255]
+            [['id', 'name', 'uri', 'parent_id', 'user_row'], 'required'],
+            [['id', 'parent_id', 'user_row'], 'integer'],
+            [['uri'], 'unique'],
+            [['name', 'uri'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,7 +49,7 @@ class Catalogue extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID категории'),
-            'parent_id' => Yii::t('app', 'ID родительской категории'),
+            'parent_id' => Yii::t('app', 'Родительской категории'),
             'name' => Yii::t('app', 'Название'),
             'uri' => Yii::t('app', 'URI'),
         ];

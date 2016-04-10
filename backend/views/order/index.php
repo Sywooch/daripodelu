@@ -1,8 +1,7 @@
 <?php
 
+use yii\bootstrap\Alert;
 use yii\helpers\Html;
-//use yii\grid\GridView;
-//use yii\grid\ActionColumn;
 use backend\models\Order;
 use kartik\grid\GridView;
 use kartik\grid\ActionColumn;
@@ -41,7 +40,7 @@ if( Yii::$app->session->hasFlash('success') )
     ]);
 }
 ?>
-<div class="alert alert-info" role="alert">Только заказ в статусе <strong>"<?= Order::getStatusName(Order::STATUS_CANCELED); ?>"</strong> или <strong>"<?= Order::getStatusName(Order::STATUS_ARCHIVE); ?>"</strong> можно удалить.</div>
+<div class="alert alert-info" role="alert">Только заказ со статусом <strong>"<?= Order::getStatusName(Order::STATUS_CANCELED); ?>"</strong> или <strong>"<?= Order::getStatusName(Order::STATUS_ARCHIVE); ?>"</strong> можно удалить.</div>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,

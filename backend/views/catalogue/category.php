@@ -71,7 +71,7 @@ if( Yii::$app->session->hasFlash('success') )
     </ul>
     <div class="tab-content cms">
         <div role="tabpanel" id="main" class="tab-pane<?php if ($tabIndex === 0) : ?> active<? endif; ?>">
-            <?= Button::widget ( [
+            <?php /*= Button::widget ( [
                 'label' => '<i class="glyphicon glyphicon-trash"></i> ' . Yii::t('app', 'Delete'),
                 'encodeLabel' => false,
                 'options' => [
@@ -81,8 +81,8 @@ if( Yii::$app->session->hasFlash('success') )
                     'style' => 'margin:5px',
                 ],
                 'tagName' => 'a',
-            ] ); ?>
-            <?php $this->registerJs("
+            ] ); */ ?>
+            <?php /* $this->registerJs("
                 $('#category-del-btn').on('click', function(e){
                     var keys = $('#categoryids').yiiGridView('getSelectedRows');
 
@@ -121,7 +121,7 @@ if( Yii::$app->session->hasFlash('success') )
 
                     return false;
                 });
-            "); ?>
+            "); */ ?>
             <?= Button::widget ( [
                 'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
                 'encodeLabel' => false,
@@ -139,14 +139,14 @@ if( Yii::$app->session->hasFlash('success') )
                 'id' => 'categoryids',
                 'filterModel' => $searchModel,
                 'columns' => [
-                    [
+                    /*[
                         'class' => CheckboxColumn::className(),
                         'checkboxOptions' => [
                             'value' => $model[$key]->id,
                         ],
                         'name' => 'categoryids[]',
                         'contentOptions' => ['style'=>'width: 30px'],
-                    ],
+                    ],*/
                     [
                         'attribute' => 'name',
                         'format' => 'raw',

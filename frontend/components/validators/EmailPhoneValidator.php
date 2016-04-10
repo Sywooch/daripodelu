@@ -94,6 +94,6 @@ class EmailPhoneValidator extends Validator
             PunycodeAsset::register($view);
         }
 
-        return 'yii.validation.email(value, messages, ' . Json::htmlEncode($options) . ');';
+        return 'yii.validation.regularExpression(value, messages, ' . Json::htmlEncode($options) . ');';
     }
 }

@@ -2,10 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Catalogue */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $categories array */
 ?>
 
 <div class="catalogue-form">
@@ -24,6 +26,11 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
                 <?= $form->field($model, 'uri')->textInput(['maxlength' => true]) ?>
+
+                <?= $form->field($model, 'parent_id')->widget(Select2::className(), [
+                    'data' => $categories,
+                    'options' => ['placeholder' => 'Выберите родительскую категорию ...'],
+                ]) ?>
             </div>
             <div role="tabpanel" id="photo" class="tab-pane">
                 <?php if ( ! $model->isNewRecord): ?>
@@ -51,7 +58,7 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($seoInfo, 'meta_keywords')->textarea(['rows' => 3, 'maxlength' => 255, 'style' => 'max-width: 500px;']) ?>
             </div>
         </div>
-<!--        <div style="padding-bottom: 5px;">&nbsp;</div>-->
+        <div style="padding-bottom: 5px;">&nbsp;</div>
         <div class="form-group btn-ctrl">
             <?= Html::submitButton(
                 $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
@@ -59,7 +66,7 @@ use yii\widgets\ActiveForm;
             ) ?>
             <?= Html::submitButton(
                 Yii::t('app', 'Apply'),
-                ['class' => 'btn btn-default', 'name' => 'applyNews']
+                ['class' => 'btn btn-default', 'name' => 'applyCategory']
             ); ?>
         </div>
     </div>

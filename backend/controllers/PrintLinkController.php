@@ -70,7 +70,7 @@ class PrintlinkController extends Controller
                 }
                 else
                 {
-                    return $this->redirect(['update', 'id' => $model->id]);
+                    return $this->redirect(['update', 'id' => $model->code]);
                 }
             }
             else
@@ -105,14 +105,38 @@ class PrintlinkController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save())
+        if ($model->load(Yii::$app->request->post()))
         {
-            return $this->redirect(['view', 'id' => $model->code]);
+            if ($model->save())
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
+
+                if (isset($_POST['savePrintLink']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->code]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
         }
         else
         {
+            $existsPrintLinks = PrintLink::find()->where(['not', ['code' => $id]])->all();
+            $existsPrintLinkCodes = ArrayHelper::getColumn($existsPrintLinks, 'code');
+
+            $printsKind = PrintKind::find()->where(['not', ['name' => $existsPrintLinkCodes]])->all();
+
             return $this->render('update', [
                 'model' => $model,
+                'prints' => $printsKind,
             ]);
         }
     }
@@ -139,7 +163,7 @@ class PrintlinkController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = PrintLink::findOne($id)) !== null)
+        if (($model = PrintLink::find()->where(['code' => $id])->one()) !== null)
         {
             return $model;
         }

@@ -119,11 +119,11 @@ $totalPrice = 0
         <div class="form-group btn-ctrl">
             <?= Html::submitButton(
                 $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
-                ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveNews']
+                ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveOrder']
             ) ?>
             <?= Html::submitButton(
                 Yii::t('app', 'Apply'),
-                ['class' => 'btn btn-default', 'name' => 'applyNews']
+                ['class' => 'btn btn-default', 'name' => 'applyOrder']
             ); ?>
         </div>
     </div>

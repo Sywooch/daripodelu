@@ -69,18 +69,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Displays a single Order model.
-     * @param integer $id
-     * @return mixed
-     */
-    /*public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }*/
-
-    /**
      * Updates an existing Order model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -89,26 +77,45 @@ class OrderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $files = [];
 
-        if ( ! is_null($model))
+        if ($model->load(Yii::$app->request->post()))
         {
-            $path = $model->getDirPath();
-            $urlToDir = $model->getDirUrl();
-            $files = glob($path . '/' . $model->id . '_*.*');
-            $filesCount = count($files);
-            for ($i = 0; $i < $filesCount; $i++)
+            if ($model->save())
             {
-                $files[$i] = $urlToDir . '/' . basename($files[$i]);
-            }
-        }
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-        if ($model->load(Yii::$app->request->post()) && $model->save())
-        {
-            return $this->redirect(['view', 'id' => $model->id]);
+                if (isset($_POST['saveOrder']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
         }
         else
         {
+            $files = [];
+
+            if ( !is_null($model))
+            {
+                $path = $model->getDirPath();
+                $urlToDir = $model->getDirUrl();
+                $files = glob($path . '/' . $model->id . '_*.*');
+                $filesCount = count($files);
+                for ($i = 0; $i < $filesCount; $i++)
+                {
+                    $files[$i] = $urlToDir . '/' . basename($files[$i]);
+                }
+            }
+
             return $this->render('update', [
                 'model' => $model,
                 'files' => $files,
@@ -124,10 +131,9 @@ class OrderController extends Controller
      */
     public function actionDelete($id)
     {
-        $model = Order::find()->where(['id' => (int) $id])->andWhere(['or', ['status' => Order::STATUS_CANCELED], ['status' => Order::STATUS_ARCHIVE]])->one();
-        $files = [];
+        $model = Order::find()->where(['id' => (int)$id])->andWhere(['or', ['status' => Order::STATUS_CANCELED], ['status' => Order::STATUS_ARCHIVE]])->one();
 
-        if ( ! is_null($model))
+        if ( !is_null($model))
         {
             $path = $model->getDirPath();
             $modelId = $model->id;

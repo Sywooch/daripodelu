@@ -82,6 +82,11 @@ return [
                     'suffix' => '.html',
                 ],
                 [
+                    'pattern' => 'catalogue/create',
+                    'route' => 'catalogue/create',
+                    'suffix' => '.html',
+                ],
+                [
                     'pattern' => 'catalogue/<uri:[\w\d\-]+>',
                     'route' => 'catalogue/view',
                     'suffix' => '.html',
