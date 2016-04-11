@@ -112,5 +112,6 @@ return [
     'Update print' => 'Редактирование метода нанесения',
     'Add print' => 'Добавление метода нанесения',
     '<strong>Saved!</strong> The link added successfully.' => '<strong>Сохранено!</strong> Ссылка успешно сохранена.',
+    'Create product' => 'Создать товар',
     '' => '',
 ];

@@ -5,10 +5,26 @@ use yii\bootstrap\Alert;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Catalogue */
+/* @var $model backend\models\Catalogue */
+/* @var $category backend\models\Catalogue */
+
+$parents = [];
+$breadcrumb = [];
+if (isset($category) and $category instanceof backend\models\Catalogue)
+{
+    $parents = $category->parents();
+}
 
 $this->title = Yii::t('app', 'Create category');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Catalogue'), 'url' => ['index']];
+for ($i = 0; $i < count($parents) - 1; $i++)
+{
+    $this->params['breadcrumbs'][] = ['label' => $parents[$i]->name, 'url' => ['category', 'id' => $parents[$i]->id]];
+}
+if (count($parents) > 0)
+{
+    $this->params['breadcrumbs'][] = ['label' => $category->name, 'url' => ['category', 'id' => $category->id]];
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="catalogue-create">

@@ -13,7 +13,9 @@ use backend\models\Catalogue;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CatalogueSearch */
+/* @var $productSearchModel backend\models\ProductSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $productDataProvider yii\data\ActiveDataProvider */
 /* @var $category backend\models\Catalogue */
 
 $parents = $category->parents();
@@ -37,7 +39,7 @@ $title = $title . ' :: ' . Yii::t('app', 'Catalogue') . ' :: ' . Yii::$app->conf
 ?>
 
 <h1><?= Html::encode($this->title) ?></h1>
-
+<h3>Категории</h3>
 <?php
 $this->title = $title;
 if( Yii::$app->session->hasFlash('error') )
@@ -123,11 +125,11 @@ if( Yii::$app->session->hasFlash('success') )
                 });
             "); */ ?>
             <?= Button::widget ( [
-                'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
+                'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create category'),
                 'encodeLabel' => false,
                 'options' => [
                     'class' => 'btn-success btn-sm pull-right',
-                    'href' => Url::to(['/catalogue/create']),
+                    'href' => Url::to(['/catalogue/create', 'id' => $parentId]),
                     'style' => 'margin:5px'
                 ],
                 'tagName' => 'a',
@@ -186,3 +188,35 @@ if( Yii::$app->session->hasFlash('success') )
         </div>
     </div>
 </div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>Товары</h3>
+<?= Button::widget ( [
+    'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create product'),
+    'encodeLabel' => false,
+    'options' => [
+        'class' => 'btn-success btn-sm pull-right',
+        'href' => Url::to(['/product/create', 'id' => $parentId]),
+        'style' => 'margin:5px'
+    ],
+    'tagName' => 'a',
+] ); ?>
+    <div class="clearfix">&nbsp;</div>
+<?php Pjax::begin(['id' => 'products-gv-container']); ?>
+<?= GridView::widget([
+    'dataProvider' => $productDataProvider,
+    'id' => 'categoryids',
+    'filterModel' => $productSearchModel,
+    'columns' => [
+        [
+            'attribute' => 'name',
+        ],
+        [
+            'class' => ActionColumn::className(),
+            'controller' => 'product',
+            'template' => '{update} {delete}',
+            'contentOptions' => ['style'=>'width: 50px'],
+        ],
+    ],
+]); ?>
+<?php Pjax::end(); ?>

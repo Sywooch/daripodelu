@@ -6,8 +6,15 @@ use yii\bootstrap\Alert;
 /* @var $this yii\web\View */
 /* @var $model app\models\Catalogue */
 
+$parents = [];
+$parents = $model->parents();
+
 $this->title = Yii::t('app', 'Update category');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Catalogue'), 'url' => ['index']];
+for ($i = 0; $i < count($parents) - 1; $i++)
+{
+    $this->params['breadcrumbs'][] = ['label' => $parents[$i]->name, 'url' => ['category', 'id' => $parents[$i]->id]];
+}
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="catalogue-update">

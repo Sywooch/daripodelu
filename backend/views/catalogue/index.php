@@ -110,7 +110,7 @@ if( Yii::$app->session->hasFlash('success') )
                 'encodeLabel' => false,
                 'options' => [
                     'class' => 'btn-success btn-sm pull-right',
-                    'href' => Url::to(['/catalogue/create']),
+                    'href' => Url::to(['/catalogue/create', 'id' => $parentId]),
                     'style' => 'margin:5px'
                 ],
                 'tagName' => 'a',

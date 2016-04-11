@@ -14,6 +14,8 @@ use app\models\Image;
 use backend\models\Catalogue;
 use backend\models\CatalogueSearch;
 use backend\models\Counter;
+use backend\models\Product;
+use backend\models\ProductSearch;
 use common\models\SEOInformation;
 
 /**
@@ -82,6 +84,7 @@ class CatalogueController extends Controller
             'dataProvider' => $dataProvider,
             'seoInfo' => $seoInfo,
             'tabIndex' => $tabIndex,
+            'parentId' => 1,
         ]);
     }
 
@@ -94,6 +97,9 @@ class CatalogueController extends Controller
         $tabIndex = 0;
         $searchModel = new CatalogueSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Catalogue::find()->where(['parent_id' => $id]));
+
+        $productSearchModel = new ProductSearch();
+        $productDataProvider = $productSearchModel->search(Yii::$app->request->queryParams, Product::find()->where(['catalogue_id' => $id]));
 
         $seoInfo = SEOInformation::findModel('catalogue', 'view', $id);
         if (is_null($seoInfo))
@@ -124,9 +130,12 @@ class CatalogueController extends Controller
         return $this->render('category', [
             'category' => Catalogue::findOne(['id' => $id]),
             'searchModel' => $searchModel,
+            'productSearchModel' => $productSearchModel,
             'dataProvider' => $dataProvider,
+            'productDataProvider' => $productDataProvider,
             'seoInfo' => $seoInfo,
             'tabIndex' => $tabIndex,
+            'parentId' => (int) $id,
         ]);
     }
 
@@ -135,7 +144,7 @@ class CatalogueController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id = 0)
     {
         $model = new Catalogue();
         $seoInfo = new SEOInformation();
@@ -184,11 +193,24 @@ class CatalogueController extends Controller
         {
             $categories = Catalogue::find()->all();
             $categoriesArr = $this->makeTreeForDroplist($categories);
+            $category = null;
+            if (intval($id) > 0)
+            {
+                foreach ($categories as $item)
+                {
+                    if ($item->id == $id)
+                    {
+                        $category = $item;
+                    }
+                }
+                $model->parent_id = (int) $id;
+            }
 
             return $this->render('create', [
                 'model' => $model,
                 'seoInfo' => $seoInfo,
                 'categories' => $categoriesArr,
+                'category' => $category,
             ]);
         }
     }
