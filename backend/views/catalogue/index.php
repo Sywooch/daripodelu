@@ -126,7 +126,7 @@ if( Yii::$app->session->hasFlash('success') )
                         'format' => 'image',
                         'contentOptions' => ['style'=>'width: 90px'],
                         'value' => function($row) {
-                            return is_null($row->photo) ? '/no-image.jpg' : $row->photo->image_url_90x90;
+                            return is_null($row->photo) ? '/admin/img/no-image.png' : $row->photo->image_url_90x90;
                         }
                     ],
                     [

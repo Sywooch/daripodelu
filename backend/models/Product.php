@@ -77,7 +77,7 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID товара'),
-            'catalogue_id' => Yii::t('app', 'ID категории'),
+            'catalogue_id' => Yii::t('app', 'Категория'),
             'group_id' => Yii::t('app', 'ID группы'),
             'code' => Yii::t('app', 'Артикул'),
             'name' => Yii::t('app', 'Название'),
@@ -102,7 +102,7 @@ class Product extends \yii\db\ActiveRecord
             'inwayamount' => Yii::t('app', 'Всего в пути (поставка)'),
             'inwayfree' => Yii::t('app', 'Доступно для резервирования из поставки'),
             'enduserprice' => Yii::t('app', 'Цена End-User'),
-            'user_row' => Yii::t('app', 'Создан пользователем'),
+            'user_row' => Yii::t('app', 'Метод создания'),
         ];
     }
 

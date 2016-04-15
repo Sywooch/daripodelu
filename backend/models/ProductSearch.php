@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use backend\models\Catalogue;
 use backend\models\Product;
 
 /**
@@ -55,6 +56,16 @@ class ProductSearch extends Product
         ]);
 
         $this->load($params);
+
+        $categoryName = trim($this->catalogue_id);
+        if ($categoryName != '')
+        {
+            $category = Catalogue::find()->where(['like', 'name', $categoryName])->one();
+            if ( !is_null($category))
+            {
+                $this->catalogue_id = $category->id;
+            }
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

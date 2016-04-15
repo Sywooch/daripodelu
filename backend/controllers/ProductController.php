@@ -3,11 +3,12 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Product;
-use backend\models\ProductSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use backend\models\Catalogue;
+use backend\models\Product;
+use backend\models\ProductSearch;
 
 /**
  * ProductController implements the CRUD actions for Product model.
@@ -38,9 +39,12 @@ class ProductController extends Controller
         $searchModel = new ProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $categories = Catalogue::find()->orderBy(['name' => SORT_ASC])->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'categories' => $categories,
         ]);
     }
 

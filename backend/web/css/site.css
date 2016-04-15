@@ -291,3 +291,18 @@ table.shop-cart td.total-price {
 table.shop-cart tr td.delimiter {
     height: 28px;
 }
+
+.gv-row-90 td {
+    height: 107px;
+}
+
+.gv-td-img-90 {
+    line-height: 107px;
+    text-align: center;
+    vertical-align: middle !important;
+}
+
+.gv-prod-img-90 {
+    max-width: 90px;
+    max-height: 90px;
+}
