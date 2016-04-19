@@ -10,6 +10,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use backend\models\Catalogue;
+use backend\models\Product;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CatalogueSearch */
@@ -209,7 +210,40 @@ if( Yii::$app->session->hasFlash('success') )
     'filterModel' => $productSearchModel,
     'columns' => [
         [
+            'attribute' => 'id',
+            'contentOptions' => ['style'=>'width: 50px'],
+        ],
+        [
+            'format' => 'html',
+            'contentOptions' => ['class' => 'gv-td-img-90', 'style'=>'width: 90px'],
+            'value' => function($row) {
+                $src = is_null($row->small_image) ? '/admin/img/no-image.png' : '/uploads/' . $row->id . '/' . $row->small_image;
+
+                return Html::img($src, ['class' => 'gv-prod-img-90']);
+            }
+        ],
+        [
+            'attribute' => 'code',
+            'contentOptions' => ['style'=>'width: 80px'],
+        ],
+        [
             'attribute' => 'name',
+        ],
+        [
+            'attribute' => 'enduserprice',
+            'contentOptions' => ['style'=>'width: 120px; text-align: right;'],
+            'value' => function($row) {
+                return Yii::$app->formatter->asDecimal($row->enduserprice, 2);
+            }
+        ],
+        [
+            'attribute' => 'user_row',
+            'filter' => Product::getCreateMethods(),
+            'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
+            'contentOptions' => ['style'=>'width: 50px; text-align: center;'],
+            'value' => function($row){
+                return Product::getCreateMethodName($row->user_row);
+            },
         ],
         [
             'class' => ActionColumn::className(),

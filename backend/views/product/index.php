@@ -120,7 +120,16 @@ if( Yii::$app->session->hasFlash('success') )
             // 'big_image',
             // 'super_big_image',
             // 'content:ntext',
-            // 'status_id',
+            [
+                'attribute' => 'status_id',
+                'label' => 'Статус',
+                'filter' => Product::getStatusOptions(),
+                'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
+                'contentOptions' => ['style'=>'width: 100px; text-align: center;'],
+                'value' => function($row){
+                    return Product::getStatusName($row->status_id);
+                },
+            ],
             // 'status_caption',
             // 'brand',
             // 'weight',
@@ -143,8 +152,12 @@ if( Yii::$app->session->hasFlash('success') )
             ],
             [
                 'attribute' => 'user_row',
+                'filter' => Product::getCreateMethods(),
                 'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
                 'contentOptions' => ['style'=>'width: 50px; text-align: center;'],
+                'value' => function($row){
+                    return Product::getCreateMethodName($row->user_row);
+                },
             ],
             [
                 'class' => ActionColumn::className(),

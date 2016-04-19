@@ -105,6 +105,8 @@ class ProductSearch extends Product
             ->andFilterWhere(['like', 'status_caption', $this->status_caption])
             ->andFilterWhere(['like', 'brand', $this->brand]);
 
+        $this->catalogue_id = $categoryName;
+
         return $dataProvider;
     }
 }

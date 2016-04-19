@@ -3,11 +3,13 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\Catalogue;
 use backend\models\Product;
+use backend\models\PrintKind;
 use backend\models\ProductSearch;
 
 /**
@@ -69,9 +71,12 @@ class ProductController extends Controller
     {
         $model = new Product();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        }
+        else
+        {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -86,13 +91,22 @@ class ProductController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Product::find()->with(['productPrints', 'productAttachments'])->where(['id' => $id])->one();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        }
+        else
+        {
+            $printIds = ArrayHelper::getColumn($model->productPrints, 'print_id');
+            $model->prints = $printIds;
+            $prints = PrintKind::find()->all();
+//            $prints = PrintKind::find()->where(['name' => $printIds])->all();
+
             return $this->render('update', [
                 'model' => $model,
+                'prints' => $prints,
             ]);
         }
     }
@@ -119,9 +133,12 @@ class ProductController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Product::findOne($id)) !== null) {
+        if (($model = Product::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

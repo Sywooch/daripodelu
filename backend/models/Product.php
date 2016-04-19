@@ -45,6 +45,13 @@ class Product extends \yii\db\ActiveRecord
     const CREATE_AUTOMATIC = 0;
     const CREATE_BY_USER = 1;
 
+    const STATUS_NEW = 0;
+    const STATUS_NORMAL = 1;
+    const STATUS_UNTIL_DEPLETION = 2;
+    const STATUS_CLOSED = 3;
+
+    public $prints = [];
+
     /**
      * @inheritdoc
      */
@@ -66,7 +73,8 @@ class Product extends \yii\db\ActiveRecord
             [['code'], 'string', 'max' => 100],
             [['name', 'product_size', 'matherial', 'small_image', 'big_image', 'super_big_image'], 'string', 'max' => 255],
             [['status_caption'], 'string', 'max' => 40],
-            [['brand'], 'string', 'max' => 60]
+            [['brand'], 'string', 'max' => 60],
+            [['prints'], 'safe'],
         ];
     }
 
@@ -101,8 +109,9 @@ class Product extends \yii\db\ActiveRecord
             'free' => Yii::t('app', 'Доступно для резервирования'),
             'inwayamount' => Yii::t('app', 'Всего в пути (поставка)'),
             'inwayfree' => Yii::t('app', 'Доступно для резервирования из поставки'),
-            'enduserprice' => Yii::t('app', 'Цена End-User'),
+            'enduserprice' => Yii::t('app', 'Цена'),
             'user_row' => Yii::t('app', 'Метод создания'),
+            'prints' => Yii::t('app', 'Методы нанесения'),
         ];
     }
 
@@ -136,5 +145,37 @@ class Product extends \yii\db\ActiveRecord
     public function getProductPrints()
     {
         return $this->hasMany(ProductPrint::className(), ['product_id' => 'id']);
+    }
+
+    static public function getCreateMethods()
+    {
+        return array(
+            self::CREATE_AUTOMATIC => 'Автоматически',
+            self::CREATE_BY_USER => 'Вручную',
+        );
+    }
+
+    static public function getCreateMethodName($index)
+    {
+        $options = self::getCreateMethods();
+
+        return $options[$index];
+    }
+
+    static public function getStatusOptions()
+    {
+        return array(
+            self::STATUS_NEW => 'Новинка',
+            self::STATUS_NORMAL => 'Обычный',
+            self::STATUS_UNTIL_DEPLETION => 'До исчерпания складских остатков',
+            self::STATUS_CLOSED => 'Закрыт',
+        );
+    }
+
+    static public function getStatusName($index)
+    {
+        $options = self::getStatusOptions();
+
+        return $options[$index];
     }
 }

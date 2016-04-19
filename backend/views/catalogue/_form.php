@@ -46,8 +46,6 @@ use kartik\select2\Select2;
                 <?php endif; ?>
 
             </div>
-            <div role="tabpanel" id="settings" class="tab-pane">
-            </div>
             <div role="tabpanel" id="seo" class="tab-pane">
                 <?= $form->field($seoInfo, 'heading')->textInput(['maxlength' => 255, 'style' => 'max-width: 500px;']) ?>
 
