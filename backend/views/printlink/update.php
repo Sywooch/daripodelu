@@ -6,7 +6,7 @@ use yii\bootstrap\Alert;
 /* @var $this yii\web\View */
 /* @var $model backend\models\PrintLink */
 
-$this->title = Yii::t('app', 'Update print');
+$this->title = Yii::t('app', 'Update print-link');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Prints'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>

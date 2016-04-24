@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\Catalogue;
+use backend\models\Filter;
+use backend\models\FilterType;
 use backend\models\Product;
 use backend\models\PrintKind;
 use backend\models\ProductSearch;
@@ -91,7 +93,7 @@ class ProductController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = Product::find()->with(['productPrints', 'productAttachments'])->where(['id' => $id])->one();
+        $model = Product::find()->with(['productPrints', 'productAttachments', 'productFilters', 'slaveProducts'])->where(['id' => $id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save())
         {
@@ -102,11 +104,23 @@ class ProductController extends Controller
             $printIds = ArrayHelper::getColumn($model->productPrints, 'print_id');
             $model->prints = $printIds;
             $prints = PrintKind::find()->all();
-//            $prints = PrintKind::find()->where(['name' => $printIds])->all();
+
+            $filterTypes = FilterType::find()->with('filters')->orderBy(['name' => SORT_ASC])->all();
+            foreach ($model->productFilters as $productFilter)
+            {
+                foreach ($filterTypes as &$filterType)
+                {
+                    if ($filterType->id == $productFilter->type_id)
+                    {
+                        $filterType->value[] = $productFilter->filter_id;
+                    }
+                }
+            }
 
             return $this->render('update', [
                 'model' => $model,
                 'prints' => $prints,
+                'filterTypes' => $filterTypes,
             ]);
         }
     }

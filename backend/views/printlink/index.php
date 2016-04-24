@@ -13,7 +13,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\PrintLinkSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Prints');
+$this->title = Yii::t('app', 'Print - Link');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

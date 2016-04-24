@@ -306,3 +306,18 @@ table.shop-cart tr td.delimiter {
     max-width: 90px;
     max-height: 90px;
 }
+
+.product-img-place {
+    float: right;
+    width: 202px;
+    text-align: center;
+}
+
+.product-img-border {
+    border: 1px solid #ddd;
+    width: 202px;
+    height: 203px;
+    line-height: 200px;
+    text-align: center;
+    vertical-align: middle;
+}

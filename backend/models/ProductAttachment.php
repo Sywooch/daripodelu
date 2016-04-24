@@ -17,6 +17,9 @@ use Yii;
  */
 class ProductAttachment extends \yii\db\ActiveRecord
 {
+    const IS_FILE = 0;
+    const IS_IMAGE = 1;
+
     /**
      * @inheritdoc
      */

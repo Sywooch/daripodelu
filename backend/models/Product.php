@@ -35,10 +35,20 @@ use Yii;
  * @property double $enduserprice
  * @property integer $user_row
  *
+ * @property string $smallImageUrl  absolute URL for 200x200 px image
+ * @property string $bigImageUrl absolute URL for 280x280 px image
+ * @property string $superBigImageUrl absolute URL for 1000x1000 px image
+ *
+ * @property string $smallImagePath  full path for 200x200 px image
+ * @property string $bigImagePath full path for 280x280 px image
+ * @property string $superBigImagePath full path for 1000x1000 px image
+ *
  * @property Catalogue $catalogue
  * @property ProductAttachment[] $productAttachments
  * @property ProductFilter[] $productFilters
  * @property ProductPrint[] $productPrints
+ * @property SlaveProduct[] $slaveProducts
+ * @property Product[] $groupProducts
  */
 class Product extends \yii\db\ActiveRecord
 {
@@ -147,6 +157,19 @@ class Product extends \yii\db\ActiveRecord
         return $this->hasMany(ProductPrint::className(), ['product_id' => 'id']);
     }
 
+    public function getGroupProducts()
+    {
+        return $this->hasMany(Product::className(), ['group_id' => 'group_id'])->from(['prod' => '{{%product}}'])->andWhere(['not', ['group_id' => null]]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlaveProducts()
+    {
+        return $this->hasMany(SlaveProduct::className(), ['parent_product_id' => 'id']);
+    }
+
     static public function getCreateMethods()
     {
         return array(
@@ -177,5 +200,35 @@ class Product extends \yii\db\ActiveRecord
         $options = self::getStatusOptions();
 
         return $options[$index];
+    }
+
+    public function getSmallImageUrl()
+    {
+        return yii::$app->params['baseUploadURL'] . '/' . $this->id . '/' . $this->small_image;
+    }
+
+    public function getSmallImagePath()
+    {
+        return yii::$app->params['uploadPath'] . '/' . $this->id . '/' . $this->small_image;
+    }
+
+    public function getBigImageUrl()
+    {
+        return yii::$app->params['baseUploadURL'] . '/' . $this->id . '/' . $this->big_image;
+    }
+
+    public function getBigImagePath()
+    {
+        return yii::$app->params['uploadPath'] . '/' . $this->id . '/' . $this->big_image;
+    }
+
+    public function getSuperBigImageUrl()
+    {
+        return yii::$app->params['baseUploadURL'] . '/' . $this->id . '/' . $this->super_big_image;
+    }
+
+    public function getSuperBigImagePath()
+    {
+        return yii::$app->params['uploadPath'] . '/' . $this->id . '/' . $this->super_big_image;
     }
 }

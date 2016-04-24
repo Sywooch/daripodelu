@@ -109,9 +109,13 @@ return [
     'Publication date article. The later date and time of publication, the higher is the article in the list.' => 'Дата публикации статьи. Чем новее дата и время публикации, тем выше расположена статьи в списке.',
     'Images can be added only after the article will be saved.' => 'Изображения могут быть добавлены только после того, как статья¡ будет сохранена.',
     'Prints' => 'Методы нанесения',
+    'Print - Link' => 'Связь "Метод нанесения - Страница описания',
     'Update print' => 'Редактирование метода нанесения',
+    'Update print-link' => 'Редактирование связи',
     'Add print' => 'Добавление метода нанесения',
+    'Add print-link' => 'Добавление связи',
     '<strong>Saved!</strong> The link added successfully.' => '<strong>Сохранено!</strong> Ссылка успешно сохранена.',
     'Create product' => 'Создать товар',
+    'Add slave product' => 'Добавить подчиненый товар',
     '' => '',
 ];
