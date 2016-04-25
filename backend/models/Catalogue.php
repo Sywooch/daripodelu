@@ -13,7 +13,7 @@ use common\models\Image;
  * @property integer $parent_id
  * @property string $name
  * @property string $uri
- * @property string $user_row
+ * @property integer $user_row
  *
  * @property Product[] $products
  */

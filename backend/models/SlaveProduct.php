@@ -21,11 +21,16 @@ use Yii;
  * @property integer $inwayamount
  * @property integer $inwayfree
  * @property double $enduserprice
+ * @property integer $user_row
  *
  * @property Product $parentProduct
  */
 class SlaveProduct extends \yii\db\ActiveRecord
 {
+    const IS_USER_ROW = 1;
+
+    const SCENARIO_INSERT = 'insert';
+
     /**
      * @inheritdoc
      */
@@ -40,13 +45,15 @@ class SlaveProduct extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'parent_product_id'], 'required'],
-            [['id', 'parent_product_id', 'amount', 'free', 'inwayamount', 'inwayfree'], 'integer'],
+            [['id', 'parent_product_id', 'user_row'], 'required'],
+            [['id', 'parent_product_id', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
             [['weight', 'price', 'enduserprice'], 'number'],
             [['code'], 'string', 'max' => 100],
             [['name', 'size_code'], 'string', 'max' => 255],
             [['price_currency'], 'string', 'max' => 20],
             [['price_name'], 'string', 'max' => 40],
+            [['amount', 'free', 'inwayamount', 'inwayfree'], 'default', 'value' => 0, 'on' => static::SCENARIO_INSERT],
+            [['weight', 'price', 'enduserprice'], 'default', 'value' => 0.00, 'on' => static::SCENARIO_INSERT],
             [['parent_product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['parent_product_id' => 'id']],
         ];
     }
@@ -58,7 +65,7 @@ class SlaveProduct extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID товара'),
-            'parent_product_id' => Yii::t('app', 'ID родительского товара'),
+            'parent_product_id' => Yii::t('app', 'Родительский товар'),
             'code' => Yii::t('app', 'Артикул'),
             'name' => Yii::t('app', 'Название'),
             'size_code' => Yii::t('app', 'Размер'),
@@ -66,11 +73,11 @@ class SlaveProduct extends \yii\db\ActiveRecord
             'price' => Yii::t('app', 'Цена'),
             'price_currency' => Yii::t('app', 'Валюта'),
             'price_name' => Yii::t('app', 'Название цены'),
-            'amount' => Yii::t('app', 'Amount'),
-            'free' => Yii::t('app', 'Free'),
-            'inwayamount' => Yii::t('app', 'Inwayamount'),
-            'inwayfree' => Yii::t('app', 'Inwayfree'),
-            'enduserprice' => Yii::t('app', 'Enduserprice'),
+            'amount' => Yii::t('app', 'Всего на складе'),
+            'free' => Yii::t('app', 'Доступно для резервирования'),
+            'inwayamount' => Yii::t('app', 'Всего в пути (поставка)'),
+            'inwayfree' => Yii::t('app', 'Доступно для резервирования из поставки'),
+            'enduserprice' => Yii::t('app', 'Цена для конечного пользователя'),
         ];
     }
 
@@ -80,5 +87,12 @@ class SlaveProduct extends \yii\db\ActiveRecord
     public function getParentProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'parent_product_id']);
+    }
+
+    public function afterFind()
+    {
+        $this->price = yii::$app->formatter->asDecimal($this->price, 2, [\NumberFormatter::GROUPING_USED => 0]);
+        $this->enduserprice = yii::$app->formatter->asDecimal($this->enduserprice, 2, [\NumberFormatter::GROUPING_USED => 0]);
+        parent::afterFind();
     }
 }

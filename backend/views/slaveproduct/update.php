@@ -4,14 +4,13 @@ use yii\bootstrap\Alert;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Product */
-/* @var $prints backend\models\PrintKind[] */
+/* @var $model backend\models\SlaveProduct */
 
 $this->title = Yii::t('app', 'Update');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Products'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Slave products'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
-<div class="product-update">
+<div class="slave-product-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -43,9 +42,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
-        'prints' => $prints,
-        'filterTypes' => $filterTypes,
-        'tabNumber' => $tabNumber,
+        'products' => $products,
     ]) ?>
 
 </div>

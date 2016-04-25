@@ -117,5 +117,7 @@ return [
     '<strong>Saved!</strong> The link added successfully.' => '<strong>Сохранено!</strong> Ссылка успешно сохранена.',
     'Create product' => 'Создать товар',
     'Add slave product' => 'Добавить подчиненый товар',
+    'Leave the group' => 'Выйти из группы',
+    'Slave products' => 'Дочерние товары',
     '' => '',
 ];

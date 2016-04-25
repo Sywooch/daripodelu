@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use backend\models\Catalogue;
 use backend\models\Product;
+use yii\helpers\ArrayHelper;
 
 /**
  * ProductSearch represents the model behind the search form about `backend\models\Product`.
@@ -20,8 +21,8 @@ class ProductSearch extends Product
     public function rules()
     {
         return [
-            [['id', 'catalogue_id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
-            [['code', 'name', 'product_size', 'matherial', 'small_image', 'big_image', 'super_big_image', 'content', 'status_caption', 'brand'], 'safe'],
+            [['id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
+            [['code', 'catalogue_id', 'name', 'product_size', 'matherial', 'small_image', 'big_image', 'super_big_image', 'content', 'status_caption', 'brand'], 'safe'],
             [['weight', 'pack_weigh', 'pack_volume', 'pack_sizex', 'pack_sizey', 'pack_sizez', 'enduserprice'], 'number'],
         ];
     }
@@ -60,10 +61,10 @@ class ProductSearch extends Product
         $categoryName = trim($this->catalogue_id);
         if ($categoryName != '')
         {
-            $category = Catalogue::find()->where(['like', 'name', $categoryName])->one();
-            if ( !is_null($category))
+            $categories = Catalogue::find()->where(['like', 'name', $categoryName])->all();
+            if (count($categories) > 0)
             {
-                $this->catalogue_id = $category->id;
+                $catalogueIds = ArrayHelper::getColumn($categories, 'id');
             }
         }
 
@@ -76,7 +77,7 @@ class ProductSearch extends Product
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'catalogue_id' => $this->catalogue_id,
+            'catalogue_id' => $catalogueIds,
             'group_id' => $this->group_id,
             'status_id' => $this->status_id,
             'weight' => $this->weight,

@@ -91,9 +91,10 @@ class ProductController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $tabNumber = 1)
     {
-        $model = Product::find()->with(['productPrints', 'productAttachments', 'productFilters', 'slaveProducts'])->where(['id' => $id])->one();
+        $tabNumber = (int) $tabNumber;
+        $model = Product::find()->with(['productPrints', 'productAttachments', 'productFilters', 'groupProducts', 'slaveProducts'])->where(['id' => $id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save())
         {
@@ -121,6 +122,7 @@ class ProductController extends Controller
                 'model' => $model,
                 'prints' => $prints,
                 'filterTypes' => $filterTypes,
+                'tabNumber' => $tabNumber,
             ]);
         }
     }
