@@ -29,7 +29,7 @@ if ($tabNumber < 1 || $tabNumber > 7)
     $tabNumber = 1;
 }
 
-$printsArr =  ArrayHelper::map($prints, 'name', 'description');
+$printsArr = ArrayHelper::map($prints, 'name', 'description');
 foreach ($printsArr as $key => &$value)
 {
     $value = $key . ' - ' . $value;
@@ -75,24 +75,52 @@ $groupDataProvider->setModels($model->groupProducts);
     <?php $form = ActiveForm::begin(); ?>
     <div role="tabpanel">
         <ul class="nav nav-tabs">
-            <li role="presentation"<?php if ($tabNumber == 1): ?> class="active"<?php endif; ?>><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-            <li role="presentation"<?php if ($tabNumber == 2): ?> class="active"<?php endif; ?>><a href="#pack" aria-controls="pack" role="tab" data-toggle="tab">Упаковка</a></li>
-            <li role="presentation"<?php if ($tabNumber == 3): ?> class="active"<?php endif; ?>><a href="#photo" aria-controls="photo" role="tab" data-toggle="tab">Доп. фотографии</a></li>
-            <li role="presentation"<?php if ($tabNumber == 4): ?> class="active"<?php endif; ?>><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Файлы</a></li>
-            <li role="presentation"<?php if ($tabNumber == 5): ?> class="active"<?php endif; ?>><a href="#filters" aria-controls="filters" role="tab" data-toggle="tab">Применяемые фильтры</a></li>
-            <li role="presentation"<?php if ($tabNumber == 6): ?> class="active"<?php endif; ?>><a href="#slave" aria-controls="slave" role="tab" data-toggle="tab">Дочерние товары</a></li>
-            <li role="presentation"<?php if ($tabNumber == 7): ?> class="active"<?php endif; ?>><a href="#group" aria-controls="group" role="tab" data-toggle="tab">Связанные товары</a></li>
+            <li role="presentation"<?php if ($tabNumber == 1): ?> class="active"<?php endif; ?>><a href="#main"
+                                                                                                   aria-controls="main"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Основное</a>
+            </li>
+            <li role="presentation"<?php if ($tabNumber == 2): ?> class="active"<?php endif; ?>><a href="#pack"
+                                                                                                   aria-controls="pack"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Упаковка</a>
+            </li>
+            <li role="presentation"<?php if ($tabNumber == 3): ?> class="active"<?php endif; ?>><a href="#photo"
+                                                                                                   aria-controls="photo"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Доп.
+                    фотографии</a></li>
+            <li role="presentation"<?php if ($tabNumber == 4): ?> class="active"<?php endif; ?>><a href="#files"
+                                                                                                   aria-controls="files"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Файлы</a>
+            </li>
+            <li role="presentation"<?php if ($tabNumber == 5): ?> class="active"<?php endif; ?>><a href="#filters"
+                                                                                                   aria-controls="filters"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Применяемые
+                    фильтры</a></li>
+            <li role="presentation"<?php if ($tabNumber == 6): ?> class="active"<?php endif; ?>><a href="#slave"
+                                                                                                   aria-controls="slave"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Дочерние
+                    товары</a></li>
+            <li role="presentation"<?php if ($tabNumber == 7): ?> class="active"<?php endif; ?>><a href="#group"
+                                                                                                   aria-controls="group"
+                                                                                                   role="tab"
+                                                                                                   data-toggle="tab">Связанные
+                    товары</a></li>
         </ul>
 
         <div class="tab-content cms">
-            <div role="tabpanel" id="main" class="tab-pane active">
+            <div role="tabpanel" id="main" class="tab-pane<?php if ($tabNumber == 1): ?> active<?php endif; ?>">
                 <div class="product-img-place">
                     <div class="product-img-border">
-                    <? if (isset($model->small_image) && file_exists($model->smallImagePath)): ?>
-                        <img src="<?= $model->smallImageUrl; ?>" alt="">
-                    <?php else: ?>
-                        <img src="<?= Yii::getAlias('@web/img/no-image.png'); ?>" alt="">
-                    <? endif ?>
+                        <? if (isset($model->small_image) && file_exists($model->smallImagePath)): ?>
+                            <img src="<?= $model->smallImageUrl; ?>" alt="">
+                        <?php else: ?>
+                            <img src="<?= Yii::getAlias('@web/img/no-image.png'); ?>" alt="">
+                        <? endif ?>
                     </div>
                 </div>
                 <?= $form->field($model, 'code')->textInput(['maxlength' => true, 'style' => 'max-width: 200px;',]) ?>
@@ -113,7 +141,7 @@ $groupDataProvider->setModels($model->groupProducts);
                     ],
                 ]); ?>
 
-                <?= $form->field($model, 'content')->widget(CKEditor::className(),[
+                <?= $form->field($model, 'content')->widget(CKEditor::className(), [
                     'editorOptions' => ElFinder::ckeditorOptions(
                         'elfinder',
                         [
@@ -138,7 +166,7 @@ $groupDataProvider->setModels($model->groupProducts);
                 <?= $form->field($model, 'enduserprice')->textInput(['style' => 'max-width: 200px;',]) ?>
 
             </div>
-            <div role="tabpanel" id="pack" class="tab-pane">
+            <div role="tabpanel" id="pack" class="tab-pane<?php if ($tabNumber == 2): ?> active<?php endif; ?>">
                 <?= $form->field($model, 'pack_amount')->textInput(['style' => 'max-width: 200px;',]) ?>
 
                 <?= $form->field($model, 'pack_weigh')->textInput(['style' => 'max-width: 200px;',]) ?>
@@ -153,7 +181,7 @@ $groupDataProvider->setModels($model->groupProducts);
 
                 <?= $form->field($model, 'amount')->textInput(['style' => 'max-width: 200px;',]) ?>
             </div>
-            <div role="tabpanel" id="photo" class="tab-pane">
+            <div role="tabpanel" id="photo" class="tab-pane<?php if ($tabNumber == 3): ?> active<?php endif; ?>">
                 <?php Pjax::begin(['id' => 'extra-images']); ?>
                 <?= GridView::widget([
                     'dataProvider' => $photoDataProvider,
@@ -165,17 +193,18 @@ $groupDataProvider->setModels($model->groupProducts);
                     'columns' => [
                         [
                             'format' => 'html',
-                            'contentOptions' => ['class' => 'gv-td-img-90', 'style'=>'width: 90px'],
-                            'value' => function($row) use($model) {
+                            'contentOptions' => ['class' => 'gv-td-img-90', 'style' => 'width: 90px'],
+                            'value' => function ($row) use ($model)
+                            {
                                 $src = is_null($row->image) ? '/admin/img/no-image.png' : '/uploads/' . $model->id . '/' . $row->image;
 
                                 return Html::img($src, ['class' => 'gv-prod-img-90']);
                             }
                         ],
                         [
-                            'class'=>'kartik\grid\EditableColumn',
+                            'class' => 'kartik\grid\EditableColumn',
                             'attribute' => 'name',
-                            'editableOptions'=>[
+                            'editableOptions' => [
                                 'size' => 'lg',
                                 'submitButton' => [
                                     'class' => 'btn btn-sm btn-primary',
@@ -187,13 +216,13 @@ $groupDataProvider->setModels($model->groupProducts);
                         [
                             'class' => ActionColumn::className(),
                             'template' => '{delete}',
-                            'contentOptions' => ['style'=>'width: 50px'],
+                            'contentOptions' => ['style' => 'width: 50px'],
                         ],
                     ],
                 ]); ?>
                 <?php Pjax::end(); ?>
             </div>
-            <div role="tabpanel" id="files" class="tab-pane">
+            <div role="tabpanel" id="files" class="tab-pane<?php if ($tabNumber == 4): ?> active<?php endif; ?>">
                 <?php
                 $i = 0;
                 Pjax::begin(['id' => 'extra-files']);
@@ -207,15 +236,17 @@ $groupDataProvider->setModels($model->groupProducts);
                             'class' => DataColumn::className(),
                             'label' => 'Скачать',
                             'format' => 'raw',
-                            'value' => function($row) use ($model) {
+                            'value' => function ($row) use ($model)
+                            {
                                 return Html::a('<i class="glyphicon glyphicon-download-alt"></i>', '/uploads/' . $model->id . '/' . $row->file, ['data' => ['pjax' => 0], 'title' => 'Скачать']);
                             },
-                            'contentOptions' => ['style'=>'width: 50px; text-align: center;'],
+                            'contentOptions' => ['style' => 'width: 50px; text-align: center;'],
                         ],
                         [
-                            'class'=>'kartik\grid\EditableColumn',
+                            'class' => 'kartik\grid\EditableColumn',
                             'attribute' => 'name',
-                            'editableOptions'=>function ($model, $key, $index, $grid) {
+                            'editableOptions' => function ($model, $key, $index, $grid)
+                            {
                                 return [
                                     'size' => 'lg',
                                     'submitButton' => [
@@ -230,13 +261,13 @@ $groupDataProvider->setModels($model->groupProducts);
                         [
                             'class' => ActionColumn::className(),
                             'template' => '{delete}',
-                            'contentOptions' => ['style'=>'width: 50px'],
+                            'contentOptions' => ['style' => 'width: 50px'],
                         ],
                     ],
                 ]); ?>
                 <?php Pjax::end(); ?>
             </div>
-            <div role="tabpanel" id="filters" class="tab-pane">
+            <div role="tabpanel" id="filters" class="tab-pane<?php if ($tabNumber == 5): ?> active<?php endif; ?>">
                 <?php foreach ($filterTypes as $index => $filterType): ?>
                     <?= $form->field($filterType, "[$index]value")
                         ->widget(Select2::className(), [
@@ -251,8 +282,8 @@ $groupDataProvider->setModels($model->groupProducts);
                         ->label($filterType->name); ?>
                 <?php endforeach; ?>
             </div>
-            <div role="tabpanel" id="slave" class="tab-pane">
-                <?= Button::widget ( [
+            <div role="tabpanel" id="slave" class="tab-pane<?php if ($tabNumber == 6): ?> active<?php endif; ?>">
+                <?= Button::widget([
                     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Add'),
                     'encodeLabel' => false,
                     'options' => [
@@ -261,7 +292,7 @@ $groupDataProvider->setModels($model->groupProducts);
                         'style' => 'margin:5px; margin-bottom: 10px;',
                     ],
                     'tagName' => 'a',
-                ] ); ?>
+                ]); ?>
                 <div class="clearfix">&nbsp;</div>
                 <?php Pjax::begin(['id' => 'slave']); ?>
                 <?= GridView::widget([
@@ -270,36 +301,37 @@ $groupDataProvider->setModels($model->groupProducts);
                     'summary' => '',
                     'columns' => [
                         [
-                            'attribute' => 'code',
-                            'contentOptions' => ['style'=>'width: 80px'],
-                        ],
-                        [
                             'attribute' => 'name',
                         ],
                         [
                             'attribute' => 'size_code',
-                            'contentOptions' => ['style'=>'width: 80px; text-align: center;'],
-                        ],
-                        [
-                            'attribute' => 'enduserprice',
-                            'label' => 'Цена',
-                            'contentOptions' => ['style'=>'width: 120px; text-align: right;'],
-                            'value' => function($row) {
-                                return Yii::$app->formatter->asDecimal($row->enduserprice, 2);
-                            }
+                            'contentOptions' => ['style' => 'width: 80px; text-align: center;'],
                         ],
                         [
                             'class' => ActionColumn::className(),
                             'controller' => 'slaveproduct',
                             'template' => '{update} {delete}',
-                            'contentOptions' => ['style'=>'width: 50px'],
+                            'urlCreator' => function ($action, $row, $key, $index) use ($model)
+                            {
+                                if ($action === 'update')
+                                {
+                                    $url = Url::to(['slaveproduct/update', 'id' => $row->id, 'referrer' => Url::to(['product/update', 'id' => $model->id, 'tabNumber' => 6])]);
+                                    return $url;
+                                }
+                                /*if ($action === 'delete')
+                                {
+                                    $url = Url::to(['slaveproduct/update', 'id' => $row->id, 'referrer' => Url::to(['product/update', 'id' => $model->id, 'tabNumber' => 6])]);
+                                    return $url;
+                                }*/
+                            },
+                            'contentOptions' => ['style' => 'width: 50px'],
                         ],
                     ],
                 ]); ?>
                 <?php Pjax::end(); ?>
             </div>
-            <div role="tabpanel" id="group" class="tab-pane">
-                <?= Button::widget ( [
+            <div role="tabpanel" id="group" class="tab-pane<?php if ($tabNumber == 7): ?> active<?php endif; ?>">
+                <?= Button::widget([
                     'label' => '<i class="glyphicon glyphicon-log-out"></i> ' . Yii::t('app', 'Leave the group'),
                     'encodeLabel' => false,
                     'options' => [
@@ -308,7 +340,7 @@ $groupDataProvider->setModels($model->groupProducts);
                         'style' => 'margin:5px; margin-bottom: 10px;',
                     ],
                     'tagName' => 'a',
-                ] ); ?>
+                ]); ?>
                 <div class="clearfix">&nbsp;</div>
                 <?php Pjax::begin(['id' => 'slave']); ?>
                 <?= GridView::widget([
@@ -321,12 +353,13 @@ $groupDataProvider->setModels($model->groupProducts);
                     'columns' => [
                         [
                             'attribute' => 'id',
-                            'contentOptions' => ['style'=>'width: 50px'],
+                            'contentOptions' => ['style' => 'width: 50px'],
                         ],
                         [
                             'format' => 'html',
-                            'contentOptions' => ['class' => 'gv-td-img-90', 'style'=>'width: 90px'],
-                            'value' => function($row) {
+                            'contentOptions' => ['class' => 'gv-td-img-90', 'style' => 'width: 90px'],
+                            'value' => function ($row)
+                            {
                                 $src = is_null($row->small_image) ? '/admin/img/no-image.png' : '/uploads/' . $row->id . '/' . $row->small_image;
 
                                 return Html::img($src, ['class' => 'gv-prod-img-90']);
@@ -334,7 +367,7 @@ $groupDataProvider->setModels($model->groupProducts);
                         ],
                         [
                             'attribute' => 'code',
-                            'contentOptions' => ['style'=>'width: 80px'],
+                            'contentOptions' => ['style' => 'width: 80px'],
                         ],
                         [
                             'attribute' => 'name',
@@ -342,8 +375,9 @@ $groupDataProvider->setModels($model->groupProducts);
                         [
                             'attribute' => 'enduserprice',
                             'label' => 'Цена',
-                            'contentOptions' => ['style'=>'width: 120px; text-align: right;'],
-                            'value' => function($row) {
+                            'contentOptions' => ['style' => 'width: 120px; text-align: right;'],
+                            'value' => function ($row)
+                            {
                                 return Yii::$app->formatter->asDecimal($row->enduserprice, 2);
                             }
                         ],
@@ -351,7 +385,7 @@ $groupDataProvider->setModels($model->groupProducts);
                             'class' => ActionColumn::className(),
                             'controller' => 'slaveproduct',
                             'template' => '{update} {delete}',
-                            'contentOptions' => ['style'=>'width: 50px'],
+                            'contentOptions' => ['style' => 'width: 50px'],
                         ],
                     ],
                 ]); ?>

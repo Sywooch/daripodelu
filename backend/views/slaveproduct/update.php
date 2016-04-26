@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\SlaveProduct */
 
 $this->title = Yii::t('app', 'Update');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Slave products'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = (trim($referrer) == '') ? ['label' => Yii::t('app', 'Slave products'), 'url' => ['index']] : ['label' => Yii::t('app', 'Slave products'), 'url' => $referrer];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="slave-product-update">
@@ -43,6 +43,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
     <?= $this->render('_form', [
         'model' => $model,
         'products' => $products,
+        'referrer' => $referrer,
     ]) ?>
 
 </div>

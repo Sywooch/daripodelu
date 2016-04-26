@@ -54,7 +54,7 @@ class SlaveproductController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($referrer = '')
     {
         $model = new SlaveProduct();
         $model->scenario = SlaveProduct::SCENARIO_INSERT;
@@ -71,18 +71,18 @@ class SlaveproductController extends Controller
 
                 if (isset($_POST['saveSlave']))
                 {
-                    return $this->redirect(['index']);
+                    return (trim($referrer) == '') ? $this->redirect(['index']): $this->redirect($referrer);
                 }
                 else
                 {
-                    return $this->redirect(['update', 'id' => $model->id]);
+                    return (trim($referrer) == '') ? $this->redirect(['update', 'id' => $model->id]): $this->redirect(['update', 'id' => $model->id, 'referrer' => $referrer]);
                 }
             }
             else
             {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
-                return $this->redirect(['index']);
+                return (trim($referrer) == '') ? $this->redirect(['index']): $this->redirect($referrer);
             }
         }
         else
@@ -92,6 +92,7 @@ class SlaveproductController extends Controller
             return $this->render('create', [
                 'model' => $model,
                 'products' => $products,
+                'referrer' => $referrer,
             ]);
         }
     }
@@ -102,7 +103,7 @@ class SlaveproductController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $referrer = '')
     {
         $model = $this->findModel($id);
 
@@ -114,18 +115,18 @@ class SlaveproductController extends Controller
 
                 if (isset($_POST['saveSlave']))
                 {
-                    return $this->redirect(['index']);
+                    return (trim($referrer) == '') ? $this->redirect(['index']): $this->redirect($referrer);
                 }
                 else
                 {
-                    return $this->redirect(['update', 'id' => $model->id]);
+                    return (trim($referrer) == '') ? $this->redirect(['update', 'id' => $model->id]): $this->redirect(['update', 'id' => $model->id, 'referrer' => $referrer]);
                 }
             }
             else
             {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
-                return $this->redirect(['index']);
+                return (trim($referrer) == '') ? $this->redirect(['index']): $this->redirect($referrer);
             }
         }
         else
@@ -135,6 +136,7 @@ class SlaveproductController extends Controller
             return $this->render('update', [
                 'model' => $model,
                 'products' => $products,
+                'referrer' => $referrer,
             ]);
         }
     }
@@ -145,11 +147,11 @@ class SlaveproductController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($id, $referrer = '')
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return (trim($referrer) == '') ? $this->redirect(['index']): $this->redirect($referrer);
     }
 
     /**

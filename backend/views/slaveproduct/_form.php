@@ -37,7 +37,7 @@ use kartik\select2\Select2;
 
                 <?php//= $form->field($model, 'code')->textInput(['maxlength' => 100, 'style' => 'max-width: 200px;']) ?>
 
-                <?php//= $form->field($model, 'name')->textInput(['maxlength' => 255, 'style' => 'max-width: 600px;']) ?>
+                <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'style' => 'max-width: 600px;']) ?>
 
                 <?= $form->field($model, 'size_code')->textInput(['maxlength' => 255, 'style' => 'max-width: 200px;']) ?>
 
