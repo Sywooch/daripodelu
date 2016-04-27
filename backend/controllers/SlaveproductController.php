@@ -3,7 +3,9 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use backend\models\Counter;
@@ -22,6 +24,15 @@ class SlaveproductController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -29,6 +40,25 @@ class SlaveproductController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        if (parent::beforeAction($action))
+        {
+            $referrer = Yii::$app->request->get('referrer', false);
+            if ($referrer !== false && trim($referrer) != '')
+            {
+                if ( ! Url::isRelative($referrer))
+                {
+                    throw new NotFoundHttpException();
+                }
+            };
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -54,7 +84,7 @@ class SlaveproductController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($referrer = '')
+    public function actionCreate($id = 0, $referrer = '')
     {
         $model = new SlaveProduct();
         $model->scenario = SlaveProduct::SCENARIO_INSERT;
@@ -88,6 +118,7 @@ class SlaveproductController extends Controller
         else
         {
             $products = Product::find()->orderBy(['name' => SORT_ASC])->all();
+            $model->parent_product_id = (int) $id;
 
             return $this->render('create', [
                 'model' => $model,

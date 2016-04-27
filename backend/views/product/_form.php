@@ -288,7 +288,7 @@ $groupDataProvider->setModels($model->groupProducts);
                     'encodeLabel' => false,
                     'options' => [
                         'class' => 'btn-success btn-sm pull-right',
-                        'href' => Url::to(['/slaveproduct/create']),
+                        'href' => Url::to(['/slaveproduct/create', 'id' => $model->id, 'referrer' => Url::to(['product/update', 'id' => $model->id, 'tabNumber' => 6])]),
                         'style' => 'margin:5px; margin-bottom: 10px;',
                     ],
                     'tagName' => 'a',
@@ -318,11 +318,11 @@ $groupDataProvider->setModels($model->groupProducts);
                                     $url = Url::to(['slaveproduct/update', 'id' => $row->id, 'referrer' => Url::to(['product/update', 'id' => $model->id, 'tabNumber' => 6])]);
                                     return $url;
                                 }
-                                /*if ($action === 'delete')
+                                if ($action === 'delete')
                                 {
-                                    $url = Url::to(['slaveproduct/update', 'id' => $row->id, 'referrer' => Url::to(['product/update', 'id' => $model->id, 'tabNumber' => 6])]);
+                                    $url = Url::to(['slaveproduct/delete', 'id' => $row->id, 'referrer' => Url::to(['product/update', 'id' => $model->id, 'tabNumber' => 6])]);
                                     return $url;
-                                }*/
+                                }
                             },
                             'contentOptions' => ['style' => 'width: 50px'],
                         ],

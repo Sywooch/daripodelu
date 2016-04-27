@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\SlaveProduct */
 
 $this->title = Yii::t('app', 'Create');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Slave products'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = (trim($referrer) == '') ? ['label' => Yii::t('app', 'Slave products'), 'url' => ['index']] : ['label' => Yii::t('app', 'Slave products'), 'url' => $referrer];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="slave-product-create">

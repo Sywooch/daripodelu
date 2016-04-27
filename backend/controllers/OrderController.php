@@ -3,12 +3,13 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Order;
-use backend\models\OrderSearch;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\helpers\Json;
+use backend\models\Order;
+use backend\models\OrderSearch;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -18,6 +19,15 @@ class OrderController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
