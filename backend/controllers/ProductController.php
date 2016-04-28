@@ -12,6 +12,7 @@ use backend\models\Catalogue;
 use backend\models\Filter;
 use backend\models\FilterType;
 use backend\models\Product;
+use backend\models\ProductFilter;
 use backend\models\PrintKind;
 use backend\models\ProductSearch;
 
@@ -106,9 +107,50 @@ class ProductController extends Controller
         $tabNumber = (int) $tabNumber;
         $model = Product::find()->with(['productPrints', 'productAttachments', 'productFilters', 'groupProducts', 'slaveProducts'])->where(['id' => $id])->one();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save())
+        if ($model->load(Yii::$app->request->post()))
         {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->save())
+            {
+                $deleteResult = ProductFilter::deleteAll(['product_id' => $model->id]);
+                $filterTypePost = Yii::$app->request->post('FilterType', []);
+                $productFilterInsertArr = [];
+                foreach ($filterTypePost as $filterTypeId => $filter)
+                {
+                    if (is_array($filter['value']))
+                    {
+                        foreach ($filter['value'] as $filterId)
+                        {
+                            $productFilterInsertArr[] = [
+                                $model->id,
+                                (int) $filterId,
+                                (int) $filterTypeId,
+                            ];
+                        }
+                    }
+                }
+
+                if (count($productFilterInsertArr) > 0)
+                {
+                    Yii::$app->db->createCommand()->batchInsert('{{%product_filter}}', ['product_id', 'filter_id', 'type_id'], $productFilterInsertArr)->execute();
+                }
+
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
+
+                if (isset($_POST['saveSlave']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
         }
         else
         {

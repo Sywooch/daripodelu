@@ -269,7 +269,7 @@ $groupDataProvider->setModels($model->groupProducts);
             </div>
             <div role="tabpanel" id="filters" class="tab-pane<?php if ($tabNumber == 5): ?> active<?php endif; ?>">
                 <?php foreach ($filterTypes as $index => $filterType): ?>
-                    <?= $form->field($filterType, "[$index]value")
+                    <?= $form->field($filterType, '[' . $filterType->id . ']value')
                         ->widget(Select2::className(), [
                             'data' => ArrayHelper::map($filterType->filters, 'id', 'name'),
                             'options' => [
@@ -396,11 +396,11 @@ $groupDataProvider->setModels($model->groupProducts);
         <div class="form-group btn-ctrl">
             <?= Html::submitButton(
                 $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
-                ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveCategory']
+                ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveProduct']
             ) ?>
             <?= Html::submitButton(
                 Yii::t('app', 'Apply'),
-                ['class' => 'btn btn-default', 'name' => 'applyCategory']
+                ['class' => 'btn btn-default', 'name' => 'applyProduct']
             ); ?>
         </div>
     </div>
