@@ -43,6 +43,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'productsWithoutGroup' => $productsWithoutGroup,
+        'productsInGroups' => $productsInGroups,
         'prints' => $prints,
         'filterTypes' => $filterTypes,
         'tabNumber' => $tabNumber,

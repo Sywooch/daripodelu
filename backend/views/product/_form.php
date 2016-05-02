@@ -1,6 +1,7 @@
 <?php
 
 use yii\bootstrap\Button;
+use yii\bootstrap\Modal;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
@@ -19,6 +20,8 @@ use mihaildev\elfinder\ElFinder;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Product */
+/* @var $productsWithoutGroup backend\models\Product[] */
+/* @var $productsInGroups backend\models\Product[] */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $prints backend\models\PrintKind[] */
 /* @var $filterTypes backend\models\FilterType[] */
@@ -65,10 +68,31 @@ foreach ($model->productAttachments as $productAttachment)
     }
 }
 
+$groupProductsWithoutCurrent = [];
+foreach ($model->groupProducts as $groupProduct)
+{
+    if ($groupProduct->id != $model->id)
+    {
+        $groupProductsWithoutCurrent[] = $groupProduct;
+    }
+}
+
 $photoDataProvider->setModels($productAttachmentImages);
 $filesDataProvider->setModels($productAttachmentFiles);
 $slavesDataProvider->setModels($model->slaveProducts);
-$groupDataProvider->setModels($model->groupProducts);
+$groupDataProvider->setModels($groupProductsWithoutCurrent);
+
+$productsWithGroupArr = [];
+foreach ($productsWithoutGroup as $product)
+{
+    $productsWithGroupArr[$product->id] = $product->name;
+}
+
+$productsInGroupsArr = [];
+foreach ($productsInGroups as $product)
+{
+    $productsInGroupsArr[$product->group_id] = $product->name;
+}
 ?>
 <div class="product-form">
 
@@ -331,15 +355,44 @@ $groupDataProvider->setModels($model->groupProducts);
                 <?php Pjax::end(); ?>
             </div>
             <div role="tabpanel" id="group" class="tab-pane<?php if ($tabNumber == 7): ?> active<?php endif; ?>">
+                <?php if ($model->group_id != null): ?>
+                    <?= Button::widget([
+                        'label' => '<i class="glyphicon glyphicon-log-out"></i> ' . Yii::t('app', 'Leave the group'),
+                        'encodeLabel' => false,
+                        'options' => [
+                            'class' => 'btn-danger btn-sm pull-right',
+                            'href' => Url::to(['/product/leavegroup', 'id' => $model->id, 'tabNumber' => 7]),
+                            'style' => 'margin:5px; margin-bottom: 10px;',
+                        ],
+                        'tagName' => 'a',
+                    ]); ?>
+                <?php else: ?>
+                    <?= Button::widget([
+                        'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create a group'),
+                        'encodeLabel' => false,
+                        'options' => [
+                            'class' => 'btn-link btn-sm pull-right',
+                            'type' => 'button',
+                            'style' => 'margin:5px; margin-bottom: 10px;',
+                            'data' => [
+                                'toggle' => 'modal',
+                                'target' => '#createGroupModal',
+                            ],
+                        ],
+                    ]); ?>
+                <?php endif; ?>
                 <?= Button::widget([
-                    'label' => '<i class="glyphicon glyphicon-log-out"></i> ' . Yii::t('app', 'Leave the group'),
+                    'label' => '<i class="glyphicon glyphicon-log-out"></i> ' . ($model->group_id != null ? Yii::t('app', 'Change group') : Yii::t('app', 'Join the group')),
                     'encodeLabel' => false,
                     'options' => [
-                        'class' => 'btn-primary btn-sm pull-right',
-                        'href' => Url::to(['/product/grouplogout', 'id' => $model->id]),
+                        'class' => 'btn-success btn-sm pull-right',
+                        'type' => 'button',
                         'style' => 'margin:5px; margin-bottom: 10px;',
+                        'data' => [
+                            'toggle' => 'modal',
+                            'target' => '#joinGroupModal',
+                        ],
                     ],
-                    'tagName' => 'a',
                 ]); ?>
                 <div class="clearfix">&nbsp;</div>
                 <?php Pjax::begin(['id' => 'slave']); ?>
@@ -383,8 +436,7 @@ $groupDataProvider->setModels($model->groupProducts);
                         ],
                         [
                             'class' => ActionColumn::className(),
-                            'controller' => 'slaveproduct',
-                            'template' => '{update} {delete}',
+                            'template' => '{update}',
                             'contentOptions' => ['style' => 'width: 50px'],
                         ],
                     ],
@@ -405,5 +457,78 @@ $groupDataProvider->setModels($model->groupProducts);
         </div>
     </div>
     <?php ActiveForm::end(); ?>
-
 </div>
+<?php $createGroupForm = ActiveForm::begin([
+    'action' => Url::to(['/product/creategroup', 'id' => $model->id, 'tabNumber' => 7]),
+    'method' => 'post',
+]); ?>
+
+    <?php Modal::begin([
+        'id' => 'createGroupModal',
+        'header' => '<h2>' . Yii::t('app', 'Create a group') . '</h2>',
+        'footer' => Button::widget([
+            'label' => Yii::t('app', 'Create'),
+            'encodeLabel' => false,
+            'options' => [
+                'class' => 'btn-success',
+                'name' => 'createGroup',
+            ],
+        ]),
+    ]); ?>
+
+        <?= $createGroupForm->field($model, 'groupProductIds')
+            ->widget(Select2::className(), [
+                'data' => $productsWithGroupArr,
+                'options' => [
+                    'multiple' => true,
+                ],
+                'pluginOptions' => [
+                    'width' => '100%'
+                ],
+            ])
+            ->label('Товары в группе')->hint(
+                Yii::t('app', '<strong>Note:</strong>') . ' ' .
+                Yii::t('app', 'Selected items will be combined into a group')
+            ); ?>
+
+    <?php Modal::end(); ?>
+
+<?php ActiveForm::end(); ?>
+
+<?php $joinGroupForm = ActiveForm::begin([
+    'action' => Url::to(['/product/joingroup', 'id' => $model->id, 'tabNumber' => 7]),
+    'method' => 'post',
+]); ?>
+
+    <?php Modal::begin([
+        'id' => 'joinGroupModal',
+        'header' => '<h2>' . ($model->group_id != null ? Yii::t('app', 'Change group') : Yii::t('app', 'Join the group')) . '</h2>',
+        'footer' => Button::widget([
+            'label' => Yii::t('app', 'Save'),
+            'encodeLabel' => false,
+            'options' => [
+                'class' => 'btn-success',
+                'name' => 'joinGroup',
+            ],
+        ]),
+    ]); ?>
+
+        <?= $joinGroupForm->field($model, 'groupProductIds')
+            ->widget(Select2::className(), [
+                'data' => $productsInGroupsArr,
+                'options' => [
+                    'id' => 'join-group',
+                    'placeholder' => 'Выберите товар...',
+                ],
+                'pluginOptions' => [
+                    'width' => '100%',
+                ],
+            ])
+            ->label('Присоединиться к группе')->hint(
+                Yii::t('app', '<strong>Note:</strong>') . ' ' .
+                Yii::t('app', 'Select the item to merge with his group.')
+            ); ?>
+
+    <?php Modal::end(); ?>
+
+<?php ActiveForm::end(); ?>

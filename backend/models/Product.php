@@ -61,6 +61,7 @@ class Product extends \yii\db\ActiveRecord
     const STATUS_CLOSED = 3;
 
     public $prints = [];
+    public $groupProductIds = [];
 
     /**
      * @inheritdoc
@@ -77,14 +78,14 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             [['catalogue_id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
-            [['catalogue_id', 'group_id', 'name', 'product_size', 'matherial', 'status_id', 'status_caption', 'brand', 'weight'], 'required'],
+            [['catalogue_id', 'name', 'status_id', 'status_caption', 'weight'], 'required'],
             [['content'], 'string'],
             [['weight', 'pack_weigh', 'pack_volume', 'pack_sizex', 'pack_sizey', 'pack_sizez', 'enduserprice'], 'number'],
             [['code'], 'string', 'max' => 100],
             [['name', 'product_size', 'matherial', 'small_image', 'big_image', 'super_big_image'], 'string', 'max' => 255],
             [['status_caption'], 'string', 'max' => 40],
             [['brand'], 'string', 'max' => 60],
-            [['prints'], 'safe'],
+            [['prints', 'groupProductIds'], 'safe'],
         ];
     }
 

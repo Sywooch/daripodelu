@@ -151,12 +151,12 @@ class CatalogueController extends Controller
 
         if ($model->load(Yii::$app->request->post()))
         {
-            $model->id = Counter::getNextNumber('catalogue_id');
+            $model->id = Counter::getNextNumber(Counter::CATALOGUE_ID);
             $model->user_row = Catalogue::IS_USER_ROW;
 
             if ($model->save())
             {
-                Counter::incrementValue('catalogue_id');
+                Counter::incrementValue(Counter::CATALOGUE_ID);
                 if ($seoInfo->load(Yii::$app->request->post()))
                 {
                     $seoInfo->controller_id = 'catalogue';

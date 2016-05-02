@@ -9,10 +9,12 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\Catalogue;
+use backend\models\Counter;
 use backend\models\Filter;
 use backend\models\FilterType;
 use backend\models\Product;
 use backend\models\ProductFilter;
+use backend\models\ProductPrint;
 use backend\models\PrintKind;
 use backend\models\ProductSearch;
 
@@ -134,15 +136,34 @@ class ProductController extends Controller
                     Yii::$app->db->createCommand()->batchInsert('{{%product_filter}}', ['product_id', 'filter_id', 'type_id'], $productFilterInsertArr)->execute();
                 }
 
+                $productPrintCodes = ArrayHelper::getColumn($model->productPrints, 'print_id');
+                if (count($model->prints) !== count($model->productPrints) || count(array_diff($productPrintCodes, $model->prints)) > 0)
+                {
+                    ProductPrint::deleteAll(['product_id' => $model->id]);
+                    $productPrintsInsertArr = [];
+                    foreach ($model->prints as $print)
+                    {
+                        $productPrintsInsertArr[] = [
+                            $model->id,
+                            $print,
+                        ];
+                    }
+
+                    if (count($productPrintsInsertArr) > 0)
+                    {
+                        Yii::$app->db->createCommand()->batchInsert('{{%product_print}}', ['product_id', 'print_id'], $productPrintsInsertArr)->execute();
+                    }
+                }
+
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveSlave']))
+                if (isset($_POST['saveProduct']))
                 {
                     return $this->redirect(['index']);
                 }
                 else
                 {
-                    return $this->redirect(['update', 'id' => $model->id]);
+                    return $this->redirect(['update', 'id' => $model->id, 'tabNumber' => $tabNumber]);
                 }
             }
             else
@@ -154,9 +175,12 @@ class ProductController extends Controller
         }
         else
         {
+            $products = Product::find()->where(['group_id' => null])->andWhere(['<>', 'id', $model->id])->orderBy(['name' => SORT_ASC])->all();
             $printIds = ArrayHelper::getColumn($model->productPrints, 'print_id');
             $model->prints = $printIds;
             $prints = PrintKind::find()->all();
+
+            $productsInGroups = Product::find()->where(['not', ['group_id' => null]])->groupBy('group_id')->orderBy(['name' => SORT_ASC])->all();
 
             $filterTypes = FilterType::find()->with('filters')->orderBy(['name' => SORT_ASC])->all();
             foreach ($model->productFilters as $productFilter)
@@ -172,6 +196,8 @@ class ProductController extends Controller
 
             return $this->render('update', [
                 'model' => $model,
+                'productsWithoutGroup' => $products,
+                'productsInGroups' => $productsInGroups,
                 'prints' => $prints,
                 'filterTypes' => $filterTypes,
                 'tabNumber' => $tabNumber,
@@ -193,10 +219,95 @@ class ProductController extends Controller
     }
 
     /**
+     * Leaves the group of products
+     * @param integer $id
+     * @param integer $tabNumber the number of active tab
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionLeavegroup($id, $tabNumber = 1)
+    {
+        $tabNumber = (int) $tabNumber;
+
+        $model = $this->findModel($id);
+        $model->group_id = null;
+        $result = $model->save(true, ['group_id']);
+
+        if ($result)
+        {
+            Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));;
+        }
+        else
+        {
+            Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+        }
+
+        return $this->redirect(['update', 'id' => $model->id, 'tabNumber' => $tabNumber]);
+    }
+
+    /**
+     * Creates group for products
+     * @param integer $id
+     * @param integer $tabNumber the number of active tab
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionCreategroup($id, $tabNumber = 1)
+    {
+        $tabNumber = (int) $tabNumber;
+
+        $model = $this->findModel($id);
+        $productPost = Yii::$app->request->post('Product', []);
+        if (isset($productPost['groupProductIds']))
+        {
+            $groupProductIds = $productPost['groupProductIds'];
+            $groupProductIds = array_merge($groupProductIds, [$model->id]);
+            $newGroupId = Counter::getNextNumber(Counter::PRODUCT_GROUP_ID);
+            if (Product::updateAll(['group_id' => $newGroupId], ['id' => $groupProductIds]))
+            {
+                Counter::incrementValue(Counter::PRODUCT_GROUP_ID);
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The group created successfully.'));
+            }
+            else
+            {
+                Yii::$app->session->setFlash('info', Yii::t('app', 'The group was not created.'));
+            }
+        }
+
+        return $this->redirect(['update', 'id' => $model->id, 'tabNumber' => $tabNumber]);
+    }
+
+    public function actionJoingroup($id, $tabNumber = 1)
+    {
+        $tabNumber = (int) $tabNumber;
+        $result = false;
+
+        $model = $this->findModel($id);
+        $productPost = Yii::$app->request->post('Product', []);
+        if (isset($productPost['groupProductIds']))
+        {
+            $groupId = (int) $productPost['groupProductIds'];
+            $model->group_id = $groupId;
+            $result = $model->save(true, ['group_id']);
+        }
+
+        if ($result)
+        {
+            Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));;
+        }
+        else
+        {
+            Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+        }
+
+        return $this->redirect(['update', 'id' => $model->id, 'tabNumber' => $tabNumber]);
+    }
+
+    /**
      * Finds the Product model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Product the loaded model
+     * @return \backend\models\Product Product the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

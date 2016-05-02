@@ -91,12 +91,12 @@ class SlaveproductController extends Controller
 
         if ($model->load(Yii::$app->request->post()))
         {
-            $model->id = Counter::getNextNumber('slave_product_id');
+            $model->id = Counter::getNextNumber(Counter::SLAVE_PRODUCT_ID);
             $model->user_row = SlaveProduct::IS_USER_ROW;
 
             if ($model->save())
             {
-                Counter::incrementValue('slave_product_id');
+                Counter::incrementValue(Counter::SLAVE_PRODUCT_ID);
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
                 if (isset($_POST['saveSlave']))
