@@ -6,13 +6,18 @@ use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\web\View;
+use frontend\assets\OwlAsset;
 use frontend\widgets\BlockWidget;
+
+OwlAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Product */
 /* @var $slaveProduct frontend\models\SlaveProduct */
 /* @var $productAttachment frontend\models\ProductAttachment */
 /* @var $prints frontend\models\PrintKind[] */
+
+
 
 $printsArr = [];
 foreach ($prints as $print)
@@ -45,7 +50,7 @@ foreach ($prints as $print)
                     <?php endif ?>
                     <?php if ( ! is_null($model->product_size) && trim($model->product_size) != ''): ?>
                         <dt itemprop="name">Размеры:</dt>
-                        <dd itemprop="value"><?= $model->product_size ?> <a class="size-table" href="#">Таблица размеров</a></dd>
+                        <dd itemprop="value"><?= $model->product_size ?><?php /* <a class="size-table" href="#">Таблица размеров</a></dd> */ ?>
                     <?php endif ?>
                     <?php if ( ! is_null($model->matherial) && trim($model->matherial) != ''): ?>
                         <dt itemprop="name">Материал:</dt>

@@ -4,7 +4,7 @@
  * @package   yii2-grid
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
- * @version   3.1.1
+ * @version   3.1.2
  */
 
 namespace kartik\grid;
@@ -355,6 +355,11 @@ HTML;
     public $resizableColumns = true;
 
     /**
+     * @var boolean whether to hide resizable columns for smaller screen sizes (< 768px). Defaults to `true`.
+     */
+    public $hideResizeMobile = true;
+
+    /**
      * @var array the resizableColumns plugin options
      */
     public $resizableColumnsOptions = ['resizeFromBody' => false];
@@ -616,7 +621,7 @@ HTML;
      *     configuration options are read specific to each file type:
      *     - HTML:
      *          - cssFile: string, the css file that will be used in the exported HTML file. Defaults to:
-     *            `http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css`.
+     *            `https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css`.
      *     - CSV and TEXT:
      *          - colDelimiter: string, the column delimiter string for TEXT and CSV downloads.
      *          - rowDelimiter: string, the row delimiter string for TEXT and CSV downloads.
@@ -1030,7 +1035,7 @@ HTML;
                 'options' => ['title' => Yii::t('kvgrid', 'Hyper Text Markup Language')],
                 'mime' => 'text/html',
                 'config' => [
-                    'cssFile' => 'http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css'
+                    'cssFile' => 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
                 ]
             ],
             self::CSV => [
@@ -1258,6 +1263,9 @@ HTML;
             $key = empty($this->resizeStorageKey) ? Yii::$app->user->id : $this->resizeStorageKey;
             $gridId = empty($this->options['id']) ? $this->getId() : $this->options['id'];
             $this->containerOptions['data-resizable-columns-id'] = (empty($key) ? "kv-{$gridId}" : "kv-{$key}-{$gridId}");
+        }
+        if ($this->hideResizeMobile) {
+            Html::addCssClass($this->options, 'hide-resize');
         }
         $export = $this->renderExport();
         $toggleData = $this->renderToggleData();

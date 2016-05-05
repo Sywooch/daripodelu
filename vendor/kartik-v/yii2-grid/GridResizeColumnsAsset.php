@@ -4,7 +4,7 @@
  * @package   yii2-grid
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
- * @version   3.1.1
+ * @version   3.1.2
  */
 
 namespace kartik\grid;
@@ -19,15 +19,12 @@ use \kartik\base\AssetBundle;
  */
 class GridResizeColumnsAsset extends AssetBundle
 {
-    public $depends = [
-        'kartik\grid\GridViewAsset'
-    ];
-
     /**
      * @inheritdoc
      */
     public function init()
     {
+        $this->depends = array_merge($this->depends, ['kartik\grid\GridViewAsset']);
         $this->setSourcePath(__DIR__ . '/assets');
         $this->setupAssets('js', ['js/jquery.resizableColumns']);
         $this->setupAssets('css', ['css/jquery.resizableColumns']);

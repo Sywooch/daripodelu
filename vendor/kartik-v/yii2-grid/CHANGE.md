@@ -1,9 +1,20 @@
 Change Log: `yii2-grid`
 =======================
 
-## Version 3.1.1 (under development)
+## Version 3.1.2 (under development)
 
-**Date:** 08-Mar-2016
+**Date:** 10-Apr-2016
+
+1. (enh #472): Having different editable models in one gridview column.
+2. (enh #472): Update Spanish translations.
+3. (enh #475): Correct grid grouping `formatNumber` JS method.
+4. (enh #476): Improve responsiveness and control resizable columns for smaller devices.
+5. (enh #479): Update default bootstrap css for HTML export of grid.
+6. (enh #480): Enhance `EditableColumnAction` to find model better.
+
+## Version 3.1.1
+
+**Date:** 10-Apr-2016
 
 1. (enh #443): Enhance to show header in exported content when setting `floatHeader`.
 2. (enh #444): Set default PDF export encoding to utf8.
@@ -13,6 +24,7 @@ Change Log: `yii2-grid`
 6. (enh #457): Implement `array_replace_recursive` instead of `ArrayHelper::merge` for overriding defaults.
 7. (enh #458): Add Slovak Translations.
 8. (enh #461): Export configuration font awesome enhancements.
+9. (enh #462): Fix responsiveness for smaller devices (resizableColumns overflow).
 
 ## Version 3.1.0
 

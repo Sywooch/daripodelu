@@ -1704,7 +1704,7 @@ ul.secondary-nav-menu li a:hover {
 
 .product .photo-box .thumbs a {
     display: inline-block;
-    margin: 0 9px;
+    /*margin: 0 9px;*/
     width: 109px;
     height: 109px;
     line-height: 109px;
@@ -1712,7 +1712,15 @@ ul.secondary-nav-menu li a:hover {
     vertical-align: middle;
 }
 
-.product .photo-box .thumbs a img {
+.photo-box .owl-carousel .owl-item {
+    /*width: 109px !important;*/
+    /*height: 109px !important;*/
+}
+
+.product .photo-box .thumbs a img,
+.photo-box .owl-carousel .owl-item img {
+    display: inline;
+    width: auto;
     max-width: 109px;
     max-height: 109px;
 }
@@ -1806,6 +1814,44 @@ ul.secondary-nav-menu li a:hover {
     margin-right: 20px;
     padding: 0 10px;
     text-align: left;
+}
+
+.photo-box .owl-carousel .owl-stage-outer {
+    z-index: 10;
+}
+
+.photo-box .owl-theme .owl-controls {
+    margin: -15px 0 0;
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    width: 100%;
+    height: 31px;
+    z-index: 5;
+}
+
+.photo-box .owl-theme .owl-controls .owl-nav div {
+    background: url("../img/thumbs-arr.png") 0px 0px no-repeat;
+    position: absolute;
+    top: 0px;
+    width: 20px;
+    height: 31px;
+    text-indent: -9999px;
+}
+
+.photo-box .owl-theme .owl-controls .owl-nav .owl-prev {
+    background-position: 0px 0px;
+    left: -30px;
+}
+
+.photo-box .owl-theme .owl-controls .owl-nav .owl-next {
+    background-position: -20px 0px;
+    right: -30px;
+}
+
+.photo-box .owl-theme .owl-controls .owl-nav .owl-prev.disabled,
+.photo-box .owl-theme .owl-controls .owl-nav .owl-next.disabled {
+    display: none !important;
 }
 
 .total-box {

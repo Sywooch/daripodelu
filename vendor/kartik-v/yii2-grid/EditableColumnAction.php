@@ -4,7 +4,7 @@
  * @package   yii2-grid
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
- * @version   3.1.1
+ * @version   3.1.2
  */
 
 namespace kartik\grid;
@@ -102,6 +102,11 @@ class EditableColumnAction extends Action
      * @var bool whether to allow access to this action for AJAX requests only. Defaults to `true`.
      */
     public $ajaxOnly = true;
+    
+    /**
+     * @var string allows overriding the form name which is used to access posted data
+     */
+    public $formName = '';
 
     /**
      * @inheritdoc
@@ -134,22 +139,20 @@ class EditableColumnAction extends Action
             return ['output' => '', 'message' => Yii::t('kvgrid', 'Invalid or bad editable data')];
         }
         /**
-         * @var ActiveRecord $modelClass
          * @var ActiveRecord $model
          */
-        $modelClass = $this->modelClass;
         $key = ArrayHelper::getValue($post, 'editableKey');
-        $model = $modelClass::findOne($key);
+        $model = $this->findModel($key);
         if (!$model) {
             return ['output' => '', 'message' => Yii::t('kvgrid', 'No valid editable model found')];
         }
         $index = ArrayHelper::getValue($post, 'editableIndex');
         $attribute = ArrayHelper::getValue($post, 'editableAttribute');
-        $formName = $model->formName();
+        $formName = $this->formName ? $this->formName: $model->formName();
         if (!$formName || is_null($index) || !isset($post[$formName][$index])) {
             return ['output' => '', 'message' => Yii::t('kvgrid', 'Invalid editable index or model form name')];
         }
-        $postData = [$formName => $post[$formName][$index]];
+        $postData = [$model->formName() => $post[$formName][$index]];
         if ($model->load($postData)) {
             $params = [$model, $attribute, $key, $index];
             $value = static::parseValue($this->outputValue, $params);

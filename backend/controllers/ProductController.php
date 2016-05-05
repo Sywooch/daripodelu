@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -109,7 +110,11 @@ class ProductController extends Controller
         $tabNumber = (int) $tabNumber;
         $model = Product::find()->with(['productPrints', 'productAttachments', 'productFilters', 'groupProducts', 'slaveProducts'])->where(['id' => $id])->one();
 
-        if ($model->load(Yii::$app->request->post()))
+        if (Yii::$app->request->post('hasEditable'))
+        {
+            $asd = 1;
+        }
+        elseif ($model->load(Yii::$app->request->post()))
         {
             if ($model->save())
             {
@@ -301,6 +306,14 @@ class ProductController extends Controller
         }
 
         return $this->redirect(['update', 'id' => $model->id, 'tabNumber' => $tabNumber]);
+    }
+
+    public function actionUpdatachname()
+    {
+        $asd = Yii::$app->request->isPost;
+        $out = Json::encode(['output' => '123456', 'message' => '']);
+
+        echo $out;
     }
 
     /**

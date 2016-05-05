@@ -129,3 +129,44 @@ use frontend\widgets\BlockWidget;
     </div>
     <div class="dashes-line"></div>
 </div>
+<?php $this->registerJs('
+    if ($(".thumbs").length)
+    {
+        owlThumbs = $(".thumbs");
+
+        owlThumbs.on("initialized.owl.carousel", function() {
+            var photoWrapperContainer = $(this).parents(".photo-box").eq(0),
+                photoWrapper = null,
+                bigImg = null;
+
+            if($(this).find(".owl-item").length <= 9)
+            {
+                $(this).find(".owl-prev, .owl-next").addClass("disabled");
+            }
+
+            if(photoWrapperContainer.length)
+            {
+                photoWrapper = photoWrapperContainer.find(".photo").eq(0);
+                bigImg = photoWrapper.find("img").eq(0);
+            }
+
+            $(this).find(".owl-item a").click(function() {
+                if(photoWrapper && bigImg)
+                {
+                    photoWrapper.attr("href", $(this).attr("href"));
+                    bigImg.attr("src", $(this).find("img").attr("src"));
+                }
+
+                return false;
+            });
+        });
+
+        owlThumbs.owlCarousel({
+            loop:true,
+            nav:true,
+            dots: false,
+            items: 3,
+            margin: 18
+        });
+    }
+', View::POS_LOAD) ?>

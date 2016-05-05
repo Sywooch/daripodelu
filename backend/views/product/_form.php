@@ -234,6 +234,10 @@ foreach ($productsInGroups as $product)
                                     'class' => 'btn btn-sm btn-primary',
                                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                                 ],
+                                'ajaxSettings' => [
+                                    'type' => 'post',
+                                    'url' => Url::to(['/product/updatachname', 'id' => $model->id, 'tabNumber' => 3]),
+                                ],
                             ],
                             'refreshGrid' => true,
                         ],
