@@ -35,9 +35,11 @@ foreach ($prints as $print)
             <div class="row">
                 <div class="col-7">
                     <?= $this->render('_item', ['model' => $model]) ?>
+                    <?php if (is_array($model->groupProducts) && count($model->groupProducts) > 1): ?>
                     <div class="add-item-box">
                         <a class="add-item-link" href="<?= Url::to(['product/view', 'id' => $model->id]) ?>" data-ajax="addColor">+ Выбрать еще цвет</a>
                     </div>
+                    <?php endif; ?>
                 </div>
                 <div class="col-3">
                     <div class="description" itemprop="description">

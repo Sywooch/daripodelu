@@ -18,23 +18,33 @@ use frontend\widgets\BlockWidget;
         <?php
         $imgPathArr = [];
         if (trim($model->super_big_image) != ''):
+            $imgArr = [];
+            foreach ($model->productAttachments as $productAttachment)
+            {
+                if ($productAttachment->meaning == 1)
+                {
+                    $imgArr[] = $productAttachment;
+                }
+            }
             ?>
-            <a class="photo" href="<?= $model->superBigImageUrl ?>">
+            <span class="photo">
                 <img src="<?= $model->superBigImageUrl ?>" alt="" itemprop="image">
-            </a>
+            </span>
+            <?php if (count($imgArr) > 1): ?>
             <div class="thumbs">
                 <a href="<?= $model->superBigImageUrl ?>">
                     <img src="<?= $model->superBigImageUrl ?>" alt="">
                 </a>
                 <?php $imgPathArr[] = $model->super_big_image; ?>
-                <?php foreach ($model->productAttachments as $productAttachment): ?>
-                    <?php if ($productAttachment->meaning == 1 && ! in_array($productAttachment->image, $imgPathArr)): ?>
+                <?php foreach ($imgArr as $productAttachment): ?>
+                    <?php if ( ! in_array($productAttachment->image, $imgPathArr)): ?>
                         <a href="<?= $productAttachment->imageUrl ?>">
                             <img src="<?= $productAttachment->imageUrl ?>" alt="">
                         </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
             <?php
         else:
             /* @var $imgArr frontend\models\ProductAttachment[] */
@@ -46,9 +56,9 @@ use frontend\widgets\BlockWidget;
             endforeach;
             if (count($imgArr) > 0):
                 ?>
-                <a class="photo" href="<?= $imgArr[0]->imageUrl; ?>">
+                <span class="photo">
                     <img src="<?= $imgArr[0]->imageUrl; ?>" alt="" itemprop="image">
-                </a>
+                </span>
                 <?php if (count($imgArr) > 1): ?>
                 <div class="thumbs">
                     <a href="<?= $imgArr[0]->imageUrl; ?>">
@@ -62,9 +72,9 @@ use frontend\widgets\BlockWidget;
                 </div>
             <?php endif; ?>
             <?php elseif (trim($model->big_image) != ''): ?>
-                <a class="photo" href="<?= $model->bigImageUrl ?>">
+                <span class="photo">
                     <img src="<?= $model->bigImageUrl ?>" alt="" itemprop="image">
-                </a>
+                </span>
             <?php endif; ?>
         <?php endif; ?>
     </div>
@@ -153,7 +163,7 @@ use frontend\widgets\BlockWidget;
             $(this).find(".owl-item a").click(function() {
                 if(photoWrapper && bigImg)
                 {
-                    photoWrapper.attr("href", $(this).attr("href"));
+                    //photoWrapper.attr("href", $(this).attr("href"));
                     bigImg.attr("src", $(this).find("img").attr("src"));
                 }
 

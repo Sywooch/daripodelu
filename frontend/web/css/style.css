@@ -1690,12 +1690,12 @@ ul.secondary-nav-menu li a:hover {
     height: 365px;
     line-height: 365px;
     text-align: center;
-    vertical-align: middle;
 }
 
 .product .photo-box .photo img {
     max-width: 365px;
     max-height: 365px;
+    vertical-align: middle;
 }
 
 .product .photo-box .thumbs {
