@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\web\View;
 use frontend\assets\OwlAsset;
+use frontend\models\ProductAttachment;
 use frontend\widgets\BlockWidget;
 
 OwlAsset::register($this);
@@ -93,11 +94,24 @@ foreach ($prints as $print)
                             <p><a href="<?= $print->printLink->link; ?>"><span><?= $print->name; ?>-<?= $print->description; ?></span></a></p>
                         <?php endforeach; ?>
                     </section>
+                    <?php
+                    $productAttachmentsArr = [];
+                    foreach ($model->productAttachments as $productAttachment)
+                    {
+                        if ($productAttachment->meaning == ProductAttachment::IS_FILE)
+                        {
+                            $productAttachmentsArr[] = $productAttachment;
+                        }
+                    }
+                    ?>
+                    <?php if (count($productAttachmentsArr) > 0): ?>
                     <div class="constructor-links-box">
                         <strong class="h2">Конструктор:</strong>
-                        <a class="item" href="#">.pdf<b class="y-arrow"></b></a>
-                        <a class="item" href="#">.cdr<b class="y-arrow"></b></a>
+                        <?php foreach ($productAttachmentsArr as $productAttachment): ?>
+                        <a class="item" href="<?= $productAttachment->fileUrl; ?>"><?= mb_substr($productAttachment->fileUrl, mb_strrpos($productAttachment->fileUrl, '.', null, 'UTF-8'), null, 'UTF-8') ; ?><b class="y-arrow"></b></a>
+                        <?php endforeach; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

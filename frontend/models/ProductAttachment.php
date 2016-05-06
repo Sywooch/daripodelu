@@ -13,11 +13,15 @@ use Yii;
  * @property string $image
  * @property string $name
  * @property string $imageUrl
+ * @property string $fileUrl
  *
  * @property Product $product
  */
 class ProductAttachment extends \yii\db\ActiveRecord
 {
+    const IS_FILE = 0;
+    const IS_IMAGE = 1;
+
     /**
      * @inheritdoc
      */
@@ -62,6 +66,11 @@ class ProductAttachment extends \yii\db\ActiveRecord
 
     public function getImageUrl()
     {
-        return yii::$app->params['baseUploadURL'] . '/' . $this->product_id . '/' . $this->image;
+        return $this->meaning == static::IS_IMAGE ? yii::$app->params['baseUploadURL'] . '/' . $this->product_id . '/' . $this->image : '';
+    }
+
+    public function getFileUrl()
+    {
+        return $this->meaning == static::IS_FILE ? yii::$app->params['baseUploadURL'] . '/' . $this->product_id . '/' . $this->file : '';
     }
 }

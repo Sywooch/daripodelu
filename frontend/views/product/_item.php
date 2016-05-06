@@ -6,6 +6,7 @@ use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\web\View;
+use frontend\models\ProductAttachment;
 use frontend\widgets\BlockWidget;
 
 /* @var $this yii\web\View */
@@ -21,7 +22,7 @@ use frontend\widgets\BlockWidget;
             $imgArr = [];
             foreach ($model->productAttachments as $productAttachment)
             {
-                if ($productAttachment->meaning == 1)
+                if ($productAttachment->meaning == ProductAttachment::IS_IMAGE)
                 {
                     $imgArr[] = $productAttachment;
                 }
@@ -50,7 +51,7 @@ use frontend\widgets\BlockWidget;
             /* @var $imgArr frontend\models\ProductAttachment[] */
             $imgArr = [];
             foreach ($model->productAttachments as $productAttachment):
-                if ($productAttachment->meaning == 1):
+                if ($productAttachment->meaning == ProductAttachment::IS_IMAGE):
                     $imgArr[] = $productAttachment;
                 endif;
             endforeach;
