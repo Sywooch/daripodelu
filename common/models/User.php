@@ -17,6 +17,7 @@ use yii\web\IdentityInterface;
  * @property string $email
  * @property string $auth_key
  * @property integer $status
+ * @property integer $role
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
@@ -25,6 +26,10 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+
+    const ROLE_GUEST = 1;
+    const ROLE_MODERATOR = 5;
+    const ROLE_ADMIN = 10;
 
     /**
      * @inheritdoc
@@ -50,7 +55,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['username', 'role'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['role', 'default', 'value' => self::ROLE_MODERATOR],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
     }
@@ -187,5 +194,39 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    static public function getRoles()
+    {
+        return array(
+            self::ROLE_MODERATOR => 'Модератор',
+            self::ROLE_ADMIN => 'Администратор',
+        );
+    }
+
+    static public function getRoleName($index)
+    {
+        $roles = self::getRoles();
+
+        return $roles[$index];
+    }
+
+    /**
+     * Returns the role string Id
+     *
+     * For example, returns guest, admin and etc.
+     *
+     * @param integer $index
+     * @return string
+     */
+    static public function getRoleStringId($index)
+    {
+        $roleStringIds = [
+            self::ROLE_GUEST => 'guest',
+            self::ROLE_MODERATOR => 'moderator',
+            self::ROLE_ADMIN => 'admin',
+        ];
+
+        return $roleStringIds[$index];
     }
 }

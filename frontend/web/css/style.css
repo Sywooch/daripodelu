@@ -1790,6 +1790,7 @@ ul.secondary-nav-menu li a:hover {
 .product .order-table th {
     padding-bottom: 19px;
     text-align: left;
+    white-space: nowrap;
 }
 
 .product .order-table td {

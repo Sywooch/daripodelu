@@ -51,10 +51,10 @@ foreach ($prints as $print)
                         <dt itemprop="name">Бренд:</dt>
                         <dd itemprop="value"><?= $model->brand ?></dd>
                     <?php endif ?>
-                    <?php if ( ! is_null($model->product_size) && trim($model->product_size) != ''): ?>
+                    <?php /* if ( ! is_null($model->product_size) && trim($model->product_size) != ''): ?>
                         <dt itemprop="name">Размеры:</dt>
                         <dd itemprop="value"><?= $model->product_size ?><?php /* <a class="size-table" href="#">Таблица размеров</a></dd> */ ?>
-                    <?php endif ?>
+                    <?php /* endif; */ ?>
                     <?php if ( ! is_null($model->matherial) && trim($model->matherial) != ''): ?>
                         <dt itemprop="name">Материал:</dt>
                         <dd itemprop="value"><?= $model->matherial ?></dd>
@@ -104,14 +104,14 @@ foreach ($prints as $print)
                         }
                     }
                     ?>
-                    <?php if (count($productAttachmentsArr) > 0): ?>
+                    <?php /* if (count($productAttachmentsArr) > 0): ?>
                     <div class="constructor-links-box">
                         <strong class="h2">Конструктор:</strong>
                         <?php foreach ($productAttachmentsArr as $productAttachment): ?>
                         <a class="item" href="<?= $productAttachment->fileUrl; ?>"><?= mb_substr($productAttachment->fileUrl, mb_strrpos($productAttachment->fileUrl, '.', null, 'UTF-8'), null, 'UTF-8') ; ?><b class="y-arrow"></b></a>
                         <?php endforeach; ?>
                     </div>
-                    <?php endif; ?>
+                    <?php endif; */ ?>
                 </div>
             </div>
         </div>
