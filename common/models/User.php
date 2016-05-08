@@ -12,6 +12,9 @@ use yii\web\IdentityInterface;
  *
  * @property integer $id
  * @property string $username
+ * @property string $last_name
+ * @property string $first_name
+ * @property string $middle_name
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
@@ -24,7 +27,7 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
+    const STATUS_BLOCKED = 0;
     const STATUS_ACTIVE = 10;
 
     const ROLE_GUEST = 1;
@@ -55,10 +58,39 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'role'], 'required'],
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            [['username', 'email', 'role'], 'required'],
+            [['last_name', 'first_name', 'middle_name', ], 'string', 'max' => 30],
+            ['username', 'unique', 'targetClass' => self::className(), 'message' => 'This username has already been taken.'],
+            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'match', 'pattern' => '/^\w+[\w_-\d]+$/i'],
+            ['email', 'email'],
+            ['email', 'unique', 'targetClass' => self::className(), 'message' => 'This email address has already been taken.'],
+            ['email', 'string', 'max' => 255],
+            [['role', 'status'], 'integer'],
             ['role', 'default', 'value' => self::ROLE_MODERATOR],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['role', 'in', 'range' => [self::ROLE_GUEST, self::ROLE_MODERATOR, self::ROLE_ADMIN]],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_BLOCKED]],
+            [['username', 'email', 'last_name', 'first_name', 'middle_name', ], 'trim'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'username' => Yii::t('app', 'Логин'),
+            'email' => Yii::t('app', 'Email'),
+            'last_name' => Yii::t('app', 'Фамилия'),
+            'first_name' => Yii::t('app', 'Имя'),
+            'middle_name' => Yii::t('app', 'Отчество'),
+            'status' => Yii::t('app', 'Статус'),
+            'role' => Yii::t('app', 'Роль'),
+            'created_at' => Yii::t('app', 'Дата создания'),
+            'updated_at' => Yii::t('app', 'Дата последнего обновления'),
         ];
     }
 
@@ -196,19 +228,62 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
-    static public function getRoles()
+    public function beforeSave($insert)
     {
-        return array(
-            self::ROLE_MODERATOR => 'Модератор',
-            self::ROLE_ADMIN => 'Администратор',
-        );
+        if (parent::beforeSave($insert))
+        {
+            if ($this->isNewRecord)
+            {
+                $this->auth_key = Yii::$app->security->generateRandomString();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
-    static public function getRoleName($index)
+    public static function getRoles()
+    {
+        return [
+            self::ROLE_MODERATOR => 'Модератор',
+            self::ROLE_ADMIN => 'Администратор',
+        ];
+    }
+
+    public static function getRoleName($index)
     {
         $roles = self::getRoles();
 
         return $roles[$index];
+    }
+
+    public static function getStatuses()
+    {
+        return [
+            static::STATUS_BLOCKED => 'Заблокирован',
+            static::STATUS_ACTIVE => 'Активен',
+        ];
+    }
+
+    public function getStatusName()
+    {
+        $statuses = static::getStatuses();
+
+        return $statuses[$this->status];
+    }
+
+    /**
+     * Returns status name by status Id
+     *
+     * @param integer $statusId
+     * @return mixed
+     */
+    public function getStatusNameById($statusId)
+    {
+        $statuses = static::getStatuses();
+
+        return $statuses[$statusId];
     }
 
     /**
@@ -219,7 +294,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param integer $index
      * @return string
      */
-    static public function getRoleStringId($index)
+    public static function getRoleStringId($index)
     {
         $roleStringIds = [
             self::ROLE_GUEST => 'guest',
@@ -229,4 +304,6 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $roleStringIds[$index];
     }
+
+
 }
