@@ -8,8 +8,10 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use app\models\MenuTreeSearch;
+use common\components\rbac\MenuPermissions;
 use common\models\MenuTree;
 use dosamigos\transliterator\TransliteratorHelper;
 
@@ -43,9 +45,16 @@ class MenutreeController extends Controller
     /**
      * Lists all MenuTree models.
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionIndex()
     {
+        if ( !Yii::$app->user->can(MenuPermissions::INDEX))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         if ( !Yii::$app->request->get('MenuTreeSearch'))
         {
             return $this->redirect(['index', 'MenuTreeSearch[show_in_menu]' => 1]);
@@ -67,9 +76,16 @@ class MenutreeController extends Controller
      * Creates a new MenuTree model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionCreate()
     {
+        if ( !Yii::$app->user->can(MenuPermissions::CREATE))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $model = new MenuTree(Yii::$app->cache);
 
         if ($model->load(Yii::$app->request->post()))
@@ -121,9 +137,16 @@ class MenutreeController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionUpdate($id)
     {
+        if ( !Yii::$app->user->can(MenuPermissions::UPDATE))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $model = $this->findModel($id);
         $model->attachCache(Yii::$app->cache);
 
@@ -187,9 +210,16 @@ class MenutreeController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionDelete($id)
     {
+        if ( !Yii::$app->user->can(MenuPermissions::DELETE))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         if ($id != 1)
         {
             $model = $this->findModel($id);

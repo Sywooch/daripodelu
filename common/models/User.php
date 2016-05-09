@@ -23,7 +23,11 @@ use yii\web\IdentityInterface;
  * @property integer $role
  * @property integer $created_at
  * @property integer $updated_at
+ *
  * @property string $password write-only password
+ *
+ * @property string $roleName
+ * @property string $statusName
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -33,6 +37,12 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_GUEST = 1;
     const ROLE_MODERATOR = 5;
     const ROLE_ADMIN = 10;
+
+    const SCENARIO_REGISTER = 'register';
+    const SCENARIO_CHANGE_PASSWORD = 'change_password';
+
+    public $password;
+    public $password_repeat;
 
     /**
      * @inheritdoc
@@ -58,19 +68,29 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email', 'role'], 'required'],
+            [['username', 'email', 'role', 'status'], 'required'],
+
             [['last_name', 'first_name', 'middle_name', ], 'string', 'max' => 30],
-            ['username', 'unique', 'targetClass' => self::className(), 'message' => 'This username has already been taken.'],
+
+            ['username', 'unique', 'targetClass' => self::className(), 'message' => Yii::t('app', 'This username has already been taken.')],
             ['username', 'string', 'min' => 2, 'max' => 255],
-            ['username', 'match', 'pattern' => '/^\w+[\w_-\d]+$/i'],
+            ['username', 'match', 'pattern' => '/^\w+[\w_\-\d]+$/i'],
+
+            [['password', 'password_repeat'], 'required', 'on' => [static::SCENARIO_REGISTER, static::SCENARIO_CHANGE_PASSWORD]],
+            ['password', 'string', 'min' => 6, 'max' => 40],
+            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('app', "Passwords don't match."), 'on' => [static::SCENARIO_REGISTER, static::SCENARIO_CHANGE_PASSWORD] ],
+
             ['email', 'email'],
-            ['email', 'unique', 'targetClass' => self::className(), 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => self::className(), 'message' => Yii::t('app', 'This email address has already been taken.')],
             ['email', 'string', 'max' => 255],
+
             [['role', 'status'], 'integer'],
             ['role', 'default', 'value' => self::ROLE_MODERATOR],
             ['role', 'in', 'range' => [self::ROLE_GUEST, self::ROLE_MODERATOR, self::ROLE_ADMIN]],
+
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_BLOCKED]],
+
             [['username', 'email', 'last_name', 'first_name', 'middle_name', ], 'trim'],
         ];
     }
@@ -84,6 +104,8 @@ class User extends ActiveRecord implements IdentityInterface
             'id' => Yii::t('app', 'ID'),
             'username' => Yii::t('app', 'Логин'),
             'email' => Yii::t('app', 'Email'),
+            'password' => Yii::t('app', 'Пароль'),
+            'password_repeat' => Yii::t('app', 'Пароль еще раз'),
             'last_name' => Yii::t('app', 'Фамилия'),
             'first_name' => Yii::t('app', 'Имя'),
             'middle_name' => Yii::t('app', 'Отчество'),
@@ -199,7 +221,7 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPasswordHash($password)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
@@ -251,11 +273,37 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    public static function getRoleName($index)
+    public static function getRoleNameById($index)
     {
         $roles = self::getRoles();
 
         return $roles[$index];
+    }
+
+    public function getRoleName()
+    {
+        $roles = static::getRoles();
+
+        return $roles[$this->role];
+    }
+
+    /**
+     * Returns the role string Id
+     *
+     * For example, returns guest, admin and etc.
+     *
+     * @param integer $index
+     * @return string
+     */
+    public static function getRoleStringId($index)
+    {
+        $roleStringIds = [
+            self::ROLE_GUEST => 'guest',
+            self::ROLE_MODERATOR => 'moderator',
+            self::ROLE_ADMIN => 'admin',
+        ];
+
+        return $roleStringIds[$index];
     }
 
     public static function getStatuses()
@@ -279,31 +327,10 @@ class User extends ActiveRecord implements IdentityInterface
      * @param integer $statusId
      * @return mixed
      */
-    public function getStatusNameById($statusId)
+    public static function getStatusNameById($statusId)
     {
         $statuses = static::getStatuses();
 
         return $statuses[$statusId];
     }
-
-    /**
-     * Returns the role string Id
-     *
-     * For example, returns guest, admin and etc.
-     *
-     * @param integer $index
-     * @return string
-     */
-    public static function getRoleStringId($index)
-    {
-        $roleStringIds = [
-            self::ROLE_GUEST => 'guest',
-            self::ROLE_MODERATOR => 'moderator',
-            self::ROLE_ADMIN => 'admin',
-        ];
-
-        return $roleStringIds[$index];
-    }
-
-
 }

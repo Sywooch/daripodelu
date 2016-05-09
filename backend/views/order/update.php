@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Alert;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\News */
+/* @var $model backend\models\Order */
 /* @var $files array */
 
 $this->title = Yii::t('app', 'Update order');

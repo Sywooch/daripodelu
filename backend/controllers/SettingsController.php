@@ -6,7 +6,9 @@ use yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use app\models\SettingsForm;
+use common\components\rbac\SettingsPermissions;
 
 class SettingsController extends Controller
 {
@@ -34,9 +36,19 @@ class SettingsController extends Controller
 
     public function actionIndex()
     {
+        if ( !Yii::$app->user->can(SettingsPermissions::INDEX))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $model = new SettingsForm();
         if ($model->load(Yii::$app->request->post()))
         {
+            if ( !Yii::$app->user->can(SettingsPermissions::UPDATE))
+            {
+                throw new ForbiddenHttpException('Access denied');
+            }
+
             if ($model->save())
             {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
@@ -61,6 +73,11 @@ class SettingsController extends Controller
 
     public function actionUpdate()
     {
+        if ( !Yii::$app->user->can(SettingsPermissions::UPDATE))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         return $this->redirect(['index']);
     }
 }

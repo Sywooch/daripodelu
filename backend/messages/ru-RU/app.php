@@ -126,5 +126,12 @@ return [
     'The group was not created.' => 'Группа не была создана',
     '<strong>Saved!</strong> The group created successfully.' => '<strong>Сохранено!</strong> Группа успешно создана.',
     'Select the item to merge with his group.' => 'Выберите товар для присоединения к его группе.',
+    'Users' => 'Пользователи',
+    'Create user' => 'Создать пользователя',
+    'Update user' => 'Редактировать пользователя',
+    'This username has already been taken.' => 'Логин уже используется. Введите другой логин.',
+    "Passwords don't match." => 'Пароли должны совпадать.',
+    'This email address has already been taken.' => 'Этот адрес электронной почты уже был указан ранее при регистрации другого пользователя. Введите иной email.',
+    '<strong>Saved!</strong> The user added successfully.' => '<strong>Сохранено!</strong> Пользователь успешно добавлен.',
     '' => '',
 ];

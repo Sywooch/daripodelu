@@ -22,7 +22,7 @@ class UserProfileOwnerRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        if (Yii::$app->user->identity->group == User::getRoleStringId(User::ROLE_ADMIN))
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN)
         {
             return true;
         }

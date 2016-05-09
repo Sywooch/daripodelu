@@ -6,10 +6,12 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Json;
 use backend\models\Order;
 use backend\models\OrderSearch;
+use common\components\rbac\OrderPermissions;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -40,14 +42,26 @@ class OrderController extends Controller
     /**
      * Lists all Order models.
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionIndex()
     {
+        if ( !Yii::$app->user->can(OrderPermissions::INDEX))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         if (Yii::$app->request->post('hasEditable'))
         {
+            if ( !Yii::$app->user->can(OrderPermissions::UPDATE))
+            {
+                throw new ForbiddenHttpException('Access denied');
+            }
+
             $orderId = Yii::$app->request->post('editableKey');
             $model = Order::findOne($orderId);
 
@@ -83,9 +97,16 @@ class OrderController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionUpdate($id)
     {
+        if ( !Yii::$app->user->can(OrderPermissions::UPDATE))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()))
@@ -138,9 +159,16 @@ class OrderController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws \Exception
      */
     public function actionDelete($id)
     {
+        if ( !Yii::$app->user->can(OrderPermissions::DELETE))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $model = Order::find()->where(['id' => (int)$id])->andWhere(['or', ['status' => Order::STATUS_CANCELED], ['status' => Order::STATUS_ARCHIVE]])->one();
 
         if ( !is_null($model))

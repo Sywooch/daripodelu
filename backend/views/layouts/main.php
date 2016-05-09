@@ -6,6 +6,9 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use backend\models\Order;
+use common\components\rbac\MenuPermissions;
+use common\components\rbac\SettingsPermissions;
+use common\components\rbac\UserPermissions;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -54,7 +57,7 @@ BootboxAsset::overrideSystemConfirm();
                             ['label' => '"Методы нанесения - Страницы описания"', 'url' => ['/printlink/index']],
                         ],
                     ],
-                    ['label' => 'Меню', 'url' => ['/menutree/index']],
+                    ['label' => 'Меню', 'url' => ['/menutree/index'], 'visible' => Yii::$app->user->can(MenuPermissions::INDEX)],
                     [
                         'label' => 'Контент',
                         'items' => [
@@ -64,8 +67,8 @@ BootboxAsset::overrideSystemConfirm();
                             ['label' => 'Блоки', 'url' => ['/block/index']]
                         ]
                     ],
-                    ['label' => 'Настройки', 'url' => ['/settings/index']],
-                    ['label' => 'Пользователи', 'url' => ['/user/index']],
+                    ['label' => 'Настройки', 'url' => ['/settings/index'], 'visible' => Yii::$app->user->can(SettingsPermissions::INDEX)],
+                    ['label' => 'Пользователи', 'url' => ['/user/index'], 'visible' => Yii::$app->user->can(UserPermissions::INDEX)],
                 ]
             ]);
             
@@ -75,7 +78,7 @@ BootboxAsset::overrideSystemConfirm();
                     [
                         'label' => Yii::$app->user->identity->username,
                         'items' => [
-                            ['label' => 'Профиль', 'url' => ['/user/index']],
+                            ['label' => 'Профиль', 'url' => ['/user/update', 'id' => Yii::$app->user->id]],
                             ['label' => 'Выйти','url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']],
                         ]
                     ]
