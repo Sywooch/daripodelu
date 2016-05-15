@@ -8,6 +8,7 @@ use yii\widgets\Pjax;
 use yii\web\View;
 use frontend\assets\OwlAsset;
 use frontend\models\ProductAttachment;
+use frontend\models\PrintLink;
 use frontend\widgets\BlockWidget;
 
 OwlAsset::register($this);
@@ -25,7 +26,7 @@ foreach ($prints as $print)
 {
     $printsArr[$print->name] = [
         'name' => $print->description,
-        'link' => $print->printLink->link,
+        'link' => (isset($print->printLink) && $print->printLink instanceof PrintLink)? $print->printLink->link : '#',
     ];
 }
 ?>
@@ -91,7 +92,7 @@ foreach ($prints as $print)
                     <section class="additional-links-box">
                         <h5 class="h2">Возможные виды нанесения:</h5>
                         <?php foreach ($prints as $print): ?>
-                            <p><a href="<?= $print->printLink->link; ?>"><span><?= $print->name; ?>-<?= $print->description; ?></span></a></p>
+                            <p><a href="<?= (isset($print->printLink) && $print->printLink instanceof PrintLink)? $print->printLink->link : '#'; ?>"><span><?= $print->name; ?>-<?= $print->description; ?></span></a></p>
                         <?php endforeach; ?>
                     </section>
                     <?php

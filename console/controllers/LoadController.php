@@ -8,6 +8,10 @@ use rkdev\loadgifts\LoadGiftsXML;
 
 class LoadController extends \yii\console\Controller
 {
+    /**
+    * Количество записей в одном insert-запросе
+    */
+    private $batchSize = 100;
 
     protected function makeArrFromTree(\SimpleXMLElement $tree)
     {
@@ -265,7 +269,19 @@ class LoadController extends \yii\console\Controller
             if (count($valuesArr) > 0)
             {
                 yii::beginProfile('CatalogueInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert('{{%catalogue}}',['id', 'parent_id', 'name', 'uri', 'user_row'], $valuesArr)->execute();
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($valuesArr);
+                do {
+                    $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%catalogue}}',
+                        ['id', 'parent_id', 'name', 'uri', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while($counter < $valuesArrLength);
                 yii::endProfile('CatalogueInsertIntoDB');
             }
         }
@@ -402,39 +418,47 @@ class LoadController extends \yii\console\Controller
             if (count($valuesArr) > 0)
             {
                 yii::beginProfile('ProductsInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert(
-                    '{{%product}}',
-                    [
-                        'id',
-                        'catalogue_id',
-                        'group_id',
-                        'code',
-                        'name',
-                        'product_size',
-                        'matherial',
-                        'small_image',
-                        'big_image',
-                        'super_big_image',
-                        'content',
-                        'status_id',
-                        'status_caption',
-                        'brand',
-                        'weight',
-                        'pack_amount',
-                        'pack_weigh',
-                        'pack_volume',
-                        'pack_sizex',
-                        'pack_sizey',
-                        'pack_sizez',
-                        'amount',
-                        'free',
-                        'inwayamount',
-                        'inwayfree',
-                        'enduserprice',
-                        'user_row'
-                    ],
-                    $valuesArr
-                )->execute();
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($valuesArr);
+                do {
+                    $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product}}',
+                        [
+                            'id',
+                            'catalogue_id',
+                            'group_id',
+                            'code',
+                            'name',
+                            'product_size',
+                            'matherial',
+                            'small_image',
+                            'big_image',
+                            'super_big_image',
+                            'content',
+                            'status_id',
+                            'status_caption',
+                            'brand',
+                            'weight',
+                            'pack_amount',
+                            'pack_weigh',
+                            'pack_volume',
+                            'pack_sizex',
+                            'pack_sizey',
+                            'pack_sizez',
+                            'amount',
+                            'free',
+                            'inwayamount',
+                            'inwayfree',
+                            'enduserprice',
+                            'user_row'
+                        ],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while($counter < $valuesArrLength);
                 yii::endProfile('ProductsInsertIntoDB');
             }
         }
@@ -550,26 +574,34 @@ class LoadController extends \yii\console\Controller
             if (count($slaveProductsArr) > 0)
             {
                 yii::beginProfile('SlaveProductsInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert(
-                    '{{%slave_product}}',
-                    [
-                        'id',
-                        'parent_product_id',
-                        'code',
-                        'name',
-                        'size_code',
-                        'weight',
-                        'price',
-                        'price_currency',
-                        'price_name',
-                        'amount',
-                        'free',
-                        'inwayamount',
-                        'inwayfree',
-                        'enduserprice'
-                    ],
-                    $slaveProductsArr
-                )->execute();
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($slaveProductsArr);
+                do {
+                    $valuesArrTmp = array_slice($slaveProductsArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%slave_product}}',
+                        [
+                            'id',
+                            'parent_product_id',
+                            'code',
+                            'name',
+                            'size_code',
+                            'weight',
+                            'price',
+                            'price_currency',
+                            'price_name',
+                            'amount',
+                            'free',
+                            'inwayamount',
+                            'inwayfree',
+                            'enduserprice'
+                        ],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while($counter < $valuesArrLength);
                 yii::endProfile('SlaveProductsInsertIntoDB');
             }
         }
@@ -639,11 +671,19 @@ class LoadController extends \yii\console\Controller
             if (count($prodAttachesArr) > 0)
             {
                 yii::beginProfile('ProductAttachInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert(
-                    '{{%product_attachment}}',
-                    ['product_id', 'meaning', 'file', 'image', 'name'],
-                    $prodAttachesArr
-                )->execute();
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($prodAttachesArr);
+                do {
+                    $valuesArrTmp = array_slice($prodAttachesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product_attachment}}',
+                        ['product_id', 'meaning', 'file', 'image', 'name'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while($counter < $valuesArrLength);
                 yii::endProfile('ProductAttachInsertIntoDB');
             }
         }
@@ -718,21 +758,37 @@ class LoadController extends \yii\console\Controller
             if (count($printsArr) > 0)
             {
                 yii::beginProfile('PrintsInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert(
-                    '{{%print}}',
-                    ['name', 'description'],
-                    $printsArr
-                )->execute();
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($printsArr);
+                do {
+                    $valuesArrTmp = array_slice($printsArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%print}}',
+                        ['name', 'description'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while($counter < $valuesArrLength);
                 yii::endProfile('PrintsInsertIntoDB');
 
                 if (count($productPrintsArr) > 0)
                 {
                     yii::beginProfile('ProductPrintsInsertIntoDB');
-                    yii::$app->db->createCommand()->batchInsert(
-                        '{{%product_print}}',
-                        ['product_id', 'print_id'],
-                        $productPrintsArr
-                    )->execute();
+                    $valuesArrTmp = [];
+                    $counter = 0;
+                    $valuesArrLength = count($productPrintsArr);
+                    do {
+                        $valuesArrTmp = array_slice($productPrintsArr, $counter, $this->batchSize);
+                        yii::$app->db->createCommand()->batchInsert(
+                            '{{%product_print}}',
+                            ['product_id', 'print_id'],
+                            $valuesArrTmp
+                        )->execute();
+                        $counter += $this->batchSize;
+                    }
+                    while($counter < $valuesArrLength);
                     yii::endProfile('ProductPrintsInsertIntoDB');
                 }
             }
@@ -788,11 +844,19 @@ class LoadController extends \yii\console\Controller
                 if (count($typesArrForInsert) > 0)
                 {
                     yii::beginProfile('FilterTypesInsertIntoDB');
-                    yii::$app->db->createCommand()->batchInsert(
-                        '{{%filter_type}}',
-                        ['id', 'name'],
-                        $typesArrForInsert
-                    )->execute();
+                    $valuesArrTmp = [];
+                    $counter = 0;
+                    $valuesArrLength = count($typesArrForInsert);
+                    do {
+                        $valuesArrTmp = array_slice($typesArrForInsert, $counter, $this->batchSize);
+                        yii::$app->db->createCommand()->batchInsert(
+                            '{{%filter_type}}',
+                            ['id', 'name'],
+                            $valuesArrTmp
+                        )->execute();
+                        $counter += $this->batchSize;
+                    }
+                    while($counter < $valuesArrLength);
                     yii::endProfile('FilterTypesInsertIntoDB');
                 }
 
@@ -800,11 +864,19 @@ class LoadController extends \yii\console\Controller
                 {
                     //Запись фильтров в БД
                     yii::beginProfile('FiltersInsertIntoDB');
-                    yii::$app->db->createCommand()->batchInsert(
-                        '{{%filter}}',
-                        ['id', 'name', 'type_id'],
-                        $filtersArrForInsert
-                    )->execute();
+                    $valuesArrTmp = [];
+                    $counter = 0;
+                    $valuesArrLength = count($filtersArrForInsert);
+                    do {
+                        $valuesArrTmp = array_slice($filtersArrForInsert, $counter, $this->batchSize);
+                        yii::$app->db->createCommand()->batchInsert(
+                            '{{%filter}}',
+                            ['id', 'name', 'type_id'],
+                            $valuesArrTmp
+                        )->execute();
+                        $counter += $this->batchSize;
+                    }
+                    while($counter < $valuesArrLength);
                     yii::endProfile('FiltersInsertIntoDB');
                 }
             }
@@ -871,11 +943,19 @@ class LoadController extends \yii\console\Controller
             if (count($prodFiltersArr) > 0)
             {
                 yii::beginProfile('ProductFiltersInsertIntoDB');
-                yii::$app->db->createCommand()->batchInsert(
-                    '{{%product_filter}}',
-                    ['product_id', 'filter_id', 'type_id'],
-                    $prodFiltersArr
-                )->execute();
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($prodFiltersArr);
+                do {
+                    $valuesArrTmp = array_slice($prodFiltersArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product_filter}}',
+                        ['product_id', 'filter_id', 'type_id'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while($counter < $valuesArrLength);
                 yii::endProfile('ProductFiltersInsertIntoDB');
             }
         }
@@ -960,7 +1040,7 @@ class LoadController extends \yii\console\Controller
         }
     }
 
-    public function actionIndex()
+    /*public function actionIndex()
     {
         //Создание объекта для загрузки файлов
         $loadXMLObject = LoadGiftsXML::getInstance();
@@ -1413,10 +1493,18 @@ class LoadController extends \yii\console\Controller
         }
 
         echo "Index action\n";
-    }
+    }*/
 
     public function actionGetimages()
     {
         echo "GateImages action\n";
+    }
+
+    public function actionMemory()
+    {
+        echo memory_get_peak_usage(), "\n";
+        echo memory_get_usage(), "\n";
+        echo ini_get('memory_limit'), "\n";
+        echo ini_get('mysqlnd.net_read_buffer_size'), "\n";
     }
 }
