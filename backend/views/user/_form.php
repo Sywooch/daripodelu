@@ -1,6 +1,9 @@
 <?php
 
+use yii\bootstrap\Button;
+use yii\bootstrap\Modal;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\User;
 
@@ -24,6 +27,19 @@ use common\models\User;
                 <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']) ?>
                 <?php else: ?>
                 <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;', 'readonly' => 'readonly']) ?>
+                <?= Button::widget([
+                    'label' => Yii::t('app', 'Change password'),
+                    'encodeLabel' => false,
+                    'options' => [
+                        'class' => 'btn-link',
+                        'type' => 'button',
+                        'style' => 'margin:5px; margin-bottom: 10px;',
+                        'data' => [
+                            'toggle' => 'modal',
+                            'target' => '#changePasswordModal',
+                        ],
+                    ],
+                ]); ?>
                 <?php endif; ?>
 
                 <?= $form->field($model, 'email')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']) ?>
@@ -69,3 +85,30 @@ use common\models\User;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php if ( ! $model->isNewRecord): ?>
+    <?php $changePasswordForm = ActiveForm::begin([
+        'action' => Url::to(['/user/changepassword', 'id' => $model->id]),
+        'method' => 'post',
+    ]); ?>
+
+    <?php Modal::begin([
+        'id' => 'changePasswordModal',
+        'header' => '<h2>' . Yii::t('app', 'Changing password') . '</h2>',
+        'footer' => Button::widget([
+            'label' => Yii::t('app', 'Save'),
+            'encodeLabel' => false,
+            'options' => [
+                'class' => 'btn-success',
+                'name' => 'joinGroup',
+            ],
+        ]),
+    ]); ?>
+
+        <?= $changePasswordForm->field($model, 'password')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 100%;'])->label(Yii::t('app', 'New password')) ?>
+
+        <?= $changePasswordForm->field($model, 'password_repeat')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 100%;']) ?>
+
+    <?php Modal::end(); ?>
+
+    <?php ActiveForm::end(); ?>
+<?php endif; ?>

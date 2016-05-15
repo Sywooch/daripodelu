@@ -133,5 +133,11 @@ return [
     "Passwords don't match." => 'Пароли должны совпадать.',
     'This email address has already been taken.' => 'Этот адрес электронной почты уже был указан ранее при регистрации другого пользователя. Введите иной email.',
     '<strong>Saved!</strong> The user added successfully.' => '<strong>Сохранено!</strong> Пользователь успешно добавлен.',
+    'Change' => 'Изменить',
+    'Change password' => 'Сменить пароль',
+    'Changing password' => 'Смена пароля',
+    'New password' => 'Новый пароль',
+    '<strong>Saved!</strong> Password changed successfully.' => '<strong>Сохранено!</strong> Пароль успешно изменен.',
+    '<strong> Error! </strong> An error occurred while changing the password.' => '<strong>Ошибка!</strong> При смене пароля произошла ошибка.',
     '' => '',
 ];

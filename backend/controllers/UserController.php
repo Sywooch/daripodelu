@@ -27,6 +27,7 @@ class UserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'changepassword' => ['POST'],
                 ],
             ],
         ];
@@ -191,6 +192,44 @@ class UserController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * Changes password
+     *
+     * @param integer $id
+     * @return \yii\web\Response
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     */
+    public function actionChangepassword($id)
+    {
+        if ( ! Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => $id]))
+        {
+            throw new ForbiddenHttpException('Access denied');
+        }
+
+        $model = $this->findModel($id);
+        $model->scenario = User::SCENARIO_CHANGE_PASSWORD;
+
+        if ($model->load(Yii::$app->request->post()))
+        {
+            $model->setPasswordHash($model->password);
+            if ($model->save(true, ['password_hash']))
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Password changed successfully.'));
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while changing the password.'));
+            }
+        }
+        else
+        {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while changing the password.'));
+        }
+
+        return $this->redirect(['update', 'id' => $model->id]);
     }
 
     /**
