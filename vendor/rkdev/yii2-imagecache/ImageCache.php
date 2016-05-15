@@ -64,8 +64,8 @@ class ImageCache extends \yii\base\Component
 
         if ( !isset($this->thumbsPath) || !isset($this->thumbsUrl))
         {
-            $this->thumbsPath = '@app/web/thumbs';
-            $this->thumbsUrl = '@web/thumbs';
+            $this->thumbsPath = (Yii::$app instanceof yii\console\Application) ? '@frontend/web/thumbs' : '@app/web/thumbs';
+            $this->thumbsUrl = (Yii::$app instanceof yii\console\Application) ? '/thumbs' : '@web/thumbs';
         }
 
         if (isset($this->text))
@@ -91,6 +91,8 @@ class ImageCache extends \yii\base\Component
      */
     public function thumb($path, $size = self::SIZE_THUMB, $imgOptions = [])
     {
+//        $this->getThumbFullPath(str_replace('/uploads/', '', $path), $size);
+
         return Html::img(self::thumbSrc($path, $size), $imgOptions);
     }
 
@@ -115,6 +117,43 @@ class ImageCache extends \yii\base\Component
         $src = str_replace('%', '%25', $src);
 
         return $src;
+    }
+
+    public function thumbConsole($path, $size = self::SIZE_THUMB)
+    {
+        if ($size != self::SIZE_FULL && !isset($this->sizes[$size]))
+            throw new \yii\base\InvalidParamException('Unkown size ' . $size);
+
+        $realPath = $this->sourcePath . '/' . $path;
+        if ( !file_exists($realPath) || !preg_match('#^(.*)\.(' . $this->getExtensionsRegexp() . ')$#', $path, $matches))
+            throw new \yii\base\InvalidParamException('Invalid path ' . $path);
+
+        $suffix = $this->getSufixFromSize($size);
+        $src = "{$matches[1]}{$suffix}.{$matches[2]}";
+
+        $this->create($src);
+    }
+
+    public function getThumbFullPath($path, $size = self::SIZE_THUMB)
+    {
+        $filename = basename($path);
+        if ( ! preg_match('#^(.*)\.(' . $this->getExtensionsRegexp() . ')$#', $filename, $matches))
+        {
+            throw new \yii\base\InvalidParamException('Invalid file name ' . $filename);
+        }
+
+        $fullPath = '';
+        $info = $this->getPathInfo($path);
+        $folder = preg_replace('#/[^/]*$#', '', $info['dstPath']);
+        $fullPath = $folder;
+
+        $suffix = $this->getSufixFromSize($size);
+        $filenameWithSuffix = "{$matches[1]}{$suffix}.{$matches[2]}";
+
+
+        $fullPath .= '/' . $filenameWithSuffix;
+
+        return $fullPath;
     }
 
     /**
