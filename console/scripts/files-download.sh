@@ -28,17 +28,17 @@ pass="MF1lHzTR"
 wait="1s"
 
 # путь к файлу со списком незагруженных картинок
-file="./downloads/current/imagesforupload.txt"
+file="./../../downloads/current/filesforupload.txt"
 
 # путь к директории, в которую следует загружать картинки
 uploadPath="./uploads"
 # ========================================================================
 
 # формирование файла со списком незагруженных картинок
-./yii load/makeimglist
+./yii load/makefileslist
 
 # проверка наличия файла со списком незагруженных картинок
-if ! [ -f ./downloads/current/imagesforupload.txt ];
+if ! [ -f ./downloads/current/filesforupload.txt ];
 then
     echo "No file with images list for upload"
 fi
