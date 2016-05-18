@@ -1,20 +1,21 @@
 #!/bin/bash
 
-# file="./downloads/current/xaa.txt"
-# file="./downloads/current/xab.txt"
-# file="./downloads/current/xac.txt"
-# file="./downloads/current/xad.txt"
-# file="./downloads/current/xae.txt"
-# file="./downloads/current/xaf.txt"
-# file="./downloads/current/xag.txt"
-# file="./downloads/current/xah.txt"
-# file="./downloads/current/xai.txt"
-# file="./downloads/current/xaj.txt"
-# file="./downloads/current/xak.txt"
-# file="./downloads/current/xal.txt"
-# file="./downloads/current/xam.txt"
-# file="./downloads/current/xan.txt"
-# file="./downloads/current/xao.txt"
+# file="./../../downloads/current/xaa"
+# file="./../../downloads/current/xab"
+# file="./../../downloads/current/xac"
+# file="./../../downloads/current/xad"
+# file="./../../downloads/current/xae"
+# file="./../../downloads/current/xaf"
+# file="./../../downloads/current/xag"
+# file="./../../downloads/current/xah"
+# file="./../../downloads/current/xai"
+# file="./../../downloads/current/xaj"
+# file="./../../downloads/current/xak"
+# file="./../../downloads/current/xal"
+# file="./../../downloads/current/xam"
+# file="./../../downloads/current/xan"
+# file="./../../downloads/current/xao"
+
 
 # ========================================================================
 # логин
@@ -25,42 +26,42 @@ pass="MF1lHzTR"
 
 # Пауза в секундах между несколькими загрузками (в т.ч. повторами). Это снижает загруженность сервера.
 # Чтобы указать значение в минутах, используйте "m", в часах - "h", в днях - "d" после числа.
-wait="1s"
+wait="0.5s"
 
 # путь к файлу со списком незагруженных картинок
 file="./../../downloads/current/imagesforupload.txt"
 
 # путь к директории, в которую следует загружать картинки
-uploadPath="./uploads"
+uploadPath="./../../uploads"
 # ========================================================================
 
 # формирование файла со списком незагруженных картинок
-./yii load/makeimglist
+php -c ~/etc/php.ini ./../../yii load/makeimglist
 
 # проверка наличия файла со списком незагруженных картинок
-if ! [ -f ./downloads/current/imagesforupload.txt ];
+if ! [ -f ./../../downloads/current/imagesforupload.txt ];
 then
-    echo "No file with images list for upload"
+      echo "No file with images list for upload"
 fi
 
 counter=0
 
 while read line ; do
-    IFS=";"
-    set -- $line
-    directory=$1
-    filepath=$2
-    fullpath="$uploadPath/$directory/$filepath"
+      IFS=";"
+      set -- $line
+      directory=$1
+      filepath=$2
+      fullpath="$uploadPath/$directory/$filepath"
 
-    fulldirpath=${fullpath%/*}
+      fulldirpath=${fullpath%/*}
 
-    counter=$((counter+1))
+      counter=$((counter+1))
 
-    if [ ! -f $fullpath ]
-    then
-        sleep 0.5s
+      if [ ! -f $fullpath ]
+      then
+          sleep 0.5
 
-        echo "$counter  wget --user=****** --password=****** --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath"
-        wget --user=$login --password=$pass --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath
-    fi
+          echo "$counter  wget --user=****** --password=****** --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath"
+          wget --user=$login --password=$pass -w $wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath
+      fi
 done < $file

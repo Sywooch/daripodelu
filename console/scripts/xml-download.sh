@@ -1,28 +1,28 @@
 #!/bin/bash
 
 # загрузка xml-файлов с сайта gifs.ru
-./../../yii load/downloadxml
+php -c ~/etc/php.ini ./../../yii load/downloadxml
 
 # очистка таблиц БД
-./../../yii load/droptables
+php -c ~/etc/php.ini ./../../yii load/droptables
 
 # анализ tree.xml и запись категорий в БД
-./../../yii load/insertctg
+php -c ~/etc/php.ini ./../../yii load/insertctg
 
 # анализ products.xml и запись товаров в БД
-./../../yii load/insertprod
+php -c ~/etc/php.ini ./../../yii load/insertprod
 
 # анализ products.xml и запись подчиненных товаров в БД
-./../../yii load/insertslaveprod
+php -c ~/etc/php.ini ./../../yii load/insertslaveprod
 
 # анализ products.xml и запись доп. файлов товаров в БД
-./../../yii load/insertattach
+php -c ~/etc/php.ini ./../../yii load/insertattach
 
 # анализ products.xml и запись методов печати товаров в БД
-./../../yii load/insertprint
+php -c ~/etc/php.ini ./../../yii load/insertprint
 
 # анализ filters.xml и запись фильтров в БД
-./../../yii load/insertfilters
+php -c ~/etc/php.ini ./../../yii load/insertfilters
 
 # анализ filters.xml и запись фильтров в БД
-./../../yii load/insertprodfilters
+php -c ~/etc/php.ini ./../../yii load/insertprodfilters

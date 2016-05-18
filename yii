@@ -1,5 +1,5 @@
-#!/opt/php55/bin/php
 <?php
+ini_set('mysqlnd.net_read_buffer_size', '192M');
 /**
  * Yii console bootstrap file.
  *

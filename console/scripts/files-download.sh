@@ -1,20 +1,5 @@
 #!/bin/bash
 
-# file="./downloads/current/xaa.txt"
-# file="./downloads/current/xab.txt"
-# file="./downloads/current/xac.txt"
-# file="./downloads/current/xad.txt"
-# file="./downloads/current/xae.txt"
-# file="./downloads/current/xaf.txt"
-# file="./downloads/current/xag.txt"
-# file="./downloads/current/xah.txt"
-# file="./downloads/current/xai.txt"
-# file="./downloads/current/xaj.txt"
-# file="./downloads/current/xak.txt"
-# file="./downloads/current/xal.txt"
-# file="./downloads/current/xam.txt"
-# file="./downloads/current/xan.txt"
-# file="./downloads/current/xao.txt"
 
 # ========================================================================
 # логин
@@ -31,14 +16,14 @@ wait="1s"
 file="./../../downloads/current/filesforupload.txt"
 
 # путь к директории, в которую следует загружать картинки
-uploadPath="./uploads"
+uploadPath="./../../uploads"
 # ========================================================================
 
 # формирование файла со списком незагруженных картинок
-./yii load/makefileslist
+php -c ~/etc/php.ini ./../../yii load/makefileslist
 
 # проверка наличия файла со списком незагруженных картинок
-if ! [ -f ./downloads/current/filesforupload.txt ];
+if ! [ -f ./../../downloads/current/filesforupload.txt ];
 then
     echo "No file with images list for upload"
 fi
@@ -58,7 +43,7 @@ while read line ; do
 
     if [ ! -f $fullpath ]
     then
-        sleep 0.5s
+        sleep 0.5
 
         echo "$counter  wget --user=****** --password=****** --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath"
         wget --user=$login --password=$pass --wait=$wait -P $fulldirpath api2.gifts.ru/export/v2/catalogue/$filepath
