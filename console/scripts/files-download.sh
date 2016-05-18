@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_PATH=`pwd`/`dirname "$0"`
+ROOT_PATH="$SCRIPT_PATH/../.."
+
 
 # ========================================================================
 # логин
@@ -13,17 +16,17 @@ pass="MF1lHzTR"
 wait="1s"
 
 # путь к файлу со списком незагруженных картинок
-file="./../../downloads/current/filesforupload.txt"
+file="$ROOT_PATH/downloads/current/filesforupload.txt"
 
 # путь к директории, в которую следует загружать картинки
-uploadPath="./../../uploads"
+uploadPath="$ROOT_PATH/uploads"
 # ========================================================================
 
 # формирование файла со списком незагруженных картинок
-php -c ~/etc/php.ini ./../../yii load/makefileslist
+php -c ~/etc/php.ini $ROOT_PATH/yii load/makefileslist
 
 # проверка наличия файла со списком незагруженных картинок
-if ! [ -f ./../../downloads/current/filesforupload.txt ];
+if ! [ -f $ROOT_PATH/downloads/current/filesforupload.txt ];
 then
     echo "No file with images list for upload"
 fi

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SCRIPT_NAME=`pwd`/`dirname "$0"`
-ROOT_PATH="$SCRIPT_NAME/../.."
+SCRIPT_PATH=`pwd`/`dirname "$0"`
+ROOT_PATH="$SCRIPT_PATH/../.."
 
-source "$SCRIPT_NAME/lib.sh"
+source "$SCRIPT_PATH/lib.sh"
 
 src_folder="$ROOT_PATH/downloads/current"
 dst_folder="$ROOT_PATH/downloads/archive"
