@@ -135,15 +135,15 @@ class LoadController extends \yii\console\Controller
                 throw new \Exception('New file "' . yii::$app->params['xmlUploadPath']['current'] . '/stock.xml' . '" not found.' . "\n\r");
             }
 
-            yii::$app->db->createCommand()->delete('{{%product_print}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%print}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%product_filter}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%product_attachment}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%slave_product}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%product}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%filter}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%filter_type}}')->execute();
-            yii::$app->db->createCommand()->delete('{{%catalogue}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%product_print_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%print_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%product_filter_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%product_attachment_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%slave_product_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%product_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%filter_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%filter_type_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%catalogue_tmp}}')->execute();
         }
         catch (\Exception $e)
         {
@@ -275,7 +275,7 @@ class LoadController extends \yii\console\Controller
                 do {
                     $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
                     yii::$app->db->createCommand()->batchInsert(
-                        '{{%catalogue}}',
+                        '{{%catalogue_tmp}}',
                         ['id', 'parent_id', 'name', 'uri', 'user_row'],
                         $valuesArrTmp
                     )->execute();
@@ -424,7 +424,7 @@ class LoadController extends \yii\console\Controller
                 do {
                     $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
                     yii::$app->db->createCommand()->batchInsert(
-                        '{{%product}}',
+                        '{{%product_tmp}}',
                         [
                             'id',
                             'catalogue_id',
@@ -580,7 +580,7 @@ class LoadController extends \yii\console\Controller
                 do {
                     $valuesArrTmp = array_slice($slaveProductsArr, $counter, $this->batchSize);
                     yii::$app->db->createCommand()->batchInsert(
-                        '{{%slave_product}}',
+                        '{{%slave_product_tmp}}',
                         [
                             'id',
                             'parent_product_id',
@@ -677,7 +677,7 @@ class LoadController extends \yii\console\Controller
                 do {
                     $valuesArrTmp = array_slice($prodAttachesArr, $counter, $this->batchSize);
                     yii::$app->db->createCommand()->batchInsert(
-                        '{{%product_attachment}}',
+                        '{{%product_attachment_tmp}}',
                         ['product_id', 'meaning', 'file', 'image', 'name'],
                         $valuesArrTmp
                     )->execute();
@@ -764,7 +764,7 @@ class LoadController extends \yii\console\Controller
                 do {
                     $valuesArrTmp = array_slice($printsArr, $counter, $this->batchSize);
                     yii::$app->db->createCommand()->batchInsert(
-                        '{{%print}}',
+                        '{{%print_tmp}}',
                         ['name', 'description'],
                         $valuesArrTmp
                     )->execute();
@@ -782,7 +782,7 @@ class LoadController extends \yii\console\Controller
                     do {
                         $valuesArrTmp = array_slice($productPrintsArr, $counter, $this->batchSize);
                         yii::$app->db->createCommand()->batchInsert(
-                            '{{%product_print}}',
+                            '{{%product_print_tmp}}',
                             ['product_id', 'print_id'],
                             $valuesArrTmp
                         )->execute();
@@ -850,7 +850,7 @@ class LoadController extends \yii\console\Controller
                     do {
                         $valuesArrTmp = array_slice($typesArrForInsert, $counter, $this->batchSize);
                         yii::$app->db->createCommand()->batchInsert(
-                            '{{%filter_type}}',
+                            '{{%filter_type_tmp}}',
                             ['id', 'name'],
                             $valuesArrTmp
                         )->execute();
@@ -870,7 +870,7 @@ class LoadController extends \yii\console\Controller
                     do {
                         $valuesArrTmp = array_slice($filtersArrForInsert, $counter, $this->batchSize);
                         yii::$app->db->createCommand()->batchInsert(
-                            '{{%filter}}',
+                            '{{%filter_tmp}}',
                             ['id', 'name', 'type_id'],
                             $valuesArrTmp
                         )->execute();
@@ -949,7 +949,7 @@ class LoadController extends \yii\console\Controller
                 do {
                     $valuesArrTmp = array_slice($prodFiltersArr, $counter, $this->batchSize);
                     yii::$app->db->createCommand()->batchInsert(
-                        '{{%product_filter}}',
+                        '{{%product_filter_tmp}}',
                         ['product_id', 'filter_id', 'type_id'],
                         $valuesArrTmp
                     )->execute();
@@ -973,10 +973,10 @@ class LoadController extends \yii\console\Controller
         {
             $imagesForDownloadArr = [];
             $results = yii::$app->db->createCommand('
-                SELECT [[id]] as `product_id`, [[small_image]] as `image` FROM {{%product}} WHERE `small_image` IS NOT NULL
-                UNION ALL SELECT [[id]] as `product_id`, [[big_image]] as `image` FROM {{%product}} WHERE `big_image` IS NOT NULL
-                UNION ALL SELECT [[id]] as `product_id`, [[super_big_image]] as `image` FROM {{%product}} WHERE `super_big_image` IS NOT NULL
-                UNION ALL SELECT [[product_id]] as `product_id`, [[image]] as `image` FROM {{%product_attachment}} WHERE `meaning` = 1 AND `image` IS NOT NULL
+                SELECT [[id]] as `product_id`, [[small_image]] as `image` FROM {{%product_tmp}} WHERE `small_image` IS NOT NULL
+                UNION ALL SELECT [[id]] as `product_id`, [[big_image]] as `image` FROM {{%product_tmp}} WHERE `big_image` IS NOT NULL
+                UNION ALL SELECT [[id]] as `product_id`, [[super_big_image]] as `image` FROM {{%product_tmp}} WHERE `super_big_image` IS NOT NULL
+                UNION ALL SELECT [[product_id]] as `product_id`, [[image]] as `image` FROM {{%product_attachment_tmp}} WHERE `meaning` = 1 AND `image` IS NOT NULL
             ')->queryAll();
 
             foreach ($results as $row)
@@ -1011,7 +1011,7 @@ class LoadController extends \yii\console\Controller
         {
             $filesForDownloadArr = [];
             $results = yii::$app->db->createCommand('
-                SELECT [[product_id]] as `product_id`, [[file]] as `file` FROM {{%product_attachment}} WHERE `meaning` = 0 AND `file` IS NOT NULL
+                SELECT [[product_id]] as `product_id`, [[file]] as `file` FROM {{%product_attachment_tmp}} WHERE `meaning` = 0 AND `file` IS NOT NULL
             ')->queryAll();
 
             foreach ($results as $row)
@@ -1089,17 +1089,17 @@ class LoadController extends \yii\console\Controller
                 if (count($valuesArr) > 0)
                 {
                     //Запись категорий в соответствующую таблицу БД
-                    yii::$app->db->createCommand()->delete('{{%product_print}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%print}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%product_filter}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%product_attachment}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%slave_product}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%product}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%filter}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%filter_type}}')->execute();
-                    yii::$app->db->createCommand()->delete('{{%catalogue}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%product_print_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%print_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%product_filter_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%product_attachment_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%slave_product_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%product_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%filter_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%filter_type_tmp}}')->execute();
+                    yii::$app->db->createCommand()->delete('{{%catalogue_tmp}}')->execute();
                     yii::beginProfile('CatalogueInsertIntoDB');
-                    yii::$app->db->createCommand()->batchInsert('{{%catalogue}}',['id', 'parent_id', 'name', 'uri'], $valuesArr)->execute();
+                    yii::$app->db->createCommand()->batchInsert('{{%catalogue_tmp}}',['id', 'parent_id', 'name', 'uri'], $valuesArr)->execute();
                     yii::endProfile('CatalogueInsertIntoDB');
 
                     try
@@ -1305,7 +1305,7 @@ class LoadController extends \yii\console\Controller
                         {
                             yii::beginProfile('ProductsInsertIntoDB');
                             yii::$app->db->createCommand()->batchInsert(
-                                '{{%product}}',
+                                '{{%product_tmp}}',
                                 [
                                     'id',
                                     'catalogue_id',
@@ -1345,7 +1345,7 @@ class LoadController extends \yii\console\Controller
                         {
                             yii::beginProfile('SlaveProductsInsertIntoDB');
                             yii::$app->db->createCommand()->batchInsert(
-                                '{{%slave_product}}',
+                                '{{%slave_product_tmp}}',
                                 ['id', 'parent_product_id', 'code', 'name', 'size_code', 'weight', 'price', 'price_currency', 'price_name'],
                                 $slaveProductsArr
                             )->execute();
@@ -1357,7 +1357,7 @@ class LoadController extends \yii\console\Controller
                         {
                             yii::beginProfile('ProductAttachInsertIntoDB');
                             yii::$app->db->createCommand()->batchInsert(
-                                '{{%product_attachment}}',
+                                '{{%product_attachment_tmp}}',
                                 ['product_id', 'meaning', 'file', 'image', 'name'],
                                 $prodAttachesArr
                             )->execute();
@@ -1370,7 +1370,7 @@ class LoadController extends \yii\console\Controller
                             {
                                 yii::beginProfile('PrintsInsertIntoDB');
                                 yii::$app->db->createCommand()->batchInsert(
-                                    '{{%print}}',
+                                    '{{%print_tmp}}',
                                     ['name', 'description'],
                                     $printsArr
                                 )->execute();
@@ -1380,7 +1380,7 @@ class LoadController extends \yii\console\Controller
                                 {
                                     yii::beginProfile('ProductPrintsInsertIntoDB');
                                     yii::$app->db->createCommand()->batchInsert(
-                                        '{{%product_print}}',
+                                        '{{%product_print_tmp}}',
                                         ['product_id', 'print_id'],
                                         $productPrintsArr
                                     )->execute();
@@ -1433,7 +1433,7 @@ class LoadController extends \yii\console\Controller
                                 {
                                     yii::beginProfile('FilterTypesInsertIntoDB');
                                     yii::$app->db->createCommand()->batchInsert(
-                                        '{{%filter_type}}',
+                                        '{{%filter_type_tmp}}',
                                         ['id', 'name'],
                                         $typesArrForInsert
                                     )->execute();
@@ -1445,7 +1445,7 @@ class LoadController extends \yii\console\Controller
                                     //Запись фильтров в БД
                                     yii::beginProfile('FiltersInsertIntoDB');
                                     yii::$app->db->createCommand()->batchInsert(
-                                        '{{%filter}}',
+                                        '{{%filter_tmp}}',
                                         ['id', 'name', 'type_id'],
                                         $filtersArrForInsert
                                     )->execute();
@@ -1456,7 +1456,7 @@ class LoadController extends \yii\console\Controller
                                     {
                                         yii::beginProfile('ProductFiltersInsertIntoDB');
                                         yii::$app->db->createCommand()->batchInsert(
-                                            '{{%product_filter}}',
+                                            '{{%product_filter_tmp}}',
                                             ['product_id', 'filter_id', 'type_id'],
                                             $prodFiltersArr
                                         )->execute();
