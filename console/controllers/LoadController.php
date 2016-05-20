@@ -543,6 +543,7 @@ class LoadController extends \yii\console\Controller
                                 (isset($stockArr[$slaveProductId]['inwayamount']) ? $stockArr[$slaveProductId]['inwayamount'] : 0),
                                 (isset($stockArr[$slaveProductId]['inwayfree']) ? $stockArr[$slaveProductId]['inwayfree'] : 0),
                                 (isset($stockArr[$slaveProductId]['enduserprice']) ? $stockArr[$slaveProductId]['enduserprice'] : 0.00),
+                                0,
                             ];
                         }
                     }
@@ -564,6 +565,7 @@ class LoadController extends \yii\console\Controller
                             (isset($stockArr[$slaveProductId]['inwayamount']) ? $stockArr[$slaveProductId]['inwayamount'] : 0),
                             (isset($stockArr[$slaveProductId]['inwayfree']) ? $stockArr[$slaveProductId]['inwayfree'] : 0),
                             (isset($stockArr[$slaveProductId]['enduserprice']) ? $stockArr[$slaveProductId]['enduserprice'] : 0.00),
+                            0,
                         ];
                     }
                 }
@@ -595,7 +597,8 @@ class LoadController extends \yii\console\Controller
                             'free',
                             'inwayamount',
                             'inwayfree',
-                            'enduserprice'
+                            'enduserprice',
+                            'user_row'
                         ],
                         $valuesArrTmp
                     )->execute();

@@ -3,6 +3,23 @@
 SCRIPT_PATH=`pwd`/`dirname "$0"`
 ROOT_PATH="$SCRIPT_PATH/../.."
 
+# архивация старых xml-файлов
+source "$SCRIPT_PATH/lib.sh"
+
+# путь каталогам, где храняться xml-файлы для архивирования (каталог src_folder)
+# и архивы (каталог dst_folder)
+src_folder="$ROOT_PATH/downloads/current"
+dst_folder="$ROOT_PATH/downloads/archive"
+
+# вызов функции для создания архива в каталоге dst_folder
+create_archive "$src_folder" "$dst_folder" ;
+
+# если каталог src_folder не пустой, то очищаем его
+if [ "$(ls -A $src_folder)" ]; then
+    `rm $src_folder/*`
+fi
+
+
 # загрузка xml-файлов с сайта gifs.ru
 php -c ~/etc/php.ini $ROOT_PATH/yii load/downloadxml
 
