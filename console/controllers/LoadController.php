@@ -223,6 +223,28 @@ class LoadController extends \yii\console\Controller
         }
     }
 
+    public function actionDownloadstock()
+    {
+        $loadXMLObject = LoadGiftsXML::getInstance();
+        $login = mb_strrpos(yii::$app->basePath, 'daripodelu/console') !== false ? null : yii::$app->config->gateLogin;
+        $password = mb_strrpos(yii::$app->basePath, 'daripodelu/console') !== false ? null : yii::$app->config->gatePassword;
+
+        try
+        {
+            $stockXML = $loadXMLObject->get(yii::$app->params['gate']['stock'], $login, $password);
+            if($stockXML === false)
+            {
+                throw new \Exception('File stock.xml was not processed.');
+            }
+
+            $stockXML->saveXML(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml');
+        }
+        catch (\Exception $e)
+        {
+            echo $e->getMessage() . "\n";
+        }
+    }
+
     /**
      * Запись категорий товаров в БД
      *
