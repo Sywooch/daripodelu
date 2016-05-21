@@ -46,12 +46,3 @@ php -c ~/etc/php.ini $ROOT_PATH/yii load/insertfilters
 
 # анализ filters.xml и запись фильтров в БД
 php -c ~/etc/php.ini $ROOT_PATH/yii load/insertprodfilters
-
-
-# вызов функции для создания архива в каталоге dst_folder
-create_archive "$src_folder" "$dst_folder" ;
-
-# если каталог src_folder не пустой, то очищаем его
-if [ "$(ls -A $src_folder)" ]; then
-    `rm $src_folder/*`
-fi

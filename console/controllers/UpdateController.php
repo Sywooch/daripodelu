@@ -4,7 +4,7 @@ namespace console\controllers;
 
 use yii;
 
-class UpdateController extends \yii\web\Controller
+class UpdateController extends \yii\console\Controller
 {
     public function actionStock()
     {
