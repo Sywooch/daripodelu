@@ -181,6 +181,8 @@ foreach ($productsInGroups as $product)
 
                 <?= $form->field($model, 'weight')->textInput(['style' => 'max-width: 200px;',]) ?>
 
+                <?= $form->field($model, 'amount')->textInput(['style' => 'max-width: 200px;',]) ?>
+
                 <?= $form->field($model, 'free')->textInput(['style' => 'max-width: 200px;',]) ?>
 
                 <?= $form->field($model, 'inwayamount')->textInput(['style' => 'max-width: 200px;',]) ?>
@@ -202,8 +204,6 @@ foreach ($productsInGroups as $product)
                 <?= $form->field($model, 'pack_sizey')->textInput(['style' => 'max-width: 200px;',]) ?>
 
                 <?= $form->field($model, 'pack_sizez')->textInput(['style' => 'max-width: 200px;',]) ?>
-
-                <?= $form->field($model, 'amount')->textInput(['style' => 'max-width: 200px;',]) ?>
             </div>
             <div role="tabpanel" id="photo" class="tab-pane<?php if ($tabNumber == 3): ?> active<?php endif; ?>">
                 <?php Pjax::begin(['id' => 'extra-images']); ?>

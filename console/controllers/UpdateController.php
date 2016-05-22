@@ -53,28 +53,29 @@ class UpdateController extends \yii\console\Controller
                         )->execute();
                     }
 
-                    $slaveProductResults = Yii::$app->db->createCommand('
-                        SELECT [[id]], [[code]] FROM {{%slave_product_tmp}}
-                    ')->queryAll();
-                    foreach ($slaveProductResults as $row)
+                }
+
+                $slaveProductResults = Yii::$app->db->createCommand('
+                    SELECT [[id]], [[code]] FROM {{%slave_product_tmp}}
+                ')->queryAll();
+                foreach ($slaveProductResults as $row)
+                {
+                    if (isset($stockArr[$row['id']]))
                     {
-                        if (isset($stockArr[$row['id']]))
-                        {
-                            Yii::$app->db->createCommand()->update(
-                                '{{%slave_product_tmp}}',
-                                [
-                                    'amount' => (int)$stockArr[$row['id']]['amount'],
-                                    'free' => (int)$stockArr[$row['id']]['free'],
-                                    'inwayamount' => (int)$stockArr[$row['id']]['inwayamount'],
-                                    'inwayfree' => (int)$stockArr[$row['id']]['inwayfree'],
-                                    'enduserprice' => (float)$stockArr[$row['id']]['enduserprice'],
-                                ],
-                                [
-                                    'id' => $row['id'],
-                                    'code' => $row['code'],
-                                ]
-                            )->execute();
-                        }
+                        Yii::$app->db->createCommand()->update(
+                            '{{%slave_product_tmp}}',
+                            [
+                                'amount' => (int)$stockArr[$row['id']]['amount'],
+                                'free' => (int)$stockArr[$row['id']]['free'],
+                                'inwayamount' => (int)$stockArr[$row['id']]['inwayamount'],
+                                'inwayfree' => (int)$stockArr[$row['id']]['inwayfree'],
+                                'enduserprice' => (float)$stockArr[$row['id']]['enduserprice'],
+                            ],
+                            [
+                                'id' => $row['id'],
+                                'code' => $row['code'],
+                            ]
+                        )->execute();
                     }
                 }
             }
