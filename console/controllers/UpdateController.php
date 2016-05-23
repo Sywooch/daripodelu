@@ -78,6 +78,8 @@ class UpdateController extends \yii\console\Controller
                         )->execute();
                     }
                 }
+
+                Yii::$app->db->createCommand('CALL gifts_update_stock()')->execute();
             }
         }
         catch (Exception $e)

@@ -16,3 +16,8 @@ fi
 # загрузка xml-файлов с сайта gifs.ru
 php -c ~/etc/php.ini $ROOT_PATH/yii load/downloadstock
 php -c ~/etc/php.ini $ROOT_PATH/yii update/stock
+
+create_archive "$src_folder" "$dst_folder" "stock";
+if [ "$(ls -A $src_folder)" ]; then
+    `rm $src_folder/*`
+fi
