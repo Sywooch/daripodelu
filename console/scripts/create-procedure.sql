@@ -52,3 +52,26 @@ BEGIN
 
     CLOSE slaveProductTmpCur;
 END;
+
+
+UPDATE dpd_product as p, dpd_product_tmp as pt
+SET
+    p.amount = pt.amount,
+    p.free = pt.free,
+    p.inwayamount = pt.inwayamount,
+    p.inwayfree = pt.inwayfree,
+    p.enduserprice = pt.enduserprice
+WHERE
+    p.id = pt.id and p.code = pt.code;
+
+
+UPDATE dpd_slave_product as sp, dpd_slave_product_tmp as spt
+SET
+    sp.amount = spt.amount,
+    sp.free = spt.free,
+    sp.inwayamount = spt.inwayamount,
+    sp.inwayfree = spt.inwayfree,
+    sp.enduserprice = spt.enduserprice
+WHERE
+    sp.id = spt.id and sp.code = spt.code;
+
