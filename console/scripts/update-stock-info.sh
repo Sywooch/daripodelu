@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SCRIPT_PATH=`pwd`/`dirname "$0"`
+# SCRIPT_PATH=`pwd`/`dirname "$0"`
+SCRIPT_PATH="$HOME/xn--80ahbenushh0b.xn--p1ai/docs/console/scripts"
 ROOT_PATH="$SCRIPT_PATH/../.."
 
 source "$SCRIPT_PATH/lib.sh"

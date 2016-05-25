@@ -8,4 +8,4 @@ Disallow: /common
 Disallow: /frontend
 Disallow: /data
 Disallow: /tests
-Host: www.daripodelu.ru
+Host: xn--80ahbenushh0b.xn--p1ai
