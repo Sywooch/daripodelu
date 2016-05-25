@@ -1,6 +1,21 @@
 Change Log: `yii2-krajee-base`
 ==============================
 
+## Version 1.8.5
+
+**Date:** 08-May-2016
+
+- (enh #60): New property `enablePopStateFix` (addendum to #59).
+- (enh #61): Enhance event handling for `pluginEvents`.
+- (enh #62): Enhance widgets and plugin initialization for dynamic manipulation.
+    - Plugin initialization routine revamped
+    - Widget output can be better handled with dynamic manipulation e.g. via ajax. In order to achieve this the widgets now use the `document.body` on `load` event and trap the plugin selector identifier within that.
+    - More better integration with JS frameworks like AngularJS
+    - Revamp initialization of HTML5 Input based plugins including `Html5Input` widget init.
+- (bug #63): More correct plugin event listening and fixes #61 better.
+- (enh #64): Correct plugin event listening for all use cases (reverts #61).
+- (enh #65): Remove AssetBundle dependency on `yii\web\YiiAsset`.
+
 ## Version 1.8.4
 
 **Date:** 11-Apr-2016

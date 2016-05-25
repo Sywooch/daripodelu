@@ -37,6 +37,10 @@ return [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
         ],
+        'view' => [
+            'class' => '\smilemd\htmlcompress\View',
+            'compress' => YII_ENV_DEV ? false : true,
+        ],
     ],
     'params' => $params,
 ];

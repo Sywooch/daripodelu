@@ -75,15 +75,6 @@ return array (
       '@mihaildev/ckeditor' => $vendorDir . '/mihaildev/yii2-ckeditor',
     ),
   ),
-  'mihaildev/yii2-elfinder' => 
-  array (
-    'name' => 'mihaildev/yii2-elfinder',
-    'version' => '1.1.3.0',
-    'alias' => 
-    array (
-      '@mihaildev/elfinder' => $vendorDir . '/mihaildev/yii2-elfinder',
-    ),
-  ),
   '2amigos/yii2-transliterator-helper' => 
   array (
     'name' => '2amigos/yii2-transliterator-helper',
@@ -210,10 +201,28 @@ return array (
       '@kartik/editable' => $vendorDir . '/kartik-v/yii2-editable',
     ),
   ),
+  'kartik-v/yii2-widget-select2' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-select2',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/select2' => $vendorDir . '/kartik-v/yii2-widget-select2',
+    ),
+  ),
+  'mihaildev/yii2-elfinder' => 
+  array (
+    'name' => 'mihaildev/yii2-elfinder',
+    'version' => '1.2.0.0',
+    'alias' => 
+    array (
+      '@mihaildev/elfinder' => $vendorDir . '/mihaildev/yii2-elfinder',
+    ),
+  ),
   'kartik-v/yii2-krajee-base' => 
   array (
     'name' => 'kartik-v/yii2-krajee-base',
-    'version' => '1.8.4.0',
+    'version' => '1.8.5.0',
     'alias' => 
     array (
       '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base',
@@ -228,13 +237,13 @@ return array (
       '@kartik/grid' => $vendorDir . '/kartik-v/yii2-grid',
     ),
   ),
-  'kartik-v/yii2-widget-select2' => 
+  'smilemd/yii2-htmlcompress' => 
   array (
-    'name' => 'kartik-v/yii2-widget-select2',
-    'version' => '9999999-dev',
+    'name' => 'smilemd/yii2-htmlcompress',
+    'version' => '1.0.2.0',
     'alias' => 
     array (
-      '@kartik/select2' => $vendorDir . '/kartik-v/yii2-widget-select2',
+      '@smilemd/htmlcompress' => $vendorDir . '/smilemd/yii2-htmlcompress/src',
     ),
   ),
 );

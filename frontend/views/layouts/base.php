@@ -27,6 +27,7 @@ $this->beginPage();
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <?php /*
     <!--<link rel="icon" href="img/favicon.ico" />
     <link rel="apple-touch-icon" sizes="57x57" href="img/apple-touch-icons/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="img/apple-touch-icons/apple-touch-icon-60x60.png">
@@ -36,6 +37,7 @@ $this->beginPage();
     <link rel="apple-touch-icon" sizes="120x120" href="img/apple-touch-icons/apple-touch-icon-120x120.png">
     <link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icons/apple-touch-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icons/apple-touch-icon-152x152.png">-->
+    */ ?>
     <?php $this->head() ?>
 </head>
 <body<?php if(yii::$app->controller->route != 'site/index'): ?> class="inner-page"<?php endif; ?>>

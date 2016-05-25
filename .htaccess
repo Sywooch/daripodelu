@@ -38,13 +38,14 @@ php_flag display_errors off
     RewriteCond %{REQUEST_URI} ^/(admin)
     RewriteRule ^.*$ backend/web/index.php [L]
 
-    RewriteCond %{REQUEST_URI} ^/(assets|css)
+    RewriteCond %{REQUEST_URI} ^/(assets|minify|css)
     RewriteRule ^assets/(.*)$ frontend/web/assets/$1 [L]
+    RewriteRule ^minify/(.*)$ frontend/web/minify/$1 [L]
     RewriteRule ^css/(.*)$ frontend/web/css/$1 [L]
     RewriteRule ^img/(.*)$ frontend/web/img/$1 [L]
     RewriteRule ^js/(.*)$ frontend/web/js/$1 [L]
 
-    RewriteCond %{REQUEST_URI} !^/(frontend|backend)/web/(assets|css|img|js)|uploads|(downloads/current)/
+    RewriteCond %{REQUEST_URI} !^/(frontend|backend)/web/(assets|minify|css|img|js)|uploads|(downloads/current)/
     RewriteCond %{REQUEST_URI} !index.php
     RewriteCond %{REQUEST_FILENAME} !-f [OR]
     RewriteCond %{REQUEST_FILENAME} !-d
