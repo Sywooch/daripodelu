@@ -204,8 +204,8 @@ $products = $productsProvider->getModels();
 
                 inputSpan = $("#" + idVal).parents(".select2-container").eq(0);
                 inputSpan.addClass("not-empty");
-                pseudoSpan = $("<span />")
-                pseudoBtn = $("<span />")
+                pseudoSpan = $("<span />");
+                pseudoBtn = $("<span />");
                 pseudoSpan.addClass("pseudo-span");
                 pseudoBtn.attr("title", "Сбросить фильтр").addClass("pseudo-btn");
 
@@ -257,8 +257,8 @@ $products = $productsProvider->getModels();
 
             inputSpan = $("#" + idVal).parents(".select2-container").eq(0);
             inputSpan.addClass("not-empty");
-            pseudoSpan = $("<span />")
-            pseudoBtn = $("<span />")
+            pseudoSpan = $("<span />");
+            pseudoBtn = $("<span />");
             pseudoSpan.addClass("pseudo-span");
             pseudoBtn.attr("title", "Сбросить фильтр").addClass("pseudo-btn");
 
