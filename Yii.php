@@ -24,6 +24,7 @@ Yii::$container = new yii\di\Container;
  *
  * @property \frontend\components\cart\ShopCart $cart
  * @property \common\components\Config $config
+ * @property \common\components\UpdateGiftsDBLogger $updateGiftsDBLogger
  * @property \rkdev\yii2imagecache\ImageCache $imageCache
  */
 abstract class BaseApplication extends yii\base\Application

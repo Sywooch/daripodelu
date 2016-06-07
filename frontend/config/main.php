@@ -9,7 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['cart', 'log'],
+    'bootstrap' => ['cart', 'log', 'updateGiftsDBLogger'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'assetManager' => [],
@@ -33,6 +33,9 @@ return [
             'class' => 'common\components\Request',
             'web'=> '/frontend/web'
         ],
+        'updateGiftsDBLogger' => [
+            'class' => 'common\components\UpdateGiftsDBLogger',
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
@@ -41,6 +44,18 @@ return [
             'class' => '\smilemd\htmlcompress\View',
             'compress' => YII_ENV_DEV ? false : true,
         ],
+        /*'view' => [
+            'class' => '\rmrevin\yii\minify\View',
+            'enableMinify' => !YII_DEBUG,
+            'web_path' => '@web', // path alias to web base
+            'base_path' => '@webroot', // path alias to web base
+            'minify_path' => '@webroot/minify', // path alias to save minify result
+            'js_position' => [ \yii\web\View::POS_END ], // positions of js files to be minified
+            'force_charset' => 'UTF-8', // charset forcibly assign, otherwise will use all of the files found charset
+            'expand_imports' => true, // whether to change @import on content
+            'compress_output' => true, // compress result html page
+            'compress_options' => ['extra' => true], // options for compress
+        ],*/
     ],
     'params' => $params,
 ];

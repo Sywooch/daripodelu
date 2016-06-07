@@ -246,4 +246,13 @@ return array (
       '@smilemd/htmlcompress' => $vendorDir . '/smilemd/yii2-htmlcompress/src',
     ),
   ),
+  'rmrevin/yii2-minify-view' => 
+  array (
+    'name' => 'rmrevin/yii2-minify-view',
+    'version' => '1.10.1.0',
+    'alias' => 
+    array (
+      '@rmrevin/yii/minify' => $vendorDir . '/rmrevin/yii2-minify-view',
+    ),
+  ),
 );

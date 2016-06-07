@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use yii;
 use backend\models\Product;
+use common\models\UpdateGiftsDBLog;
 use rkdev\loadgifts\LoadGiftsXML;
 
 class LoadController extends \yii\console\Controller
@@ -231,16 +232,26 @@ class LoadController extends \yii\console\Controller
 
         try
         {
+            Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_LOAD, UpdateGiftsDBLog::ITEM_STOCK, 'Началось скачивание файла stock.xml с gifts.ru.');
+
             $stockXML = $loadXMLObject->get(yii::$app->params['gate']['stock'], $login, $password);
             if($stockXML === false)
             {
                 throw new \Exception('File stock.xml was not processed.');
             }
 
-            $stockXML->saveXML(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml');
+            if ($stockXML->saveXML(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml'))
+            {
+                Yii::$app->updateGiftsDBLogger->success(UpdateGiftsDBLog::ACTION_LOAD, UpdateGiftsDBLog::ITEM_STOCK, 'Файл stock.xml загружен с gifts.ru и сохранен на сервере.');
+            }
+            else
+            {
+                Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_LOAD, UpdateGiftsDBLog::ITEM_STOCK, 'Файл stock.xml не удалось сохранить на сервере.');
+            }
         }
         catch (\Exception $e)
         {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_LOAD, UpdateGiftsDBLog::ITEM_STOCK, $e->getMessage());
             echo $e->getMessage() . "\n";
         }
     }

@@ -3,6 +3,8 @@
 namespace console\controllers;
 
 use yii;
+use common\models\UpdateGiftsDBLog;
+use common\components\exceptions\SimpleXMLException;
 
 class UpdateController extends \yii\console\Controller
 {
@@ -20,13 +22,16 @@ class UpdateController extends \yii\console\Controller
 
             if($stockXML === false)
             {
-                throw new \Exception('File stock.xml was not processed.');
+                throw new SimpleXMLException('File stock.xml was not processed.');
             }
 
             //Формирование массива с количеством товаров и их ценами
             yii::beginProfile('update_StockFileAnalyze');
             $stockArr = $this->makeArrFromStockTree($stockXML);
             yii::endProfile('update_StockFileAnalyze');
+
+            $updateProductResult = 0;
+            $updateSlaveProductResult = 0;
 
             if (count($stockArr) > 0)
             {
@@ -37,7 +42,7 @@ class UpdateController extends \yii\console\Controller
                 {
                     if (isset($stockArr[$row['id']]))
                     {
-                        Yii::$app->db->createCommand()->update(
+                        $updateProductResult += (int) Yii::$app->db->createCommand()->update(
                             '{{%product_tmp}}',
                             [
                                 'amount' => (int)$stockArr[$row['id']]['amount'],
@@ -52,7 +57,6 @@ class UpdateController extends \yii\console\Controller
                             ]
                         )->execute();
                     }
-
                 }
 
                 $slaveProductResults = Yii::$app->db->createCommand('
@@ -62,7 +66,7 @@ class UpdateController extends \yii\console\Controller
                 {
                     if (isset($stockArr[$row['id']]))
                     {
-                        Yii::$app->db->createCommand()->update(
+                        $updateSlaveProductResult += (int) Yii::$app->db->createCommand()->update(
                             '{{%slave_product_tmp}}',
                             [
                                 'amount' => (int)$stockArr[$row['id']]['amount'],
@@ -79,8 +83,11 @@ class UpdateController extends \yii\console\Controller
                     }
                 }
 
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_PRODUCT, 'Обновлены цены и/или остатки у ' . $updateProductResult . ' товаров во временной таблице.');
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров во временной таблице.');
+
 //                Yii::$app->db->createCommand('CALL gifts_update_stock()')->execute();
-                Yii::$app->db->createCommand('
+                $updateProductResult = (int) Yii::$app->db->createCommand('
                     UPDATE dpd_product as p, dpd_product_tmp as pt
                     SET
                         p.amount = pt.amount,
@@ -92,7 +99,7 @@ class UpdateController extends \yii\console\Controller
                         p.id = pt.id and p.code = pt.code
                 ')->execute();
 
-                Yii::$app->db->createCommand('
+                $updateSlaveProductResult = (int) Yii::$app->db->createCommand('
                     UPDATE dpd_slave_product as sp, dpd_slave_product_tmp as spt
                     SET
                         sp.amount = spt.amount,
@@ -103,12 +110,27 @@ class UpdateController extends \yii\console\Controller
                     WHERE
                         sp.id = spt.id and sp.code = spt.code
                 ')->execute();
+
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_PRODUCT, 'Обновлены цены и/или остатки у ' . $updateProductResult . ' товаров.');
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров.');
             }
+        }
+        catch (SimpleXMLException $xmlE)
+        {
+            yii::endProfile('update_StockFilePrepare');
+            yii::endProfile('update_StockFileAnalyze');
+            Yii::$app->updateGiftsDBLogger->error(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_STOCK,
+                'Ошибка во время парсирования (разбора) файла stock.xml'
+            );
+            echo $xmlE->getMessage() . "\n";
         }
         catch (Exception $e)
         {
             yii::endProfile('update_StockFilePrepare');
             yii::endProfile('update_StockFileAnalyze');
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_STOCK, $e->getMessage());
             echo $e->getMessage() . "\n";
         }
 
