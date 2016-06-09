@@ -9,7 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['cart', 'log', 'updateGiftsDBLogger'],
+    'bootstrap' => ['cart', 'log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'assetManager' => [],
@@ -32,9 +32,6 @@ return [
         'request'=>[
             'class' => 'common\components\Request',
             'web'=> '/frontend/web'
-        ],
-        'updateGiftsDBLogger' => [
-            'class' => 'common\components\UpdateGiftsDBLogger',
         ],
         'user' => [
             'identityClass' => 'common\models\User',

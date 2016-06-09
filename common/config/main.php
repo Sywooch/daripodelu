@@ -1,6 +1,7 @@
 <?php
 return [
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'bootstrap' => ['updateGiftsDBLogger'],
     'components' => [
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
@@ -130,6 +131,9 @@ return [
                     'suffix' => '.html',
                 ],
             ],
+        ],
+        'updateGiftsDBLogger' => [
+            'class' => 'common\components\UpdateGiftsDBLogger',
         ],
     ],
     'language' => 'ru-RU',

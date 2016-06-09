@@ -88,6 +88,7 @@ class UpdateGiftsDBLog extends \yii\db\ActiveRecord
             [
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'created_date',
+                'updatedAtAttribute' => false,
                 'value' => new Expression('NOW()'),
             ],
         ];
