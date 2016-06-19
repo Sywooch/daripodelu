@@ -34,8 +34,12 @@ class UpdateGiftsDBLog extends \yii\db\ActiveRecord
     const ITEM_PRODUCT = 'product';
     const ITEM_FILTER_TYPE = 'filter_type';
     const ITEM_FILTER = 'filter';
+    const ITEM_PRODUCT_PRINT_REL = 'product_print_rel';
+    const ITEM_PRODUCT_FILTER_REL = 'product_filter_rel';
     const ITEM_SLAVE_PRODUCT = 'slave_product';
+    const ITEM_PRINT = 'print';
     const ITEM_STOCK = 'stock';
+    const ITEM_PRODUCT_ATTACH = 'product_attachment';
 
     /**
      * @inheritdoc

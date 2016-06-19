@@ -12,21 +12,9 @@ class UpdateGiftsDBLogger extends yii\base\Component
         parent::init();
     }
 
-    public function log($status, $action, $item, $message = '', $item_id = null)
+    public function info($action, $item, $message = '')
     {
-        $loggerModel = new UpdateGiftsDBLog();
-        $loggerModel->status = $status;
-        $loggerModel->action = $action;
-        $loggerModel->item = $item;
-        $loggerModel->item_id = $item_id;
-        $loggerModel->message = $message;
-
-        return $loggerModel->save();
-    }
-
-    public function info($action, $item, $message = '', $item_id = null)
-    {
-        $this->log(UpdateGiftsDBLog::STATUS_INFO, $action, $item, $message, $item_id);
+        $this->log(UpdateGiftsDBLog::STATUS_INFO, $action, $item, $message, null);
     }
 
     public function success($action, $item, $message = '', $item_id = null)
@@ -42,5 +30,17 @@ class UpdateGiftsDBLogger extends yii\base\Component
     public function error($action, $item, $message = '', $item_id = null)
     {
         $this->log(UpdateGiftsDBLog::STATUS_ERROR, $action, $item, $message, $item_id);
+    }
+
+    public function log($status, $action, $item, $message = '', $item_id = null)
+    {
+        $loggerModel = new UpdateGiftsDBLog();
+        $loggerModel->status = $status;
+        $loggerModel->action = $action;
+        $loggerModel->item = $item;
+        $loggerModel->item_id = $item_id;
+        $loggerModel->message = $message;
+
+        return $loggerModel->save();
     }
 }

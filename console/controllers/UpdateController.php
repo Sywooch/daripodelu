@@ -20,7 +20,7 @@ class UpdateController extends \yii\console\Controller
             );
             yii::endProfile('update_StockFilePrepare');
 
-            if($stockXML === false)
+            if ($stockXML === false)
             {
                 throw new SimpleXMLException('File stock.xml was not processed.');
             }
@@ -42,7 +42,7 @@ class UpdateController extends \yii\console\Controller
                 {
                     if (isset($stockArr[$row['id']]))
                     {
-                        $updateProductResult += (int) Yii::$app->db->createCommand()->update(
+                        $updateProductResult += (int)Yii::$app->db->createCommand()->update(
                             '{{%product_tmp}}',
                             [
                                 'amount' => (int)$stockArr[$row['id']]['amount'],
@@ -66,7 +66,7 @@ class UpdateController extends \yii\console\Controller
                 {
                     if (isset($stockArr[$row['id']]))
                     {
-                        $updateSlaveProductResult += (int) Yii::$app->db->createCommand()->update(
+                        $updateSlaveProductResult += (int)Yii::$app->db->createCommand()->update(
                             '{{%slave_product_tmp}}',
                             [
                                 'amount' => (int)$stockArr[$row['id']]['amount'],
@@ -87,7 +87,7 @@ class UpdateController extends \yii\console\Controller
                 Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров во временной таблице.');
 
 //                Yii::$app->db->createCommand('CALL gifts_update_stock()')->execute();
-                $updateProductResult = (int) Yii::$app->db->createCommand('
+                $updateProductResult = (int)Yii::$app->db->createCommand('
                     UPDATE dpd_product as p, dpd_product_tmp as pt
                     SET
                         p.amount = pt.amount,
@@ -99,7 +99,7 @@ class UpdateController extends \yii\console\Controller
                         p.id = pt.id and p.code = pt.code
                 ')->execute();
 
-                $updateSlaveProductResult = (int) Yii::$app->db->createCommand('
+                $updateSlaveProductResult = (int)Yii::$app->db->createCommand('
                     UPDATE dpd_slave_product as sp, dpd_slave_product_tmp as spt
                     SET
                         sp.amount = spt.amount,
@@ -126,14 +126,396 @@ class UpdateController extends \yii\console\Controller
             );
             echo $xmlE->getMessage() . "\n";
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             yii::endProfile('update_StockFilePrepare');
             yii::endProfile('update_StockFileAnalyze');
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_STOCK, $e->getMessage());
             echo $e->getMessage() . "\n";
         }
+    }
 
+    public function actionCategories()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_CATEGORY,
+                'Начало процесса добавления новых категорий в БД.'
+            );
+            $newCategories = Yii::$app->db->createCommand('SELECT id FROM dpd_catalogue_tmp ct WHERE ct.id NOT IN (SELECT c.id FROM dpd_catalogue c WHERE ct.id = c.id)')->queryAll();
+            $result = 0;
+            if (count($newCategories) > 0)
+            {
+                $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_catalogue SELECT * FROM dpd_catalogue_tmp ct')->execute();
+                if ($result > 0)
+                {
+                    foreach ($newCategories as $item)
+                    {
+                        Yii::$app->updateGiftsDBLogger->success(
+                            UpdateGiftsDBLog::ACTION_INSERT,
+                            UpdateGiftsDBLog::ITEM_CATEGORY,
+                            'Добавлена новая категория',
+                            $item['id']
+                        );
+                    }
+                }
+            }
+
+            if (count($newCategories) == 0 || $result == 0)
+            {
+                Yii::$app->updateGiftsDBLogger->info(
+                    UpdateGiftsDBLog::ACTION_INSERT,
+                    UpdateGiftsDBLog::ITEM_CATEGORY,
+                    'Появилось ' . count($newCategories) . ' новых категорий. В БД добавлено ' . $result . ' категорий.'
+                );
+            }
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_CATEGORY,
+                'Окончание процесса добавления новых категорий в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_CATEGORY, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_CATEGORY,
+                'Окончание процесса добавления новых категорий в БД.'
+            );
+        }
+    }
+
+    public function actionFilterTypes()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                'Начало процесса добавления новых типов фильтров в БД.'
+            );
+
+            $newFilterTypes = Yii::$app->db->createCommand('SELECT id FROM dpd_filter_type_tmp ftt WHERE ftt.id NOT IN (SELECT ft.id FROM dpd_filter_type ft WHERE ftt.id = ft.id)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_filter_type SELECT * FROM dpd_filter_type_tmp ftt')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                'Появилось ' . count($newFilterTypes) . ' новых типов фильтров. В БД добавлено ' . $result . ' типов фильтров.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                'Окончание процесса добавления новых типов фильтров в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_FILTER_TYPE, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                'Окончание процесса добавления новых типов фильтров в БД.'
+            );
+        }
+    }
+
+    public function actionFilter()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER,
+                'Начало процесса добавления новых фильтров в БД.'
+            );
+
+            $newFilters = Yii::$app->db->createCommand('SELECT ft.id, ft.type_id FROM dpd_filter_tmp ft WHERE (ft.id, ft.type_id) NOT IN (SELECT f.id, f.type_id FROM dpd_filter f WHERE ft.id = f.id AND ft.type_id = f.type_id)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_filter SELECT * FROM dpd_filter_tmp')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER,
+                'Появилось ' . count($newFilters) . ' новых фильтров. В БД добавлено ' . $result . ' фильтров.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER,
+                'Окончание процесса добавления новых фильтров в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_FILTER, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_FILTER,
+                'Окончание процесса добавления новых фильтров в БД.'
+            );
+        }
+    }
+
+    public function actionPrints()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRINT,
+                'Начало процесса добавления новых методов нанесения в БД.'
+            );
+
+            $newPrints = Yii::$app->db->createCommand('SELECT name FROM dpd_print_tmp pt WHERE pt.name NOT IN (SELECT p.name FROM dpd_print p WHERE pt.name = p.name)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_print SELECT * FROM dpd_print_tmp')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRINT,
+                'Появилось ' . count($newPrints) . ' новых методов нанесения. В БД добавлено ' . $result . ' методов нанесения.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRINT,
+                'Окончание процесса добавления новых методов нанесения в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRINT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRINT,
+                'Окончание процесса добавления новых методов нанесения в БД.'
+            );
+        }
+    }
+
+    public function actionProducts()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT,
+                'Начало процесса добавления новых товаров в БД.'
+            );
+
+            $newProducts = Yii::$app->db->createCommand('SELECT id FROM dpd_product_tmp pt WHERE pt.id NOT IN (SELECT p.id FROM dpd_product p WHERE pt.id = p.id)')->queryAll();
+            $result = 0;
+            if (count($newProducts) > 0)
+            {
+                $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_product SELECT * FROM dpd_product_tmp')->execute();
+                if ($result > 0)
+                {
+                    foreach ($newProducts as $item)
+                    {
+                        Yii::$app->updateGiftsDBLogger->success(
+                            UpdateGiftsDBLog::ACTION_INSERT,
+                            UpdateGiftsDBLog::ITEM_PRODUCT,
+                            'Добавлена новый товар',
+                            $item['id']
+                        );
+                    }
+                }
+            }
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT,
+                'Появилось ' . count($newProducts) . ' новых товаров. В БД добавлено ' . $result . ' товаров.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT,
+                'Окончание процесса добавления новых товаров в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT,
+                'Окончание процесса добавления новых товаров в БД.'
+            );
+        };
+    }
+
+    public function actionSlaveProducts()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                'Начало процесса добавления новых "подчиненных" товаров в БД.'
+            );
+
+            $newSlaveProducts = Yii::$app->db->createCommand('SELECT spt.id FROM dpd_slave_product_tmp spt WHERE spt.id NOT IN (SELECT sp.id FROM dpd_slave_product sp WHERE spt.id = sp.id)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_slave_product SELECT * FROM dpd_slave_product_tmp')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                'Появилось ' . count($newSlaveProducts) . ' новых "подчиненных" товаров. В БД добавлено ' . $result . ' "подчиненных" товаров.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                'Окончание процесса добавления новых "подчиненных" товаров в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                'Окончание процесса добавления новых "подчиненных" товаров в БД.'
+            );
+        }
+    }
+
+    public function actionPrudoctAttach()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                'Начало процесса добавления информации о доп. файлах товаров в БД.'
+            );
+
+            $newsAttachments = Yii::$app->db->createCommand('SELECT * FROM dpd_product_attachment_tmp pat WHERE (pat.product_id, pat.file, pat.image) NOT IN (SELECT pa.product_id, pa.file, pa.image FROM dpd_product_attachment pa WHERE pat.product_id = pa.product_id AND (pat.file = pa.file OR pat.image = pa.image))')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_product_attachment
+                                                        SELECT *
+                                                        FROM dpd_product_attachment_tmp pat
+                                                        WHERE
+                                                            (pat.product_id, pat.file, pat.image) NOT IN (
+                                                                SELECT pa.product_id, pa.file, pa.image
+                                                                FROM dpd_product_attachment pa
+                                                                WHERE pat.product_id = pa.product_id AND (pat.file = pa.file OR pat.image = pa.image)
+                                                            )
+            ')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                'Появилось ' . count($newsAttachments) . ' новых доп. файлов товаров. В БД добавлена информаци о ' . $result . ' доп. файлов.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                'Окончание процесса добавления информации о доп. файлах товаров в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                'Окончание процесса добавления информации о доп. файлах товаров в БД.'
+            );
+        }
+    }
+
+    public function actionPrintProductRel()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                'Начало процесса добавления новых связей между товарами и методами нанесения в БД.'
+            );
+
+            $newPrintProductRel = Yii::$app->db->createCommand('SELECT * FROM dpd_product_print_tmp ppt WHERE (ppt.product_id, ppt.print_id) NOT IN (SELECT pp.product_id, pp.print_id FROM dpd_product_print pp WHERE ppt.product_id = pp.product_id AND ppt.print_id = pp.print_id)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_product_print
+                                                        SELECT *
+                                                        FROM dpd_product_print_tmp ppt
+                                                        WHERE
+                                                            (ppt.product_id, ppt.print_id) NOT IN (
+                                                                SELECT pp.product_id, pp.print_id
+                                                                FROM dpd_product_print pp
+                                                                WHERE ppt.product_id = pp.product_id AND ppt.print_id = pp.print_id
+                                                            )'
+            )->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                'Появилось ' . count($newPrintProductRel) . ' новых связей между товарами и методами нанесения. В БД добавлено ' . $result . ' связей.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                'Окончание процесса добавления новых связей между товарами и методами нанесения в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                'Окончание процесса добавления новых связей между товарами и методами нанесения в БД.'
+            );
+        }
+    }
+
+    public function actionProductFilterRel()
+    {
+        try
+        {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                'Начало процесса добавления новых связей между товарами и фильтрами в БД.'
+            );
+
+            $newProductFilterRel = Yii::$app->db->createCommand('SELECT * FROM dpd_product_filter_tmp pft WHERE (pft.product_id, pft.filter_id, pft.type_id) NOT IN (SELECT pf.product_id, pf.filter_id, pf.type_id FROM dpd_product_filter pf WHERE pft.product_id = pf.product_id AND pft.filter_id = pf.filter_id AND pft.type_id = pf.type_id)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_product_filter
+                                                        SELECT *
+                                                        FROM dpd_product_filter_tmp pft
+                                                        WHERE
+                                                            (pft.product_id, pft.filter_id, pft.type_id) NOT IN (
+                                                                SELECT pf.product_id, pf.filter_id, pf.type_id
+                                                                FROM dpd_product_filter pf
+                                                                WHERE pft.product_id = pf.product_id AND pft.filter_id = pf.filter_id AND pft.type_id = pf.type_id)'
+            )->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                'Появилось ' . count($newProductFilterRel) . ' новых связей между товарами и фильтрами. В БД добавлено ' . $result . ' связей.'
+            );
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                'Окончание процесса добавления новых связей между товарами и фильтрами в БД.'
+            );
+        }
+        catch (\Exception $e)
+        {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                'Окончание процесса добавления новых связей между товарами и фильтрами в БД.'
+            );
+        }
     }
 
     protected function makeArrFromStockTree(\SimpleXMLElement $tree)
@@ -141,15 +523,15 @@ class UpdateController extends \yii\console\Controller
         $arr = [];
         foreach ($tree->stock as $stock)
         {
-            $productId = (int) $stock->product_id;
+            $productId = (int)$stock->product_id;
             $arr[$productId] = [
                 'product_id' => $productId,
-                'code' => (string) $stock->code,
-                'amount' => (int) $stock->amount,
-                'free' => (int) $stock->free,
-                'inwayamount' => (int) $stock->inwayamount,
-                'inwayfree' => (int) $stock->inwayfree,
-                'enduserprice' => (float) $stock->enduserprice,
+                'code' => (string)$stock->code,
+                'amount' => (int)$stock->amount,
+                'free' => (int)$stock->free,
+                'inwayamount' => (int)$stock->inwayamount,
+                'inwayfree' => (int)$stock->inwayfree,
+                'enduserprice' => (float)$stock->enduserprice,
             ];
         }
 
