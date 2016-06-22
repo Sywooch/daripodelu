@@ -145,7 +145,7 @@ php -c ~/etc/php.ini $ROOT_PATH/yii tools/createthumbs
 php -c ~/etc/php.ini $ROOT_PATH/yii update/categories
 
 # добавление новых типов фильтров в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/filterTypes
+php -c ~/etc/php.ini $ROOT_PATH/yii update/filter-types
 
 # добавление новых фильтров в "основную" таблицу фильтров в БД
 php -c ~/etc/php.ini $ROOT_PATH/yii update/filters
@@ -157,13 +157,20 @@ php -c ~/etc/php.ini $ROOT_PATH/yii update/prints
 php -c ~/etc/php.ini $ROOT_PATH/yii update/products
 
 # добавление новых "подчиненных товаров" в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/slaveProducts
+php -c ~/etc/php.ini $ROOT_PATH/yii update/slave-products
 
 # добавление новых дополнительных файлов в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/productAttachments
+php -c ~/etc/php.ini $ROOT_PATH/yii update/product-attachments
 
 # добавление новых связей "метод нанесения - товар" в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/printProductRel
+php -c ~/etc/php.ini $ROOT_PATH/yii update/print-product-rel
 
 # добавление новых связей "фильтр - продукт" в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/productFilterRel
+php -c ~/etc/php.ini $ROOT_PATH/yii update/product-filter-rel
+
+# вызов функции для создания архива в каталоге dst_folder
+create_archive "$src_folder" "$dst_folder";
+# если каталог src_folder не пустой, то очищаем его
+if [ "$(ls -A $src_folder)" ]; then
+    `rm $src_folder/*`
+fi

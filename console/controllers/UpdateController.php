@@ -336,7 +336,7 @@ class UpdateController extends \yii\console\Controller
                         Yii::$app->updateGiftsDBLogger->success(
                             UpdateGiftsDBLog::ACTION_INSERT,
                             UpdateGiftsDBLog::ITEM_PRODUCT,
-                            'Добавлена новый товар',
+                            'Добавлен новый товар',
                             $item['id']
                         );
                     }
