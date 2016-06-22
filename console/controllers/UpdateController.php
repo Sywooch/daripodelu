@@ -8,6 +8,9 @@ use common\components\exceptions\SimpleXMLException;
 
 class UpdateController extends \yii\console\Controller
 {
+    /**
+     * Updates information about price and quantity of goods
+     */
     public function actionStock()
     {
         $stockArr = [];
@@ -135,6 +138,9 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Adds information about new categories in DB of goods
+     */
     public function actionCategories()
     {
         try
@@ -188,6 +194,9 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Adds information about new types of filters in DB of goods
+     */
     public function actionFilterTypes()
     {
         try
@@ -224,7 +233,10 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
-    public function actionFilter()
+    /**
+     * Adds information about new filters in DB of goods
+     */
+    public function actionFilters()
     {
         try
         {
@@ -260,6 +272,9 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Adds information about new methods of print in DB of goods
+     */
     public function actionPrints()
     {
         try
@@ -296,6 +311,9 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Adds information about new goods in DB
+     */
     public function actionProducts()
     {
         try
@@ -348,6 +366,9 @@ class UpdateController extends \yii\console\Controller
         };
     }
 
+    /**
+     * Adds information about new "slave goods" in DB
+     */
     public function actionSlaveProducts()
     {
         try
@@ -384,7 +405,10 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
-    public function actionPrudoctAttach()
+    /**
+     * Adds information about new attachments (files or images) of goods in DB
+     */
+    public function actionProductAttachments()
     {
         try
         {
