@@ -26,6 +26,7 @@ Yii::$container = new yii\di\Container;
  * @property \common\components\Config $config
  * @property \common\components\UpdateGiftsDBLogger $updateGiftsDBLogger
  * @property \rkdev\yii2imagecache\ImageCache $imageCache
+ * @property \demi\backup\Component $backup
  */
 abstract class BaseApplication extends yii\base\Application
 {

@@ -9,12 +9,12 @@
 
 namespace kartik\grid\controllers;
 
+use kartik\grid\GridView;
+use kartik\mpdf\Pdf;
 use Yii;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Response;
-use kartik\mpdf\Pdf;
-use kartik\grid\GridView;
 
 class ExportController extends Controller
 {
@@ -25,17 +25,20 @@ class ExportController extends Controller
      */
     public function actionDownload()
     {
-        $type = static::getPostData('export_filetype', 'html');
-        $name = static::getPostData('export_filename', Yii::t('kvgrid', 'export'));
-        $content = static::getPostData('export_content', Yii::t('kvgrid', 'No data found'));
-        $mime = static::getPostData('export_mime', 'text/plain');
-        $encoding = static::getPostData('export_encoding', 'utf-8');
-        $config = static::getPostData('export_config', '{}');
+        $type = Yii::$app->request->post('export_filetype', 'html');
+        $name = Yii::$app->request->post('export_filename', Yii::t('kvgrid', 'export'));
+        $content = Yii::$app->request->post('export_content', Yii::t('kvgrid', 'No data found'));
+        $mime = Yii::$app->request->post('export_mime', 'text/plain');
+        $encoding = Yii::$app->request->post('export_encoding', 'utf-8');
+        $bom = Yii::$app->request->post('export_bom', true);
+        $config = Yii::$app->request->post('export_config', '{}');
         if ($type == GridView::PDF) {
             $config = Json::decode($config);
             $this->generatePDF($content, "{$name}.pdf", $config);
             /** @noinspection PhpInconsistentReturnPointsInspection */
             return;
+        } elseif (($type == GridView::CSV || $type == GridView::TEXT) && $encoding == 'utf-8' && $bom) {
+            $content = chr('0xEF') . chr('0xBB') . chr('0xBF') . $content; // add BOM
         }
         $this->setHttpHeaders($type, $name, $mime, $encoding);
         return $content;
@@ -86,18 +89,5 @@ class ExportController extends Controller
         header("Content-Type: {$mime}; charset={$encoding}");
         header("Content-Disposition: attachment; filename={$name}.{$type}");
         header("Cache-Control: max-age=0");
-    }
-
-    /**
-     * Gets the value of a variable in $_POST
-     *
-     * @param int|string $key the variable name in $_POST
-     * @param mixed      $default the default value
-     *
-     * @return mixed the post data value
-     */
-    protected static function getPostData($key, $default = null)
-    {
-        return empty($_POST) || empty($_POST[$key]) ? $default : $_POST[$key];
     }
 }

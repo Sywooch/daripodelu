@@ -10,6 +10,27 @@ return [
             'assignmentFile' => '@common/components/rbac/assignments.php',
             'ruleFile' => '@common/components/rbac/rules.php',
         ],
+        'backup' => [
+            'class' => 'demi\backup\Component',
+
+            // The directory for storing backups files
+            'backupsFolder' => dirname(dirname(__DIR__)) . '/downloads/backups', // <project-root>/backups
+
+            // Name template for backup files.
+            // if string - return date('Y_m_d-H_i_s')
+            //'backupFilename' => 'Y-m-d_His',
+            // also can be callable:
+            'backupFilename' => function (\demi\backup\Component $component) {
+                    return 'dump_'.date('Y-m-d_His');
+            },
+
+            // Directories that will be added to backup
+            'directories' => [],
+
+            // Number of seconds after which the file is considered deprecated and will be deleted.
+            // To prevent deleting any files you can set this param as NULL/FALSE/0.
+            'expireTime' => 3 * 2592000, // 3 month (1 month = 2592000 seconds)
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
             'cachePath' => '@frontend/runtime/cache'

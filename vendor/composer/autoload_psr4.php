@@ -37,6 +37,7 @@ return array(
     'kartik\\affix\\' => array($vendorDir . '/kartik-v/yii2-widget-affix'),
     'dosamigos\\transliterator\\' => array($vendorDir . '/2amigos/yii2-transliterator-helper'),
     'dosamigos\\datetimepicker\\' => array($vendorDir . '/2amigos/yii2-date-time-picker-widget/src'),
+    'demi\\backup\\' => array($vendorDir . '/demi/backup'),
     'creocoder\\nestedsets\\' => array($vendorDir . '/creocoder/yii2-nested-sets/src'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
     'Zelenin\\yii\\behaviors\\' => array($vendorDir . '/zelenin/yii2-slug-behavior'),

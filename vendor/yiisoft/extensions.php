@@ -111,15 +111,6 @@ return array (
       '@kartik/depdrop' => $vendorDir . '/kartik-v/yii2-widget-depdrop',
     ),
   ),
-  'kartik-v/yii2-widget-fileinput' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-fileinput',
-    'version' => '1.0.4.0',
-    'alias' => 
-    array (
-      '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput',
-    ),
-  ),
   'newerton/yii2-fancybox' => 
   array (
     'name' => 'newerton/yii2-fancybox',
@@ -201,15 +192,6 @@ return array (
       '@kartik/editable' => $vendorDir . '/kartik-v/yii2-editable',
     ),
   ),
-  'kartik-v/yii2-widget-select2' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-select2',
-    'version' => '9999999-dev',
-    'alias' => 
-    array (
-      '@kartik/select2' => $vendorDir . '/kartik-v/yii2-widget-select2',
-    ),
-  ),
   'mihaildev/yii2-elfinder' => 
   array (
     'name' => 'mihaildev/yii2-elfinder',
@@ -228,15 +210,6 @@ return array (
       '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base',
     ),
   ),
-  'kartik-v/yii2-grid' => 
-  array (
-    'name' => 'kartik-v/yii2-grid',
-    'version' => '9999999-dev',
-    'alias' => 
-    array (
-      '@kartik/grid' => $vendorDir . '/kartik-v/yii2-grid',
-    ),
-  ),
   'smilemd/yii2-htmlcompress' => 
   array (
     'name' => 'smilemd/yii2-htmlcompress',
@@ -246,13 +219,49 @@ return array (
       '@smilemd/htmlcompress' => $vendorDir . '/smilemd/yii2-htmlcompress/src',
     ),
   ),
+  'kartik-v/yii2-widget-fileinput' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-fileinput',
+    'version' => '1.0.5.0',
+    'alias' => 
+    array (
+      '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput',
+    ),
+  ),
   'rmrevin/yii2-minify-view' => 
   array (
     'name' => 'rmrevin/yii2-minify-view',
-    'version' => '1.10.1.0',
+    'version' => '1.10.2.0',
     'alias' => 
     array (
       '@rmrevin/yii/minify' => $vendorDir . '/rmrevin/yii2-minify-view',
+    ),
+  ),
+  'demi/backup' => 
+  array (
+    'name' => 'demi/backup',
+    'version' => '1.0.1.0',
+    'alias' => 
+    array (
+      '@demi/backup' => $vendorDir . '/demi/backup',
+    ),
+  ),
+  'kartik-v/yii2-widget-select2' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-select2',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/select2' => $vendorDir . '/kartik-v/yii2-widget-select2',
+    ),
+  ),
+  'kartik-v/yii2-grid' => 
+  array (
+    'name' => 'kartik-v/yii2-grid',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/grid' => $vendorDir . '/kartik-v/yii2-grid',
     ),
   ),
 );
