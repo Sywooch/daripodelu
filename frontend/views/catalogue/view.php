@@ -275,8 +275,7 @@ $products = $productsProvider->getModels();
     }
 
     $(document.body).on("submit", "#product_search_form", function(event) {
-        event.preventDefault(); // stop default submit behavior when it bubbles to <body>
-
+        event.preventDefault(); 
         $.pjax.submit(event, "#pl-container");
     });
 ', \yii\web\View::POS_READY) ?>
