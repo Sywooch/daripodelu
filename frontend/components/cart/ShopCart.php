@@ -95,7 +95,7 @@ class ShopCart extends yii\base\Component
                 {
                     if ($this->items[$index]->size[$j]->sizeCode == $cartItem->size[$i]->sizeCode)
                     {
-                        $this->items[$index]->size[$j]->quantity += $cartItem->size[$i]->quantity;
+                        $this->items[$index]->size[$j]->setQuantity($this->items[$index]->size[$j]->quantity + $cartItem->size[$i]->quantity);
                         $exist = true;
                     }
                 }
