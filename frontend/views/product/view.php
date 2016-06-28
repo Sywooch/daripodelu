@@ -274,7 +274,7 @@ foreach ($prints as $print)
         var eventTarget = event.target,
             productsCount = 0;
 
-        if ($(eventTarget).has("form[name=\"add2cartForm\"]"))
+        if ($(eventTarget).is("form[name=\"add2cartForm\"]"))
         {
             $(eventTarget).find("input.size-count").each(function(){
                 productsCount += isNaN(parseInt($(this).val())) ? 0 : parseInt($(this).val())
@@ -332,8 +332,10 @@ foreach ($prints as $print)
                     }
                 }
             });
+
+            return false;
         }
 
-        return false;
+        return true;
     });
 ', View::POS_READY); ?>
