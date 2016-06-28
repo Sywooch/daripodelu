@@ -76,8 +76,15 @@ use frontend\widgets\BlockWidget;
         </footer>
     </div>
 <?php
-$alert = yii::$app->session->getFlash('msg_send_success', null);
-if ( ! is_null($alert))
+$mailAlert = yii::$app->session->getFlash('msg_send_mail_success', null);
+if ( ! is_null($mailAlert))
+{
+    $this->registerJs('
+        showModal("sendSuccessModal", "Сообщение отправлено!", "<p>В ближайшее время наш оператор свяжется с вами.</p>");
+    ', yii\web\View::POS_READY);
+}
+$orderAlert = yii::$app->session->getFlash('msg_send_order_success', null);
+if ( ! is_null($orderAlert))
 {
     $this->registerJs('
         showModal("sendSuccessModal", "Сообщение отправлено!", "<p>В ближайшее время наш оператор свяжется с вами для подтверждения заказа.</p>");

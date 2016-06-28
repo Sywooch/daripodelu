@@ -148,7 +148,23 @@ class CartController extends Controller
             $orderInfo = unserialize($order);
         }
 
+        $this->heading = yii::t('app', 'Cart');
+        $this->metaTitle = $this->heading . ' | ' . Yii::$app->config->siteName;
+        $this->metaDescription = yii::$app->config->siteMetaDescript;
+        $this->metaKeywords = yii::$app->config->siteMetaKeywords;
+
+        $this->view->registerMetaTag([
+            'name' => 'description',
+            'content' => $this->metaDescription,
+        ]);
+        $this->view->registerMetaTag([
+            'name' => 'keywords',
+            'content' => $this->metaKeywords,
+        ]);
+        $this->view->title = $this->metaTitle;
+
         return $this->render('success', [
+            'heading' => $this->heading,
             'orderInfo' => $orderInfo
         ]);
     }

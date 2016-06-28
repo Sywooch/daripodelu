@@ -107,7 +107,7 @@ class SiteController extends Controller
         if ($model->load(yii::$app->request->post()) && $model->validate())
         {
             $model->sendEmail(yii::$app->config->siteEmail);
-            yii::$app->session->setFlash('msg_send_success');
+            yii::$app->session->setFlash('msg_send_mail_success');
         }
 
         return $this->redirect(yii::$app->request->referrer);

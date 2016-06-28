@@ -39,7 +39,7 @@ return [
         ],
         'view' => [
             'class' => '\smilemd\htmlcompress\View',
-            'compress' => YII_ENV_DEV ? false : true,
+            'compress' => YII_ENV_DEV ? false : false,
         ],
         /*'view' => [
             'class' => '\rmrevin\yii\minify\View',

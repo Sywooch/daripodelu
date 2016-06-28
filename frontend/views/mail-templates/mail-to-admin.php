@@ -1,6 +1,5 @@
 <?php
 
-use yii;
 use yii\helpers\Html;
 
 /* @var $mail frontend\models\FeedbackForm */

@@ -164,7 +164,6 @@ use frontend\widgets\BlockWidget;
             $(this).find(".owl-item a").click(function() {
                 if(photoWrapper && bigImg)
                 {
-                    //photoWrapper.attr("href", $(this).attr("href"));
                     bigImg.attr("src", $(this).find("img").attr("src"));
                 }
 
