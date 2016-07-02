@@ -36,3 +36,6 @@ frontend/web/thumbs
 
 local-files-download.sh
 local-img-download.sh
+
+#
+awstats
