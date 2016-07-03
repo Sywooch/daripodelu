@@ -64,7 +64,8 @@ BootboxAsset::overrideSystemConfirm();
                             ['label' => 'Статичные страницы', 'url' => ['/page/index']],
                             ['label' => 'Новости', 'url' => ['/news/index']],
                             ['label' => 'Статьи', 'url' => ['/article/index']],
-                            ['label' => 'Блоки', 'url' => ['/block/index']]
+                            ['label' => 'Блоки', 'url' => ['/block/index']],
+                            ['label' => 'Контакты', 'url' => ['/contacts/index']],
                         ]
                     ],
                     ['label' => 'Настройки', 'url' => ['/settings/index'], 'visible' => Yii::$app->user->can(SettingsPermissions::INDEX)],

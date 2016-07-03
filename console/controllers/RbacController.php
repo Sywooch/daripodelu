@@ -10,6 +10,7 @@ use common\components\rbac\UserProfileOwnerRule;
 use common\components\rbac\ArticlePermissions;
 use common\components\rbac\BlockPermissions;
 use common\components\rbac\CataloguePermissions;
+use common\components\rbac\ContactsPermissions;
 use common\components\rbac\DefaultPermissions;
 use common\components\rbac\ImagePermissions;
 use common\components\rbac\MenuPermissions;
@@ -62,6 +63,13 @@ class RbacController extends Controller
         $catalogueCreate = $authManager->createPermission(CataloguePermissions::CREATE);
         $catalogueUpdate = $authManager->createPermission(CataloguePermissions::UPDATE);
         $catalogueDelete = $authManager->createPermission(CataloguePermissions::DELETE);
+
+        $contactsIndex = $authManager->createPermission(ContactsPermissions::INDEX);
+        $contactsView = $authManager->createPermission(ContactsPermissions::VIEW);
+        $contactsCreate = $authManager->createPermission(ContactsPermissions::CREATE);
+        $contactsUpdate = $authManager->createPermission(ContactsPermissions::UPDATE);
+        $contactsDelete = $authManager->createPermission(ContactsPermissions::DELETE);
+        $contactsChangeOrder = $authManager->createPermission(ContactsPermissions::CHANGE_ORDER);
 
         $imageIndex = $authManager->createPermission(ImagePermissions::INDEX);
         $imageView = $authManager->createPermission(ImagePermissions::VIEW);
@@ -143,6 +151,13 @@ class RbacController extends Controller
         $authManager->add($catalogueCreate);
         $authManager->add($catalogueUpdate);
         $authManager->add($catalogueDelete);
+
+        $authManager->add($contactsIndex);
+        $authManager->add($contactsView);
+        $authManager->add($contactsCreate);
+        $authManager->add($contactsUpdate);
+        $authManager->add($contactsDelete);
+        $authManager->add($contactsChangeOrder);
 
         $authManager->add($imageIndex);
         $authManager->add($imageView);
@@ -243,6 +258,13 @@ class RbacController extends Controller
         $authManager->addChild($moderator, $catalogueCreate);
         $authManager->addChild($moderator, $catalogueUpdate);
         $authManager->addChild($moderator, $catalogueDelete);
+
+        $authManager->addChild($moderator, $contactsIndex);
+        $authManager->addChild($moderator, $contactsView);
+        $authManager->addChild($moderator, $contactsCreate);
+        $authManager->addChild($moderator, $contactsUpdate);
+        $authManager->addChild($moderator, $contactsDelete);
+        $authManager->addChild($moderator, $contactsChangeOrder);
 
         $authManager->addChild($moderator, $imageIndex);
         $authManager->addChild($moderator, $imageView);

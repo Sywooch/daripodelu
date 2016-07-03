@@ -166,4 +166,4 @@ if( Yii::$app->session->hasFlash('success') )
             ],
         ],
     ]); ?>
-<?php Pjax::end(); ?></div>
+<?php Pjax::end(); ?>

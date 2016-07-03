@@ -20,7 +20,7 @@ use common\models\MenuTree;
     <div role="tabpanel">
         <ul class="nav nav-tabs">
             <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-            <li role="presentation"><a href="#settings" aria-controls="main" role="tab" data-toggle="tab">Настройка видимости</a></li>
+            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройка видимости</a></li>
         </ul>
 
         <div class="tab-content cms">

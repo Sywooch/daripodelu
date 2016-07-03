@@ -139,5 +139,9 @@ return [
     'New password' => 'Новый пароль',
     '<strong>Saved!</strong> Password changed successfully.' => '<strong>Сохранено!</strong> Пароль успешно изменен.',
     '<strong> Error! </strong> An error occurred while changing the password.' => '<strong>Ошибка!</strong> При смене пароля произошла ошибка.',
+    'Contacts' => 'Контакты',
+    'Create Contact' => 'Создать контакт',
+    'Update Contact' => 'Редактировать контакт',
+    'Only contact items with status "Published" is displayed on the site.' => 'Только контакты со статусом "Опубликовано" отображаются на сайте.',
     '' => '',
 ];

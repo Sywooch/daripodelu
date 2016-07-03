@@ -57,7 +57,7 @@ class SEOInformation extends ActiveRecord
             'action_id' => Yii::t('app', 'Действие'),
             'ctg_id' => Yii::t('app', 'Категория'),
             'item_id' => Yii::t('app', 'Элемент'),
-            'heading' => Yii::t('app', 'Заголовок'),
+            'heading' => Yii::t('app', 'Заголовок (H1)'),
             'meta_title' => Yii::t('app', 'META Title'),
             'meta_description' => Yii::t('app', 'META Description'),
             'meta_keywords' => Yii::t('app', 'META Keywords'),

@@ -72,6 +72,24 @@ return [
     'catalogue_delete' => [
         'type' => 2,
     ],
+    'contacts_index' => [
+        'type' => 2,
+    ],
+    'contacts_view' => [
+        'type' => 2,
+    ],
+    'contacts_create' => [
+        'type' => 2,
+    ],
+    'contacts_update' => [
+        'type' => 2,
+    ],
+    'contacts_delete' => [
+        'type' => 2,
+    ],
+    'contacts_change_order' => [
+        'type' => 2,
+    ],
     'image_index' => [
         'type' => 2,
     ],
@@ -227,6 +245,12 @@ return [
             'catalogue_create',
             'catalogue_update',
             'catalogue_delete',
+            'contacts_index',
+            'contacts_view',
+            'contacts_create',
+            'contacts_update',
+            'contacts_delete',
+            'contacts_change_order',
             'image_index',
             'image_view',
             'image_create',
