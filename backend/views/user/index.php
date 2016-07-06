@@ -56,65 +56,72 @@ if( Yii::$app->session->hasFlash('success') )
     'tagName' => 'a',
 ] ); ?>
     <div class="clearfix">&nbsp;</div>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            'username',
-            [
-                'attribute' => 'email',
-                'format' => 'email',
-                'contentOptions' => ['style'=>'width: 250px'],
-            ],
-            [
-                'attribute' => 'last_name',
-//                'contentOptions' => ['style'=>'width: 250px'],
-            ],
-            [
-                'attribute' => 'first_name',
-//                'contentOptions' => ['style'=>'width: 250px'],
-            ],
-            [
-                'class'=>'kartik\grid\EditableColumn',
-                'attribute' => 'role',
-                'editableOptions'=>[
-                    'inputType'=> Editable::INPUT_DROPDOWN_LIST,
-                    'data' => User::getRoles(),
-                    'submitButton' => [
-                        'class' => 'btn btn-sm btn-primary',
-                        'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                    ],
-                ],
-                'refreshGrid' => true,
-                'filter' => User::getRoles(),
-                'value' => function($model){ return $model->roleName; },
-                'contentOptions' => ['style'=>'width: 150px'],
-            ],
-            [
-                'class'=>'kartik\grid\EditableColumn',
-                'attribute' => 'status',
-                'editableOptions'=>[
-                    'inputType'=> Editable::INPUT_DROPDOWN_LIST,
-                    'data' => User::getStatuses(),
-                    'submitButton' => [
-                        'class' => 'btn btn-sm btn-primary',
-                        'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                    ],
-                ],
-                'refreshGrid' => true,
-                'filter' => User::getStatuses(),
-                'value' => function($model){ return $model->statusName; },
-                'contentOptions' => ['style'=>'width: 150px'],
-            ],
-            // 'role',
-            // 'created_at',
-            // 'updated_at',
-
-            [
-                'class' => ActionColumn::className(),
-                'template' => Yii::$app->user->can(UserPermissions::DELETE) ? '{update} {delete}' : '{update}',
-                'contentOptions' => ['style'=>'width: 50px'],
-            ],
+<?= GridView::widget([
+    'pjax' => true,
+    'pjaxSettings' => [
+        'neverTimeout'=>true,
+        'options'=>['id'=>'usersGridView'],
+    ],
+    'options' => [
+        'id' => 'usersGridView'
+    ],
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        'username',
+        [
+            'attribute' => 'email',
+            'format' => 'email',
+            'contentOptions' => ['style'=>'width: 250px'],
         ],
-    ]); ?>
-<?php Pjax::end(); ?>
+        [
+            'attribute' => 'last_name',
+//                'contentOptions' => ['style'=>'width: 250px'],
+        ],
+        [
+            'attribute' => 'first_name',
+//                'contentOptions' => ['style'=>'width: 250px'],
+        ],
+        [
+            'class'=>'kartik\grid\EditableColumn',
+            'attribute' => 'role',
+            'editableOptions'=>[
+                'inputType'=> Editable::INPUT_DROPDOWN_LIST,
+                'data' => User::getRoles(),
+                'submitButton' => [
+                    'class' => 'btn btn-sm btn-primary',
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+            ],
+            'refreshGrid' => true,
+            'filter' => User::getRoles(),
+            'value' => function($model){ return $model->roleName; },
+            'contentOptions' => ['style'=>'width: 150px'],
+        ],
+        [
+            'class'=>'kartik\grid\EditableColumn',
+            'attribute' => 'status',
+            'editableOptions'=>[
+                'inputType'=> Editable::INPUT_DROPDOWN_LIST,
+                'data' => User::getStatuses(),
+                'submitButton' => [
+                    'class' => 'btn btn-sm btn-primary',
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+            ],
+            'refreshGrid' => true,
+            'filter' => User::getStatuses(),
+            'value' => function($model){ return $model->statusName; },
+            'contentOptions' => ['style'=>'width: 150px'],
+        ],
+        // 'role',
+        // 'created_at',
+        // 'updated_at',
+
+        [
+            'class' => ActionColumn::className(),
+            'template' => Yii::$app->user->can(UserPermissions::DELETE) ? '{update} {delete}' : '{update}',
+            'contentOptions' => ['style'=>'width: 50px'],
+        ],
+    ],
+]); ?>

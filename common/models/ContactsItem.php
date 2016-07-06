@@ -25,6 +25,9 @@ class ContactsItem extends \yii\db\ActiveRecord
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const SCENARIO_INSERT_PHONE = 'insert_phone';
+    const SCENARIO_INSERT_EMAIL = 'insert_email';
+
     /**
      * @inheritdoc
      */
@@ -39,10 +42,32 @@ class ContactsItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'name', 'weight'], 'required'],
+            [['type', 'name', 'value', 'weight'], 'required'],
             [['weight', 'status'], 'integer'],
             [['type'], 'string', 'max' => 40],
             [['name', 'value', 'note'], 'string', 'max' => 255],
+            [
+                ['value'],
+                'email',
+                'when' => function($model){
+                    return $model->type == ContactsItem::TYPE_EMAIL;
+                },
+                'whenClient' => "function (attribute, value) {
+                    return $('#contactTypeFld').val() == '" . ContactsItem::TYPE_EMAIL . "';
+                }",
+            ],
+            [
+                ['value'],
+                'match',
+                'pattern' => '/^((8|\+7|\+[0-9]{1,3})[\- ]?)?(\(?\d{2,5}\)?[\- ]?)?[\d\- ]{6,10}$/',
+                'message' => Yii::t('app', '{attribute} is not a valid phone number.', ['attribute' => $this->getAttributeLabel('value')]),
+                'when' => function($model){
+                    return $model->type == ContactsItem::TYPE_PHONE || $model->type == ContactsItem::TYPE_FAX;
+                },
+                'whenClient' => "function (attribute, value) {
+                    return $('#contactTypeFld').val() == '" . ContactsItem::TYPE_PHONE . "' || $('#contactTypeFld').val() == '" . ContactsItem::TYPE_FAX . "';
+                }",
+            ],
         ];
     }
 
@@ -63,11 +88,13 @@ class ContactsItem extends \yii\db\ActiveRecord
     }
 
     /**
+     * Changes order of the items
+     *
      * @param integer $newPosition
      * @param bool $save If true, saving of [[weight]] attribute occurs at the end of this method, else the new value of
      * [[weight]] attribute must be saved separately outside of this method
      */
-    public function order($newPosition, $save = true)
+    public function changeOrder($newPosition, $save = true)
     {
         $oldPosition = $this->getOldAttribute('weight');
 
@@ -144,7 +171,7 @@ class ContactsItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * Returns status name by Id
+     * Returns type name by Id
      *
      * @param $index the type Id
      * @return mixed

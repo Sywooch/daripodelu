@@ -47,6 +47,12 @@ class ContactsItemSearch extends ContactsItem
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'weight' => SORT_ASC,
+                    'id' => SORT_ASC,
+                ],
+            ],
         ]);
 
         $this->load($params);

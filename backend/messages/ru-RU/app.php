@@ -13,6 +13,7 @@ return [
     'Update page' => 'Редактирование страницы',
     'Update' => 'Редактирование',
     '<strong>Note:</strong>' => '<strong>Примечание:</strong>',
+    '<strong>Example:</strong>' => '<strong>Пример:</strong>',
     'Only pages with status "Published" is displayed on the site.' => 'Только страницы со статусом "Опубликовано" отображаются на сайте.',
     'Is displayed in the title bar of the browser. If the field is empty, in the header of the browser window displays the page title.' => 'Отображается в строке заголовка браузера. Если поле пустое, в заголовке окна браузера отображается заголовок страницы.',
     'Used by search engines such as Google, Yandex, etc. in displaying search results.' => 'Используется поисковиками, такими как Google, Yandex и т.д., при выводе результатов поиска.',
@@ -143,5 +144,7 @@ return [
     'Create Contact' => 'Создать контакт',
     'Update Contact' => 'Редактировать контакт',
     'Only contact items with status "Published" is displayed on the site.' => 'Только контакты со статусом "Опубликовано" отображаются на сайте.',
+    'The type of information that may be contained in the field "Value".' => 'Тип информации, которая может содержаться в поле "Значение".',
+    '{attribute} is not a valid phone number.' => 'Значение "{attribute}" не является правильным номером телефона.',
     '' => '',
 ];

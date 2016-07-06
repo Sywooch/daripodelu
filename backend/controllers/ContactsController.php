@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\ForbiddenHttpException;
@@ -52,6 +53,37 @@ class ContactsController extends Controller
         if ( !Yii::$app->user->can(ContactsPermissions::INDEX))
         {
             throw new ForbiddenHttpException('Access denied');
+        }
+
+        if (Yii::$app->request->post('hasEditable'))
+        {
+            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
+            {
+                throw new ForbiddenHttpException('Access denied');
+            }
+
+            $modelId = Yii::$app->request->post('editableKey');
+            $model = ContactsItem::findOne($modelId);
+
+            $out = Json::encode(['output' => '', 'message' => '']);
+
+            $posted = current($_POST['ContactsItem']);
+            $post = ['ContactsItem' => $posted];
+
+            if ($model->load($post))
+            {
+                $model->save();
+                $output = '';
+                if (isset($posted['status']))
+                {
+                    $output = ContactsItem::getStatusName($model->status);
+                }
+
+                $out = Json::encode(['output' => $output, 'message' => '']);
+            }
+            echo $out;
+
+            return;
         }
 
         $tabIndex = 0;
@@ -105,12 +137,36 @@ class ContactsController extends Controller
         }
 
         $model = new ContactsItem();
+        $contactItems = ContactsItem::find()->orderBy(['weight' => SORT_ASC])->all();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            $contactItems = ContactsItem::find()->orderBy(['weight' => SORT_ASC])->all();
+        if ($model->load(Yii::$app->request->post()))
+        {
 
+            if ($model->save())
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
+
+                if (isset($_POST['saveContact']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->render('create', [
+                    'model' => $model,
+                    'contactItems' => $contactItems,
+                ]);
+            }
+        }
+        else
+        {
             return $this->render('create', [
                 'model' => $model,
                 'contactItems' => $contactItems,
@@ -132,15 +188,120 @@ class ContactsController extends Controller
             throw new ForbiddenHttpException('Access denied');
         }
 
+        $id = intval($id);
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post()))
+        {
+            $trans = $model->getDb()->beginTransaction();
+            try
+            {
+                $model->changeOrder($model->weight, false);
+                $saveResult = $model->save();
+                $trans->commit();
+            } catch (\Exception $e)
+            {
+                $saveResult = false;
+                $trans->rollBack();
+            }
+
+            if ($saveResult)
+            {
+                Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
+
+                if (isset($_POST['saveContact']))
+                {
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                }
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+
+                return $this->redirect(['index']);
+            }
+        }
+        else
+        {
+            $contactItems = ContactsItem::find()->where(['<>', 'id', $model->id])->orderBy(['weight' => SORT_ASC])->all();
+
             return $this->render('update', [
                 'model' => $model,
+                'contactItems' => $contactItems,
             ]);
         }
+    }
+
+    public function actionUpdateName()
+    {
+        if (Yii::$app->request->post('hasEditable'))
+        {
+            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
+            {
+                throw new ForbiddenHttpException('Access denied');
+            }
+
+            $modelId = Yii::$app->request->post('editableKey');
+            $model = ContactsItem::findOne($modelId);
+
+            $out = Json::encode(['output' => '', 'message' => '']);
+
+            $posted = current($_POST['ContactsItem']);
+            $post = ['ContactsItem' => $posted];
+
+            if ($model->load($post))
+            {
+                $model->save();
+                $output = '';
+                if (isset($posted['name']))
+                {
+                    $output = $model->name;
+                }
+
+                $out = Json::encode(['output' => $output, 'message' => '']);
+            }
+            echo $out;
+        }
+
+        return;
+    }
+
+    public function actionUpdateValue()
+    {
+        if (Yii::$app->request->post('hasEditable'))
+        {
+            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
+            {
+                throw new ForbiddenHttpException('Access denied');
+            }
+
+            $modelId = Yii::$app->request->post('editableKey');
+            $model = ContactsItem::findOne($modelId);
+
+            $out = Json::encode(['output' => '', 'message' => '']);
+
+            $posted = current($_POST['ContactsItem']);
+            $post = ['ContactsItem' => $posted];
+
+            if ($model->load($post))
+            {
+                $model->save();
+                $output = '';
+                if (isset($posted['value']))
+                {
+                    $output = $model->name;
+                }
+
+                $out = Json::encode(['output' => $output, 'message' => '']);
+            }
+            echo $out;
+        }
+
+        return;
     }
 
     /**
@@ -163,6 +324,87 @@ class ContactsController extends Controller
     }
 
     /**
+     * Changes filed
+     *
+     * @param integer $id model Id
+     * @return string
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     */
+    public function actionChangeField($id = null)
+    {
+        if ( !Yii::$app->user->can(ContactsPermissions::CREATE) && !Yii::$app->user->can(ContactsPermissions::UPDATE))
+        {
+            throw new ForbiddenHttpException('Access denied');;
+        }
+
+        $result = ['status' => 'not_success', 'rslt' => null, 'msg' => 'Method is not Post'];
+        if (Yii::$app->request->isPost)
+        {
+            $fieldType = Yii::$app->request->post('fieldType', null);
+
+            $model = is_null($id) ? new ContactsItem() : $this->findModel($id);
+
+            $msg = 'The input field was created successfully';
+            switch ($fieldType)
+            {
+                case ContactsItem::TYPE_FAX:
+                case ContactsItem::TYPE_PHONE:
+                    $template = '_phoneField';
+                    break;
+
+                case ContactsItem::TYPE_EMAIL:
+                    $template = '_emailField';
+                    break;
+
+                case ContactsItem::TYPE_ADDRESS:
+                    $template = '_textArea';
+                    break;
+
+                case ContactsItem::TYPE_OTHER:
+                    $template = '_wysiwygEditor';
+                    break;
+
+                default:
+                    $template = '_textField';
+                    $msg = 'The input field was created by default';
+            }
+
+            $result = [
+                'status' => 'success',
+                'rslt' => $this->renderAjax($template, ['model' => $model, 'form' => new \yii\widgets\ActiveForm()]),
+                'msg' => $msg,
+            ];
+        }
+
+        if (Yii::$app->request->isPost && Yii::$app->request->isAjax)
+        {
+            return Json::encode($result);
+        }
+    }
+
+    public function actionChangeOrder()
+    {
+        $counter = 0;
+        $status = 'no_data_found';
+        if (isset($_POST['sortData']))
+        {
+            $sortData = Yii::$app->request->post('sortData');
+            if (is_array($sortData) && count($sortData) > 0)
+            {
+                foreach ($sortData as $index => $id)
+                {
+                    $counter += (ContactsItem::updateAll(['weight' => $index], ['id' => intval($id)])) ? 1 : 0;
+                }
+            }
+
+            $status = ($counter > 0) ? 'success' : 'no_updated';
+        }
+
+        echo Json::encode(['status' => $status, 'rslt' => $counter]);
+    }
+
+    /**
      * Finds the ContactsItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
@@ -171,9 +413,12 @@ class ContactsController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = ContactsItem::findOne($id)) !== null) {
+        if (($model = ContactsItem::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

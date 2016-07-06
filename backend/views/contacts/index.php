@@ -9,6 +9,9 @@ use yii\widgets\Pjax;
 use kartik\grid\GridView;
 use kartik\grid\ActionColumn;
 use common\models\ContactsItem;
+
+yii\jui\JuiAsset::register($this);
+
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\ContactsItemSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -51,6 +54,7 @@ if( Yii::$app->session->hasFlash('success') )
     </ul>
     <div class="tab-content cms">
         <div role="tabpanel" id="main" class="tab-pane<?php if ($tabIndex === 0) : ?> active<? endif; ?>">
+            <?php //Pjax::begin(); ?>
             <?= Button::widget ( [
                 'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
                 'encodeLabel' => false,
@@ -61,27 +65,77 @@ if( Yii::$app->session->hasFlash('success') )
                 ],
                 'tagName' => 'a',
             ] ); ?>
+            <?= Html::a('<span class="glyphicon glyphicon-floppy-save"></span>' . Yii::t('app', 'Save changes'),
+                ['change-order'],
+                [
+                    'class' => 'btn btn-primary btn-sm pull-right',
+                    'id' => 'save-order',
+                    'disabled' => 'disabled',
+                    'title' => Yii::t('app', 'Save changes after sorting'),
+                    'style' => 'margin: 5px;',
+                ]
+            ); ?>
             <div class="clearfix">&nbsp;</div>
-            <?php Pjax::begin(); ?>    <?= GridView::widget([
+            <?= GridView::widget([
+                    'pjax' => true,
+                    'pjaxSettings' => [
+                        'neverTimeout'=>true,
+                        'options'=>['id'=>'contactsGridView'],
+                    ],
+                    'options' => [
+                        'id' => 'contactsGridView'
+                    ],
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
                     'columns' => [
                         [
-                            'attribute' => 'id',
-                            'contentOptions' => ['style'=>'width: 50px'],
+                            'format' => 'html',
+                            'contentOptions' => ['style'=>'width: 10px;'],
+                            'value' => function($row){
+                                return '<span class="glyphicon glyphicon-option-vertical drag-balloon"></span> ';
+                            },
                         ],
                         [
                             'attribute' => 'type',
-                            'label' => 'Статус',
                             'filter' => ContactsItem::getTypes(),
                             'contentOptions' => ['style'=>'width: 120px; text-align: center;'],
                             'value' => function($row){
                                 return ContactsItem::getTypeName($row->type);
                             },
                         ],
-                        'name',
-                        'value',
-                        'note',
+                        [
+                            'class' => 'kartik\grid\EditableColumn',
+                            'attribute' => 'name',
+                            'editableOptions' => [
+                                'size' => 'lg',
+                                'submitButton' => [
+                                    'class' => 'btn btn-sm btn-primary',
+                                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'ajaxSettings' => [
+                                    'type' => 'post',
+                                    'url' => Url::to(['update-name', 'id' => $model->id]),
+                                ],
+                            ],
+                            'refreshGrid' => true,
+                        ],
+                        [
+                            'class' => 'kartik\grid\EditableColumn',
+                            'attribute' => 'value',
+                            'editableOptions' => [
+                                'size' => 'lg',
+                                'submitButton' => [
+                                    'class' => 'btn btn-sm btn-primary',
+                                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'ajaxSettings' => [
+                                    'type' => 'post',
+                                    'url' => Url::to(['update-value', 'id' => $model->id]),
+                                ],
+                            ],
+                            'refreshGrid' => true,
+                        ],
+//                        'note',
                         [
                             'class'=>'kartik\grid\EditableColumn',
                             'attribute' => 'status',
@@ -106,7 +160,7 @@ if( Yii::$app->session->hasFlash('success') )
                         ],
                     ],
                 ]); ?>
-            <?php Pjax::end(); ?>
+            <?php //Pjax::end(); ?>
         </div>
         <div role="tabpanel" id="settings" class="tab-pane<?php if ($tabIndex === 1): ?> active<? endif; ?>">
             <?php $form = ActiveForm::begin(); ?>
@@ -131,3 +185,89 @@ if( Yii::$app->session->hasFlash('success') )
         </div>
     </div>
 </div>
+
+<?php $this->registerJs("
+
+    var fixHelper = function(e, ui) {
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        },
+        saveOrder = $('#save-order');
+
+    $('.table tbody').sortable({
+        cursor: 'move',
+        cursorAt: { left: 12 },
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
+        update: function( event, ui ) {
+            saveOrder.attr('disabled', false);
+        }
+    }).disableSelection();
+
+    $(document).on('pjax:complete', function() {
+        var fixHelper = function(e, ui) {
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        },
+        saveOrder = $('#save-order');
+
+        $('.table tbody').sortable({
+            cursor: 'move',
+            cursorAt: { left: 12 },
+            helper: fixHelper,
+            placeholder: 'ui-sortable-placeholder',
+            update: function( event, ui ) {
+                saveOrder.attr('disabled', false);
+            }
+        }).disableSelection();
+    });
+
+    saveOrder.on('click', function(e){
+        var link = $(this).attr('href'),
+            itemsList = {};
+
+        $('.table tbody tr').each(function(index, value) {
+            itemsList[index] = $(this).attr('data-key');
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: link,
+            dataType: 'json',
+            data: {sortData: itemsList},
+            beforeSend: function(){},
+            success: function(data, textStatus, jqXHR){
+                if (data.status == 'success')
+                {
+                    bootbox.alert('" . Yii::t('app', 'The changes was successfully saved!') . "');
+                    saveOrder.attr('disabled', true);
+                }
+                else if (data.status == 'no_updated')
+                {
+                    bootbox.alert('" . Yii::t('app', 'No changes was made!') . "');
+                }
+                else
+                {
+                    bootbox.alert('" . Yii::t('app', 'No changes was made!') . "');
+                }
+            },
+            error: function(){
+                bootbox.alert('" . Yii::t('app', 'An error occurred while updating!') . "');
+            },
+            statusCode: {
+                404: function() {
+                  bootbox.alert('" . Yii::t('app', 'Page not found!') . "');
+                },
+                500: function() {
+                  bootbox.alert('" . Yii::t('app', 'Internal server error!') . "');
+                },
+            }
+        });
+
+        return false;
+    });
+"); ?>
