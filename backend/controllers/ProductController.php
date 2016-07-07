@@ -87,12 +87,9 @@ class ProductController extends Controller
     {
         $model = new Product();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save())
-        {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
-        }
-        else
-        {
+        } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -107,79 +104,61 @@ class ProductController extends Controller
      */
     public function actionUpdate($id, $tabNumber = 1)
     {
-        $tabNumber = (int) $tabNumber;
+        $tabNumber = (int)$tabNumber;
         $model = Product::find()->with(['productPrints', 'productAttachments', 'productFilters', 'groupProducts', 'slaveProducts'])->where(['id' => $id])->one();
 
-        if (Yii::$app->request->post('hasEditable'))
-        {
+        if (Yii::$app->request->post('hasEditable')) {
             $asd = 1;
-        }
-        elseif ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        } elseif ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 $deleteResult = ProductFilter::deleteAll(['product_id' => $model->id]);
                 $filterTypePost = Yii::$app->request->post('FilterType', []);
                 $productFilterInsertArr = [];
-                foreach ($filterTypePost as $filterTypeId => $filter)
-                {
-                    if (is_array($filter['value']))
-                    {
-                        foreach ($filter['value'] as $filterId)
-                        {
+                foreach ($filterTypePost as $filterTypeId => $filter) {
+                    if (is_array($filter['value'])) {
+                        foreach ($filter['value'] as $filterId) {
                             $productFilterInsertArr[] = [
                                 $model->id,
-                                (int) $filterId,
-                                (int) $filterTypeId,
+                                (int)$filterId,
+                                (int)$filterTypeId,
                             ];
                         }
                     }
                 }
 
-                if (count($productFilterInsertArr) > 0)
-                {
+                if (count($productFilterInsertArr) > 0) {
                     Yii::$app->db->createCommand()->batchInsert('{{%product_filter}}', ['product_id', 'filter_id', 'type_id'], $productFilterInsertArr)->execute();
                 }
 
                 $productPrintCodes = ArrayHelper::getColumn($model->productPrints, 'print_id');
-                if (count($model->prints) !== count($model->productPrints) || count(array_diff($productPrintCodes, $model->prints)) > 0)
-                {
+                if (count($model->prints) !== count($model->productPrints) || count(array_diff($productPrintCodes, $model->prints)) > 0) {
                     ProductPrint::deleteAll(['product_id' => $model->id]);
                     $productPrintsInsertArr = [];
-                    foreach ($model->prints as $print)
-                    {
+                    foreach ($model->prints as $print) {
                         $productPrintsInsertArr[] = [
                             $model->id,
                             $print,
                         ];
                     }
 
-                    if (count($productPrintsInsertArr) > 0)
-                    {
+                    if (count($productPrintsInsertArr) > 0) {
                         Yii::$app->db->createCommand()->batchInsert('{{%product_print}}', ['product_id', 'print_id'], $productPrintsInsertArr)->execute();
                     }
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveProduct']))
-                {
+                if (isset($_POST['saveProduct'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id, 'tabNumber' => $tabNumber]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $products = Product::find()->where(['group_id' => null])->andWhere(['<>', 'id', $model->id])->orderBy(['name' => SORT_ASC])->all();
             $printIds = ArrayHelper::getColumn($model->productPrints, 'print_id');
             $model->prints = $printIds;
@@ -188,12 +167,9 @@ class ProductController extends Controller
             $productsInGroups = Product::find()->where(['not', ['group_id' => null]])->groupBy('group_id')->orderBy(['name' => SORT_ASC])->all();
 
             $filterTypes = FilterType::find()->with('filters')->orderBy(['name' => SORT_ASC])->all();
-            foreach ($model->productFilters as $productFilter)
-            {
-                foreach ($filterTypes as &$filterType)
-                {
-                    if ($filterType->id == $productFilter->type_id)
-                    {
+            foreach ($model->productFilters as $productFilter) {
+                foreach ($filterTypes as &$filterType) {
+                    if ($filterType->id == $productFilter->type_id) {
                         $filterType->value[] = $productFilter->filter_id;
                     }
                 }
@@ -232,18 +208,15 @@ class ProductController extends Controller
      */
     public function actionLeavegroup($id, $tabNumber = 1)
     {
-        $tabNumber = (int) $tabNumber;
+        $tabNumber = (int)$tabNumber;
 
         $model = $this->findModel($id);
         $model->group_id = null;
         $result = $model->save(true, ['group_id']);
 
-        if ($result)
-        {
+        if ($result) {
             Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));;
-        }
-        else
-        {
+        } else {
             Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
         }
 
@@ -259,22 +232,18 @@ class ProductController extends Controller
      */
     public function actionCreategroup($id, $tabNumber = 1)
     {
-        $tabNumber = (int) $tabNumber;
+        $tabNumber = (int)$tabNumber;
 
         $model = $this->findModel($id);
         $productPost = Yii::$app->request->post('Product', []);
-        if (isset($productPost['groupProductIds']))
-        {
+        if (isset($productPost['groupProductIds'])) {
             $groupProductIds = $productPost['groupProductIds'];
             $groupProductIds = array_merge($groupProductIds, [$model->id]);
             $newGroupId = Counter::getNextNumber(Counter::PRODUCT_GROUP_ID);
-            if (Product::updateAll(['group_id' => $newGroupId], ['id' => $groupProductIds]))
-            {
+            if (Product::updateAll(['group_id' => $newGroupId], ['id' => $groupProductIds])) {
                 Counter::incrementValue(Counter::PRODUCT_GROUP_ID);
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The group created successfully.'));
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'The group was not created.'));
             }
         }
@@ -284,24 +253,20 @@ class ProductController extends Controller
 
     public function actionJoingroup($id, $tabNumber = 1)
     {
-        $tabNumber = (int) $tabNumber;
+        $tabNumber = (int)$tabNumber;
         $result = false;
 
         $model = $this->findModel($id);
         $productPost = Yii::$app->request->post('Product', []);
-        if (isset($productPost['groupProductIds']))
-        {
-            $groupId = (int) $productPost['groupProductIds'];
+        if (isset($productPost['groupProductIds'])) {
+            $groupId = (int)$productPost['groupProductIds'];
             $model->group_id = $groupId;
             $result = $model->save(true, ['group_id']);
         }
 
-        if ($result)
-        {
+        if ($result) {
             Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));;
-        }
-        else
-        {
+        } else {
             Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
         }
 
@@ -325,12 +290,9 @@ class ProductController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Product::findOne($id)) !== null)
-        {
+        if (($model = Product::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

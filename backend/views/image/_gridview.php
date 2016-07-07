@@ -23,9 +23,8 @@ yii\jui\JuiAsset::register($this);
 //TODO-cms Исправить текст некоторых сообщений об ошибках, выводимых виджетом FileInput
 //TODO-cms Получать из правил проверки модели (или из поведения) максимальный размер загружаемого
 
-if( Yii::$app->session->hasFlash('image-error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('image-error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -33,9 +32,8 @@ if( Yii::$app->session->hasFlash('image-error') )
     ]);
 }
 
-if( Yii::$app->session->hasFlash('image-success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('image-success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -53,7 +51,7 @@ Modal::begin([
 ]);
 
 echo FileInput::widget([
-    'name'=>'model_images[]',
+    'name' => 'model_images[]',
     'id' => 'input-file',
     'options' => [
         'multiple' => true,
@@ -103,8 +101,7 @@ Modal::end();
 ?>
 
 
-
-<p>&nbsp;</p>
+    <p>&nbsp;</p>
 <?php Pjax::begin(['id' => 'photo-gv-container', 'timeout' => false, 'enablePushState' => false]); ?>
 
 <?= Html::a('<span class="glyphicon glyphicon-floppy-save"></span> ' . Yii::t('app', 'Save changes'),
@@ -118,7 +115,7 @@ Modal::end();
     ]
 );
 ?>
-<div class="clearfix">&nbsp;</div>
+    <div class="clearfix">&nbsp;</div>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'id' => 'photoids',
@@ -127,15 +124,17 @@ Modal::end();
             'class' => CheckboxColumn::className(),
             'checkboxOptions' => [],
             'name' => 'photoids[]',
-            'contentOptions' => ['style'=>'width: 30px'],
+            'contentOptions' => ['style' => 'width: 30px'],
         ],
         [
             'class' => DataColumn::className(),
             'label' => 'Фото',
             'format' => 'html',
-            'value' => function($item) { return Html::img($item->image_url_80x80); },
+            'value' => function ($item) {
+                return Html::img($item->image_url_80x80);
+            },
             'contentOptions' => [
-                'style'=>'width: 30px',
+                'style' => 'width: 30px',
                 'alt' => '',
             ],
         ],
@@ -143,7 +142,7 @@ Modal::end();
         [
             'attribute' => 'is_main',
             'format' => 'raw',
-            'value' => function($item) {
+            'value' => function ($item) {
                 return ($item->is_main === 1) ? '<span class="glyphicon glyphicon-ok"></span>' : Html::a('<span class="glyphicon glyphicon-remove"></span>',
                     ['image/setmain', 'id' => $item->id],
                     [
@@ -153,13 +152,15 @@ Modal::end();
                     ]
                 );
             },
-            'contentOptions' => ['style'=>'width: 70px; text-align: center;'],
+            'contentOptions' => ['style' => 'width: 70px; text-align: center;'],
         ],
         [
             'attribute' => 'status',
             'format' => 'html',
-            'value' => function($item){ return ($item->status === 1) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span>'; },
-            'contentOptions' => ['style'=>'width: 70px; text-align: center;'],
+            'value' => function ($item) {
+                return ($item->status === 1) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span>';
+            },
+            'contentOptions' => ['style' => 'width: 70px; text-align: center;'],
         ],
         [
             'class' => ActionColumn::className(),
@@ -180,13 +181,13 @@ Modal::end();
                         'class' => 'img-del-btn',
                         'title' => Yii::t('yii', 'Delete'),
                         'aria-label' => Yii::t('yii', 'Delete'),
-                        'data-pjax'=>'photo-gv-container',
+                        'data-pjax' => 'photo-gv-container',
                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                         'onclick' => '$.pjax.defaults.timeout = false;',
                     ]);
                 },
             ],
-            'contentOptions' => ['style'=>'width: 50px'],
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
     ],
 ]); ?>
@@ -200,10 +201,10 @@ Modal::end();
             return ui;
         },
         imgSaveSort = $('#img-save-sort-changes'),
-        loadIcon = $('" .  Spinner::widget([
-            'preset' => Spinner::TINY,
-            'color' => 'grey',
-            'align' => 'center']) . "');
+        loadIcon = $('" . Spinner::widget([
+        'preset' => Spinner::TINY,
+        'color' => 'grey',
+        'align' => 'center']) . "');
 
     $('.table tbody').sortable({
         cursor: 'move',

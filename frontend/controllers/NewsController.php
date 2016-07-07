@@ -18,8 +18,7 @@ class NewsController extends \yii\web\Controller
 
     public function beforeAction($action)
     {
-        if (parent::beforeAction($action))
-        {
+        if (parent::beforeAction($action)) {
             $feedbackModel = new FeedbackForm();
             $this->getView()->params['feedbackModel'] = $feedbackModel;
 
@@ -29,8 +28,7 @@ class NewsController extends \yii\web\Controller
             $this->metaKeywords = Yii::$app->config->siteMetaKeywords;
 
             $seoInfo = SEOInformation::findModel('news', 'index');
-            if ( ! is_null($seoInfo))
-            {
+            if ( !is_null($seoInfo)) {
                 $this->heading = ($seoInfo->heading == '') ? $this->heading : $seoInfo->heading;
                 $this->metaTitle = ($seoInfo->meta_title == '') ? $this->heading . ' | ' . Yii::$app->config->siteName : $seoInfo->meta_title;
                 $this->metaDescription = ($seoInfo->meta_description == '') ? $this->metaDescription : $seoInfo->meta_description;
@@ -79,13 +77,13 @@ class NewsController extends \yii\web\Controller
 
         $this->view->registerMetaTag([
             'name' => 'description',
-            'content' => isset($model->meta_description) && !empty($model->meta_description)? $model->meta_description : $this->metaDescription,
+            'content' => isset($model->meta_description) && !empty($model->meta_description) ? $model->meta_description : $this->metaDescription,
         ]);
         $this->view->registerMetaTag([
             'name' => 'keywords',
-            'content' => isset($model->meta_keywords) && !empty($model->meta_keywords)? $model->meta_keywords : $this->metaKeywords,
+            'content' => isset($model->meta_keywords) && !empty($model->meta_keywords) ? $model->meta_keywords : $this->metaKeywords,
         ]);
-        $this->view->title = isset($model->meta_title) && !empty($model->meta_title)? $model->meta_title : $model->name . ' | ' . $this->heading . ' | ' . Yii::$app->config->siteName;
+        $this->view->title = isset($model->meta_title) && !empty($model->meta_title) ? $model->meta_title : $model->name . ' | ' . $this->heading . ' | ' . Yii::$app->config->siteName;
 
         return $this->render('view', [
             'heading' => $this->heading,
@@ -103,12 +101,9 @@ class NewsController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = News::findOne($id)) !== null)
-        {
+        if (($model = News::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

@@ -26,7 +26,7 @@ class Api extends Component
 
     /** @var string */
     /* https://tech.yandex.ru/maps/doc/jsapi/2.1/versions/concepts/index-docpage */
-    public $api_version = '2.1-dev';
+    public $api_version = '2.1';
 
     /** @var string */
     public $language = 'ru-RU';
@@ -120,12 +120,12 @@ class Api extends Component
             {
                 if (null !== $var)
                 {
-                    $events = "\n$var.events";
+                    $events = "\n\$Maps['$var'].events";
                     foreach ($object->getEvents() as $event => $handle)
                     {
                         $event = Json::encode($event);
-                        $handle = Json::encode($handle);
-                        $events .= "\n.add($event, $handle)";
+                        $handle = $handle;
+                        $events .= ".add($event, $handle)";
                     }
                     $js .= "$events;\n";
                 }

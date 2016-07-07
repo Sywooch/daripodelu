@@ -70,7 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['username', 'email', 'role', 'status'], 'required'],
 
-            [['last_name', 'first_name', 'middle_name', ], 'string', 'max' => 30],
+            [['last_name', 'first_name', 'middle_name',], 'string', 'max' => 30],
 
             ['username', 'unique', 'targetClass' => self::className(), 'message' => Yii::t('app', 'This username has already been taken.')],
             ['username', 'string', 'min' => 2, 'max' => 255],
@@ -78,7 +78,7 @@ class User extends ActiveRecord implements IdentityInterface
 
             [['password', 'password_repeat'], 'required', 'on' => [static::SCENARIO_REGISTER, static::SCENARIO_CHANGE_PASSWORD]],
             ['password', 'string', 'min' => 6, 'max' => 40],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('app', "Passwords don't match."), 'on' => [static::SCENARIO_REGISTER, static::SCENARIO_CHANGE_PASSWORD] ],
+            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('app', "Passwords don't match."), 'on' => [static::SCENARIO_REGISTER, static::SCENARIO_CHANGE_PASSWORD]],
 
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => self::className(), 'message' => Yii::t('app', 'This email address has already been taken.')],
@@ -91,7 +91,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_BLOCKED]],
 
-            [['username', 'email', 'last_name', 'first_name', 'middle_name', ], 'trim'],
+            [['username', 'email', 'last_name', 'first_name', 'middle_name',], 'trim'],
         ];
     }
 
@@ -151,8 +151,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByPasswordResetToken($token)
     {
-        if ( !static::isPasswordResetTokenValid($token))
-        {
+        if ( !static::isPasswordResetTokenValid($token)) {
             return null;
         }
 
@@ -170,8 +169,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function isPasswordResetTokenValid($token)
     {
-        if (empty($token))
-        {
+        if (empty($token)) {
             return false;
         }
 
@@ -252,10 +250,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function beforeSave($insert)
     {
-        if (parent::beforeSave($insert))
-        {
-            if ($this->isNewRecord)
-            {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
                 $this->auth_key = Yii::$app->security->generateRandomString();
             }
 

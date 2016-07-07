@@ -17,37 +17,38 @@ use common\models\User;
     <?php $form = ActiveForm::begin(); ?>
     <div role="tabpanel">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
+            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a>
+            </li>
             <li role="presentation"><a href="#fio" aria-controls="fio" role="tab" data-toggle="tab">ФИО</a></li>
         </ul>
         <div class="tab-content cms">
             <div role="tabpanel" id="main" class="tab-pane active">
 
                 <?php if ($model->isNewRecord): ?>
-                <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']) ?>
+                    <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']) ?>
                 <?php else: ?>
-                <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;', 'readonly' => 'readonly']) ?>
-                <?= Button::widget([
-                    'label' => Yii::t('app', 'Change password'),
-                    'encodeLabel' => false,
-                    'options' => [
-                        'class' => 'btn-link',
-                        'type' => 'button',
-                        'style' => 'margin:5px; margin-bottom: 10px;',
-                        'data' => [
-                            'toggle' => 'modal',
-                            'target' => '#changePasswordModal',
+                    <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;', 'readonly' => 'readonly']) ?>
+                    <?= Button::widget([
+                        'label' => Yii::t('app', 'Change password'),
+                        'encodeLabel' => false,
+                        'options' => [
+                            'class' => 'btn-link',
+                            'type' => 'button',
+                            'style' => 'margin:5px; margin-bottom: 10px;',
+                            'data' => [
+                                'toggle' => 'modal',
+                                'target' => '#changePasswordModal',
+                            ],
                         ],
-                    ],
-                ]); ?>
+                    ]); ?>
                 <?php endif; ?>
 
                 <?= $form->field($model, 'email')->textInput(['maxlength' => 255, 'style' => 'max-width: 400px;']) ?>
 
                 <?php if ($model->isNewRecord): ?>
-                <?= $form->field($model, 'password')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 400px;']) ?>
+                    <?= $form->field($model, 'password')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 400px;']) ?>
 
-                <?= $form->field($model, 'password_repeat')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 400px;']) ?>
+                    <?= $form->field($model, 'password_repeat')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 400px;']) ?>
                 <?php endif; ?>
 
                 <?= $form->field($model, 'role')->dropDownList(['' => 'Выбрать роль...'] + User::getRoles(), ['style' => 'max-width: 400px;']); ?>
@@ -68,8 +69,8 @@ use common\models\User;
             <?php
             $class = 'default';
             if (Yii::$app->user->identity->role == User::ROLE_ADMIN):
-            ?>
-            <?= Html::submitButton(
+                ?>
+                <?= Html::submitButton(
                 $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
                 ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveUser']
             ) ?>
@@ -85,7 +86,7 @@ use common\models\User;
     <?php ActiveForm::end(); ?>
 
 </div>
-<?php if ( ! $model->isNewRecord): ?>
+<?php if ( !$model->isNewRecord): ?>
     <?php $changePasswordForm = ActiveForm::begin([
         'action' => Url::to(['/user/changepassword', 'id' => $model->id]),
         'method' => 'post',
@@ -104,9 +105,9 @@ use common\models\User;
         ]),
     ]); ?>
 
-        <?= $changePasswordForm->field($model, 'password')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 100%;'])->label(Yii::t('app', 'New password')) ?>
+    <?= $changePasswordForm->field($model, 'password')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 100%;'])->label(Yii::t('app', 'New password')) ?>
 
-        <?= $changePasswordForm->field($model, 'password_repeat')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 100%;']) ?>
+    <?= $changePasswordForm->field($model, 'password_repeat')->passwordInput(['maxlength' => 40, 'style' => 'max-width: 100%;']) ?>
 
     <?php Modal::end(); ?>
 

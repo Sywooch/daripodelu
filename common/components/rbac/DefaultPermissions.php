@@ -6,12 +6,12 @@ namespace common\components\rbac;
 
 class DefaultPermissions
 {
-    const LOGIN  = 'login';
+    const LOGIN = 'login';
     const LOGOUT = 'logout';
-    const ERROR  = 'error';
+    const ERROR = 'error';
     const SIGNUP = 'sign-up';
-    const INDEX  = 'index';
-    const VIEW   = 'view';
+    const INDEX = 'index';
+    const VIEW = 'view';
     const CREATE = 'create';
     const UPDATE = 'update';
     const DELETE = 'delete';

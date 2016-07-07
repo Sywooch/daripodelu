@@ -18,25 +18,25 @@ return [
             'disabledCommands' => ['mkfile', 'netmount'], //отключение ненужных команд https://github.com/Studio-42/elFinder/wiki/Client-configuration-options#commands
             'roots' => [
                 [
-                    'baseUrl'=>'',
-                    'basePath'=>'@webroot/../..',
+                    'baseUrl' => '',
+                    'basePath' => '@webroot/../..',
                     'path' => 'uploads/global',
                     'name' => 'Global'
                 ],
             ],
             'watermark' => [
-                'source'         => __DIR__.'/logo.png', // Path to Water mark image
-                'marginRight'    => 5,          // Margin right pixel
-                'marginBottom'   => 5,          // Margin bottom pixel
-                'quality'        => 95,         // JPEG image save quality
-                'transparency'   => 70,         // Water mark image transparency ( other than PNG )
-                'targetType'     => IMG_GIF|IMG_JPG|IMG_PNG|IMG_WBMP, // Target image formats ( bit-field )
+                'source' => __DIR__ . '/logo.png', // Path to Water mark image
+                'marginRight' => 5,          // Margin right pixel
+                'marginBottom' => 5,          // Margin bottom pixel
+                'quality' => 95,         // JPEG image save quality
+                'transparency' => 70,         // Water mark image transparency ( other than PNG )
+                'targetType' => IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP, // Target image formats ( bit-field )
                 'targetMinPixel' => 200         // Target image minimum pixel size
             ]
         ]
     ],
     'modules' => [
-        'gridview' =>  [
+        'gridview' => [
             'class' => '\kartik\grid\Module',
             'i18n' => [
                 'class' => 'yii\i18n\PhpMessageSource',
@@ -71,9 +71,9 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'request'=>[
+        'request' => [
             'class' => 'common\components\Request',
-            'web'=> '/backend/web',
+            'web' => '/backend/web',
             'adminUrl' => '/admin',
             'csrfParam' => '_backendCSRF',
             'csrfCookie' => [

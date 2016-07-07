@@ -11,10 +11,8 @@ use kartik\select2\Select2;
 /* @var $products backend\models\Product[] */
 
 $productsWithGroup = [];
-foreach ($products as $product)
-{
-    if ($product->group_id == null)
-    {
+foreach ($products as $product) {
+    if ($product->group_id == null) {
         $productsWithGroup[$product->id] = $product->name;
     }
 }
@@ -49,21 +47,22 @@ foreach ($products as $product)
             ],
         ]),
     ]); ?>
-    <form id="abc" action="<?= Url::to(['/product/creategroup', 'id' => $model->id, 'tabNumber' => 7]); ?>" method="post">
-    <?= $form->field($model, 'groupProductIds')
-        ->widget(Select2::className(), [
-            'data' => $productsWithGroup,
-            'options' => [
-                'multiple' => true,
-            ],
-            'pluginOptions' => [
-                'width' => '100%'
-            ],
-        ])
-        ->label('Товары в группе')->hint(
-            Yii::t('app', '<strong>Note:</strong>') . ' ' .
-            Yii::t('app', 'Selected items will be combined into a group')
-        ); ?>
+    <form id="abc" action="<?= Url::to(['/product/creategroup', 'id' => $model->id, 'tabNumber' => 7]); ?>"
+          method="post">
+        <?= $form->field($model, 'groupProductIds')
+            ->widget(Select2::className(), [
+                'data' => $productsWithGroup,
+                'options' => [
+                    'multiple' => true,
+                ],
+                'pluginOptions' => [
+                    'width' => '100%'
+                ],
+            ])
+            ->label('Товары в группе')->hint(
+                Yii::t('app', '<strong>Note:</strong>') . ' ' .
+                Yii::t('app', 'Selected items will be combined into a group')
+            ); ?>
     </form>
     <?php Modal::end(); ?>
 <?php endif; ?>

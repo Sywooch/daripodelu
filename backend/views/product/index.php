@@ -18,8 +18,7 @@ $this->title = Yii::t('app', 'Products');
 $this->params['breadcrumbs'][] = $this->title;
 $categoriesName = [];
 $categoriesArr = [];
-foreach ($categories as $category)
-{
+foreach ($categories as $category) {
     $categoriesName[] = $category->name;
     $categoriesArr[$category->id] = $category->name;
 }
@@ -30,9 +29,8 @@ foreach ($categories as $category)
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
 
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -42,9 +40,8 @@ if( Yii::$app->session->hasFlash('error') )
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -53,7 +50,7 @@ if( Yii::$app->session->hasFlash('success') )
 }
 ?>
 
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
     'encodeLabel' => false,
     'options' => [
@@ -62,108 +59,108 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px'
     ],
     'tagName' => 'a',
-] ); ?>
+]); ?>
 <div class="clearfix">&nbsp;</div>
 <?php Pjax::begin(); ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'rowOptions' => [
-            'class' => 'gv-row-90',
-        ],
-        'columns' => [
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'rowOptions' => [
+        'class' => 'gv-row-90',
+    ],
+    'columns' => [
 //            ['class' => 'yii\grid\SerialColumn'],
 
-            [
-                'attribute' => 'id',
-                'contentOptions' => ['style'=>'width: 50px'],
-            ],
-            [
-                'format' => 'html',
-                'contentOptions' => ['class' => 'gv-td-img-90', 'style'=>'width: 90px'],
-                'value' => function($row) {
-                    $src = is_null($row->small_image) ? '/admin/img/no-image.png' : '/uploads/' . $row->id . '/' . $row->small_image;
-
-                    return Html::img($src, ['class' => 'gv-prod-img-90']);
-                }
-            ],
-            [
-                'attribute' => 'code',
-                'contentOptions' => ['style'=>'width: 80px'],
-            ],
-            [
-                'attribute' => 'catalogue_id',
-                'filter' => \yii\jui\AutoComplete::widget([
-                    'model' => $searchModel,
-                    'attribute' => 'catalogue_id',
-                    'clientOptions' => [
-                        'source' => $categoriesName,
-                        'autoFill' => true,
-                        'minLength' => 3
-                    ],
-                    'options' => [
-                        'class' => 'form-control'
-                    ]
-                ]),
-                'value' => function($row) use ($categoriesArr) {
-                    return $categoriesArr[$row->catalogue_id];
-                },
-                'contentOptions' => ['style'=>'width: 240px'],
-            ],
-//            'group_id',
-            [
-                'attribute' => 'name',
-            ],
-            // 'product_size',
-            // 'matherial',
-            // 'small_image',
-            // 'big_image',
-            // 'super_big_image',
-            // 'content:ntext',
-            [
-                'attribute' => 'status_id',
-                'label' => 'Статус',
-                'filter' => Product::getStatusOptions(),
-                'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
-                'contentOptions' => ['style'=>'width: 100px; text-align: center;'],
-                'value' => function($row){
-                    return Product::getStatusName($row->status_id);
-                },
-            ],
-            // 'status_caption',
-            // 'brand',
-            // 'weight',
-            // 'pack_amount',
-            // 'pack_weigh',
-            // 'pack_volume',
-            // 'pack_sizex',
-            // 'pack_sizey',
-            // 'pack_sizez',
-            // 'amount',
-            // 'free',
-            // 'inwayamount',
-            // 'inwayfree',
-            [
-                'attribute' => 'enduserprice',
-                'contentOptions' => ['style'=>'width: 120px; text-align: right;'],
-                'value' => function($row) {
-                    return Yii::$app->formatter->asDecimal($row->enduserprice, 2);
-                }
-            ],
-            [
-                'attribute' => 'user_row',
-                'filter' => Product::getCreateMethods(),
-                'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
-                'contentOptions' => ['style'=>'width: 50px; text-align: center;'],
-                'value' => function($row){
-                    return Product::getCreateMethodName($row->user_row);
-                },
-            ],
-            [
-                'class' => ActionColumn::className(),
-                'template' => '{update} {delete}',
-                'contentOptions' => ['style'=>'width: 50px'],
-            ],
+        [
+            'attribute' => 'id',
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
-    ]); ?>
+        [
+            'format' => 'html',
+            'contentOptions' => ['class' => 'gv-td-img-90', 'style' => 'width: 90px'],
+            'value' => function ($row) {
+                $src = is_null($row->small_image) ? '/admin/img/no-image.png' : '/uploads/' . $row->id . '/' . $row->small_image;
+
+                return Html::img($src, ['class' => 'gv-prod-img-90']);
+            }
+        ],
+        [
+            'attribute' => 'code',
+            'contentOptions' => ['style' => 'width: 80px'],
+        ],
+        [
+            'attribute' => 'catalogue_id',
+            'filter' => \yii\jui\AutoComplete::widget([
+                'model' => $searchModel,
+                'attribute' => 'catalogue_id',
+                'clientOptions' => [
+                    'source' => $categoriesName,
+                    'autoFill' => true,
+                    'minLength' => 3
+                ],
+                'options' => [
+                    'class' => 'form-control'
+                ]
+            ]),
+            'value' => function ($row) use ($categoriesArr) {
+                return $categoriesArr[$row->catalogue_id];
+            },
+            'contentOptions' => ['style' => 'width: 240px'],
+        ],
+//            'group_id',
+        [
+            'attribute' => 'name',
+        ],
+        // 'product_size',
+        // 'matherial',
+        // 'small_image',
+        // 'big_image',
+        // 'super_big_image',
+        // 'content:ntext',
+        [
+            'attribute' => 'status_id',
+            'label' => 'Статус',
+            'filter' => Product::getStatusOptions(),
+            'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
+            'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+            'value' => function ($row) {
+                return Product::getStatusName($row->status_id);
+            },
+        ],
+        // 'status_caption',
+        // 'brand',
+        // 'weight',
+        // 'pack_amount',
+        // 'pack_weigh',
+        // 'pack_volume',
+        // 'pack_sizex',
+        // 'pack_sizey',
+        // 'pack_sizez',
+        // 'amount',
+        // 'free',
+        // 'inwayamount',
+        // 'inwayfree',
+        [
+            'attribute' => 'enduserprice',
+            'contentOptions' => ['style' => 'width: 120px; text-align: right;'],
+            'value' => function ($row) {
+                return Yii::$app->formatter->asDecimal($row->enduserprice, 2);
+            }
+        ],
+        [
+            'attribute' => 'user_row',
+            'filter' => Product::getCreateMethods(),
+            'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
+            'contentOptions' => ['style' => 'width: 50px; text-align: center;'],
+            'value' => function ($row) {
+                return Product::getCreateMethodName($row->user_row);
+            },
+        ],
+        [
+            'class' => ActionColumn::className(),
+            'template' => '{update} {delete}',
+            'contentOptions' => ['style' => 'width: 50px'],
+        ],
+    ],
+]); ?>
 <?php Pjax::end(); ?>

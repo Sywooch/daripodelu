@@ -23,14 +23,12 @@ class CmsUrlRule extends Object implements UrlRuleInterface
 
         $query = '';
         $pageParams = [];
-        if (isset($params['page']))
-        {
+        if (isset($params['page'])) {
 //            $pageParams['page'] = $params['page'];
             $query .= '/page/' . intval($params['page']);
         }
 
-        if (isset($params['per-page']))
-        {
+        if (isset($params['per-page'])) {
 //            $pageParams['per-page'] = $params['per-page'];
             $query .= '/per-page/' . intval($params['per-page']);
         }
@@ -40,35 +38,22 @@ class CmsUrlRule extends Object implements UrlRuleInterface
             $query = '?' . http_build_query($pageParams);
         }*/
 
-        foreach ($routes as $path => $item)
-        {
-            if ($route == $item['controller_id'] . '/' . $item['action_id'] || $route == $item['module_id'] . '/' . $item['controller_id'] . '/' . $item['action_id'])
-            {
-                if (isset($params['ctg_id']) && isset($params['id']))
-                {
-                    if ( !empty($item['ctg_id']) && !empty($item['item_id']) && $params['ctg_id'] == $item['ctg_id'] && $params['id'] == $item['item_id'])
-                    {
+        foreach ($routes as $path => $item) {
+            if ($route == $item['controller_id'] . '/' . $item['action_id'] || $route == $item['module_id'] . '/' . $item['controller_id'] . '/' . $item['action_id']) {
+                if (isset($params['ctg_id']) && isset($params['id'])) {
+                    if ( !empty($item['ctg_id']) && !empty($item['item_id']) && $params['ctg_id'] == $item['ctg_id'] && $params['id'] == $item['item_id']) {
                         return $path . $query . $suffix;
                     }
-                }
-                elseif (isset($params['ctg_id']) && !isset($params['id']))
-                {
-                    if ( !empty($item['ctg_id']) && empty($item['item_id']) && $params['ctg_id'] == $item['ctg_id'])
-                    {
+                } elseif (isset($params['ctg_id']) && !isset($params['id'])) {
+                    if ( !empty($item['ctg_id']) && empty($item['item_id']) && $params['ctg_id'] == $item['ctg_id']) {
                         return $path . $query . $suffix;
                     }
-                }
-                elseif ( !isset($params['ctg_id']) && isset($params['id']))
-                {
-                    if (empty($item['ctg_id']) && !empty($item['item_id']) && $params['id'] == $item['item_id'])
-                    {
+                } elseif ( !isset($params['ctg_id']) && isset($params['id'])) {
+                    if (empty($item['ctg_id']) && !empty($item['item_id']) && $params['id'] == $item['item_id']) {
                         return $path . $query . $suffix;
                     }
-                }
-                else
-                {
-                    if (empty($item['ctg_id']) && empty($item['item_id']))
-                    {
+                } else {
+                    if (empty($item['ctg_id']) && empty($item['item_id'])) {
                         return $path . $query . $suffix;
                     }
                 }
@@ -86,26 +71,20 @@ class CmsUrlRule extends Object implements UrlRuleInterface
 
         $pathInfo = $request->getPathInfo();
         $suffix = (string)($this->suffix === null ? $manager->suffix : $this->suffix);
-        if ($suffix !== '' && $pathInfo !== '')
-        {
+        if ($suffix !== '' && $pathInfo !== '') {
             $n = strlen($suffix);
-            if (substr_compare($pathInfo, $suffix, -$n, $n) === 0)
-            {
+            if (substr_compare($pathInfo, $suffix, -$n, $n) === 0) {
                 $pathInfo = substr($pathInfo, 0, -$n);
-                if ($pathInfo === '')
-                {
+                if ($pathInfo === '') {
                     // suffix alone is not allowed
                     return false;
                 }
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
 
-        if (preg_match_all('/\/page\/\d+/', $pathInfo, $matches, PREG_OFFSET_CAPTURE))
-        {
+        if (preg_match_all('/\/page\/\d+/', $pathInfo, $matches, PREG_OFFSET_CAPTURE)) {
             $matches = $matches[0];
             $matchesCnt = count($matches);
             $pageQuery = trim($matches[$matchesCnt - 1][0], '/');
@@ -118,8 +97,7 @@ class CmsUrlRule extends Object implements UrlRuleInterface
             $pathInfo = rtrim($pathInfo, '/');
         }
 
-        if (preg_match_all('/\/per\-page\/\d+/', $pathInfo, $matches, PREG_OFFSET_CAPTURE))
-        {
+        if (preg_match_all('/\/per\-page\/\d+/', $pathInfo, $matches, PREG_OFFSET_CAPTURE)) {
             $matches = $matches[0];
             $matchesCnt = count($matches);
             $pageQuery = trim($matches[$matchesCnt - 1][0], '/');
@@ -132,26 +110,21 @@ class CmsUrlRule extends Object implements UrlRuleInterface
             $pathInfo = rtrim($pathInfo, '/');
         }
 
-        if (ArrayHelper::keyExists($pathInfo, $routes, false))
-        {
+        if (ArrayHelper::keyExists($pathInfo, $routes, false)) {
             $result = false;
             $route = '';
-            if ( !empty($routes[$pathInfo]['controller_id']) && !empty($routes[$pathInfo]['action_id']))
-            {
-                if ( !empty($routes[$pathInfo]['module_id']))
-                {
+            if ( !empty($routes[$pathInfo]['controller_id']) && !empty($routes[$pathInfo]['action_id'])) {
+                if ( !empty($routes[$pathInfo]['module_id'])) {
                     $route .= $routes[$pathInfo]['module_id'] . '/';
                 }
 
                 $route .= $routes[$pathInfo]['controller_id'] . '/' . $routes[$pathInfo]['action_id'];
 
-                if ( !empty($routes[$pathInfo]['ctg_id']))
-                {
+                if ( !empty($routes[$pathInfo]['ctg_id'])) {
                     $params['ctgId'] = $routes[$pathInfo]['ctg_id'];
                 }
 
-                if ( !empty($routes[$pathInfo]['item_id']))
-                {
+                if ( !empty($routes[$pathInfo]['item_id'])) {
                     $params['id'] = $routes[$pathInfo]['item_id'];
                 }
 

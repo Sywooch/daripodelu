@@ -23,9 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -35,9 +34,8 @@ if( Yii::$app->session->hasFlash('error') )
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -49,8 +47,16 @@ if( Yii::$app->session->hasFlash('success') )
 
 <div role="tabpanel">
     <ul class="nav nav-tabs">
-        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройки</a></li>
+        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main"
+                                                                                             aria-controls="main"
+                                                                                             role="tab"
+                                                                                             data-toggle="tab">Основное</a>
+        </li>
+        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#settings"
+                                                                                             aria-controls="settings"
+                                                                                             role="tab"
+                                                                                             data-toggle="tab">Настройки</a>
+        </li>
     </ul>
     <div class="tab-content cms">
         <div role="tabpanel" id="main" class="tab-pane<?php if ($tabIndex === 0) : ?> active<? endif; ?>">
@@ -105,7 +111,7 @@ if( Yii::$app->session->hasFlash('success') )
                     return false;
                 });
             "); */ ?>
-            <?= Button::widget ( [
+            <?= Button::widget([
                 'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
                 'encodeLabel' => false,
                 'options' => [
@@ -114,7 +120,7 @@ if( Yii::$app->session->hasFlash('success') )
                     'style' => 'margin:5px'
                 ],
                 'tagName' => 'a',
-            ] ); ?>
+            ]); ?>
             <div class="clearfix">&nbsp;</div>
             <?php Pjax::begin(['id' => 'catalogue-gv-container']); ?>
             <?= GridView::widget([
@@ -124,22 +130,22 @@ if( Yii::$app->session->hasFlash('success') )
                 'columns' => [
                     [
                         'format' => 'image',
-                        'contentOptions' => ['style'=>'width: 90px'],
-                        'value' => function($row) {
+                        'contentOptions' => ['style' => 'width: 90px'],
+                        'value' => function ($row) {
                             return is_null($row->photo) ? '/admin/img/no-image.png' : $row->photo->image_url_90x90;
                         }
                     ],
                     [
                         'attribute' => 'name',
                         'format' => 'raw',
-                        'value' => function($row){
+                        'value' => function ($row) {
                             return Html::a($row->name, ['category', 'id' => $row->id], ['data' => ['pjax' => 0]]);
                         }
                     ],
                     [
                         'class' => ActionColumn::className(),
                         'template' => '{update} {delete}',
-                        'contentOptions' => ['style'=>'width: 50px'],
+                        'contentOptions' => ['style' => 'width: 50px'],
                     ],
                 ],
             ]); ?>

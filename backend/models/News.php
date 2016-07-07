@@ -78,8 +78,7 @@ class News extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_date', 'last_update_date'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['last_update_date'],
                 ],
-                'value' => function ()
-                {
+                'value' => function () {
                     $dateTime = new \DateTime(null, new \DateTimeZone(Yii::$app->formatter->timeZone));
                     $timeOffset = $dateTime->getOffset();
                     $timeStamp = Yii::$app->formatter->asTimestamp(time());
@@ -107,24 +106,20 @@ class News extends ActiveRecord
 
     public function beforeSave($insert)
     {
-        if (parent::beforeSave($insert))
-        {
+        if (parent::beforeSave($insert)) {
             $dateTime = new \DateTime(null, new \DateTimeZone(Yii::$app->formatter->timeZone));
             $timeOffset = $dateTime->getOffset();
 
             $timeStamp = Yii::$app->formatter->asTimestamp($this->published_date);
             $this->published_date = date('Y-m-d H:i:s', $timeStamp - $timeOffset);
 
-            if ($insert === false)
-            {
+            if ($insert === false) {
                 $timeStamp = Yii::$app->formatter->asTimestamp($this->created_date);
                 $this->created_date = date('Y-m-d H:i:s', $timeStamp - 2 * $timeOffset);
             }
 
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

@@ -17,13 +17,12 @@ $this->title = Yii::t('app', 'Print - Link');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -33,9 +32,8 @@ if( Yii::$app->session->hasFlash('error') )
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -45,7 +43,7 @@ if( Yii::$app->session->hasFlash('success') )
 ?>
 
 
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-trash"></i> ' . Yii::t('app', 'Delete'),
     'encodeLabel' => false,
     'options' => [
@@ -55,7 +53,7 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px',
     ],
     'tagName' => 'a',
-] ); ?>
+]); ?>
 <?php $this->registerJs("
     $('#printlink-del-btn').on('click', function(e){
         var keys = $('#printlinkids').yiiGridView('getSelectedRows');
@@ -70,13 +68,13 @@ if( Yii::$app->session->hasFlash('success') )
                     bootbox.alert('" . Yii::t('app', 'You must select at least one item!') . "');
                     return false;
                 }
-                if(! confirm('" . Yii::t('app','Are you sure you want to delete selected items?') . "'))
+                if(! confirm('" . Yii::t('app', 'Are you sure you want to delete selected items?') . "'))
                 {
                     return false;
                 }
 
                 /*
-                bootbox.confirm('" . Yii::t('yii','Are you sure you want to delete this item?') . "', function(result){
+                bootbox.confirm('" . Yii::t('yii', 'Are you sure you want to delete this item?') . "', function(result){
 
                 });*/
             },
@@ -99,7 +97,7 @@ if( Yii::$app->session->hasFlash('success') )
         return false;
     });
 "); ?>
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
     'encodeLabel' => false,
     'options' => [
@@ -108,31 +106,31 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px'
     ],
     'tagName' => 'a',
-] ); ?>
-<div class="clearfix">&nbsp;</div>
+]); ?>
+    <div class="clearfix">&nbsp;</div>
 <?php Pjax::begin(['id' => 'printlinks-gv-container']); ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            [
-                'class' => CheckboxColumn::className(),
-                'checkboxOptions' => [
-                    'value' => $model[$key]->id,
-                ],
-                'name' => 'printlinkids[]',
-                'contentOptions' => ['style'=>'width: 30px'],
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        [
+            'class' => CheckboxColumn::className(),
+            'checkboxOptions' => [
+                'value' => $model[$key]->id,
             ],
-            [
-                'attribute' => 'code',
-                'contentOptions' => ['style'=>'width: 150px'],
-            ],
-            'link',
-            [
-                'class' => ActionColumn::className(),
-                'template' => '{update} {delete}',
-                'contentOptions' => ['style'=>'width: 50px'],
-            ],
+            'name' => 'printlinkids[]',
+            'contentOptions' => ['style' => 'width: 30px'],
         ],
-    ]); ?>
+        [
+            'attribute' => 'code',
+            'contentOptions' => ['style' => 'width: 150px'],
+        ],
+        'link',
+        [
+            'class' => ActionColumn::className(),
+            'template' => '{update} {delete}',
+            'contentOptions' => ['style' => 'width: 50px'],
+        ],
+    ],
+]); ?>
 <?php Pjax::end(); ?>

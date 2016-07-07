@@ -15,47 +15,36 @@ class Image extends yii\imagine\Image
 
     public static function proportionalResize($filename, $size, $filter = ImageInterface::FILTER_UNDEFINED)
     {
-        if ( !is_string($size) || !preg_match('/^(\d+x\d*)|(\d*x\d+)$/', $size))
-        {
+        if ( !is_string($size) || !preg_match('/^(\d+x\d*)|(\d*x\d+)$/', $size)) {
             throw new InvalidParamException('Wrong parameter of method ' . __METHOD__ . ' of class ' . __CLASS__);
         }
 
         list($width, $height) = explode('x', $size);
         $img = static::getImagine()->open(Yii::getAlias($filename));
 
-        if ( !empty($width) && !empty($height))
-        {
+        if ( !empty($width) && !empty($height)) {
             $startX = 0;
             $startY = 0;
-            if ($width <= 0 || $height <= 0)
-            {
+            if ($width <= 0 || $height <= 0) {
                 throw new InvalidParamException('The width and height must be greater than 0');
             }
 
             $sourceRatio = $img->getSize()->getWidth() / $img->getSize()->getHeight();
             $targetRatio = $width / $height;
 
-            if ($sourceRatio > $targetRatio)
-            {
+            if ($sourceRatio > $targetRatio) {
                 $resizeThumb = static::proportionalResize($filename, 'x' . $height);
                 $startX = ceil($resizeThumb->getSize()->getWidth() - $width) / 2;
                 $thumb = $resizeThumb->copy()->crop(new Point($startX, $startY), new Box($width, $height));
-            }
-            elseif ($sourceRatio < $targetRatio)
-            {
+            } elseif ($sourceRatio < $targetRatio) {
                 $resizeThumb = static::proportionalResize($filename, $width . 'x');
                 $startY = ceil($resizeThumb->getSize()->getHeight() - $height) / 2;
                 $thumb = $resizeThumb->copy()->crop(new Point($startX, $startY), new Box($width, $height));
-            }
-            else
-            {
+            } else {
                 $thumb = static::proportionalResize($filename, $width . 'x');
             }
-        }
-        elseif ( !empty($width))
-        {
-            if ($width <= 0)
-            {
+        } elseif ( !empty($width)) {
+            if ($width <= 0) {
                 throw new InvalidParamException('The width must be greater than 0');
             }
 
@@ -67,11 +56,8 @@ class Image extends yii\imagine\Image
 
             $thumb = static::getImagine()->create($scaleBox, new Color('FFF', 100));
             $thumb->paste($img, new Point(0, 0));
-        }
-        else
-        {
-            if ($height <= 0)
-            {
+        } else {
+            if ($height <= 0) {
                 throw new InvalidParamException('The height must be greater than 0');
             }
 

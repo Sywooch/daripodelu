@@ -6,7 +6,8 @@ use yii;
 use yii\base\Widget;
 use frontend\models\News;
 
-class LastNewsWidget extends Widget {
+class LastNewsWidget extends Widget
+{
 
     const ON_MAIN_PAGE = 'main';
     const ON_SECOND_PAGE = 'second';
@@ -51,8 +52,7 @@ class LastNewsWidget extends Widget {
      */
     public function setQuantity($quantity)
     {
-        if ( ! is_int($quantity))
-        {
+        if ( !is_int($quantity)) {
             throw new yii\base\InvalidParamException('The parameter must be an integer value');
         }
 
@@ -72,6 +72,6 @@ class LastNewsWidget extends Widget {
      */
     public function setPage($page)
     {
-        $this->page = $page == self::ON_MAIN_PAGE ? : self::ON_SECOND_PAGE;
+        $this->page = $page == self::ON_MAIN_PAGE ?: self::ON_SECOND_PAGE;
     }
 }

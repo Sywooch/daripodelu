@@ -18,9 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $this->title = $this->title . ' :: ' . Yii::t('app', 'Blocks') . ' :: ' . Yii::$app->config->siteName;
 
-    if( Yii::$app->session->hasFlash('error') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('error')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-danger'
             ],
@@ -30,9 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php
-    if( Yii::$app->session->hasFlash('success') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('success')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-success'
             ],

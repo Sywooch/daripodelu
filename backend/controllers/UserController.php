@@ -41,15 +41,12 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-        if ( !Yii::$app->user->can(UserPermissions::INDEX))
-        {
+        if ( !Yii::$app->user->can(UserPermissions::INDEX)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
-        if (Yii::$app->request->post('hasEditable'))
-        {
-            if ( ! Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => Yii::$app->user->id]))
-            {
+        if (Yii::$app->request->post('hasEditable')) {
+            if ( !Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => Yii::$app->user->id])) {
                 throw new ForbiddenHttpException('Access denied');
             }
 
@@ -61,16 +58,12 @@ class UserController extends Controller
             $posted = current($_POST['User']);
             $post = ['User' => $posted];
 
-            if ($model->load($post))
-            {
+            if ($model->load($post)) {
                 $model->save();
                 $output = '';
-                if (isset($posted['role']))
-                {
+                if (isset($posted['role'])) {
                     $output = $model->roleName;
-                }
-                elseif (isset($posted['status']))
-                {
+                } elseif (isset($posted['status'])) {
                     $output = $model->statusName;
                 }
 
@@ -99,39 +92,29 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-        if ( !Yii::$app->user->can(UserPermissions::CREATE))
-        {
+        if ( !Yii::$app->user->can(UserPermissions::CREATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = new User();
         $model->scenario = User::SCENARIO_REGISTER;
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $model->setPasswordHash($model->password);
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The user added successfully.'));
 
-                if (isset($_POST['saveUser']))
-                {
+                if (isset($_POST['saveUser'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $model->status = User::STATUS_ACTIVE;
 
             return $this->render('create', [
@@ -151,43 +134,32 @@ class UserController extends Controller
      */
     public function actionUpdate($id)
     {
-        if ( ! Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => $id]))
-        {
+        if ( !Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => $id])) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = $this->findModel($id);
         $oldUserName = $model->username;
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->username != $oldUserName)
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->username != $oldUserName) {
                 $model->username = $oldUserName;
             }
 
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveUser']))
-                {
+                if (isset($_POST['saveUser'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -204,29 +176,22 @@ class UserController extends Controller
      */
     public function actionChangepassword($id)
     {
-        if ( ! Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => $id]))
-        {
+        if ( !Yii::$app->user->can(UserPermissions::UPDATE_OWN_PROFILE, ['profileId' => $id])) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = $this->findModel($id);
         $model->scenario = User::SCENARIO_CHANGE_PASSWORD;
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $model->setPasswordHash($model->password);
-            if ($model->save(true, ['password_hash']))
-            {
+            if ($model->save(true, ['password_hash'])) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Password changed successfully.'));
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while changing the password.'));
             }
-        }
-        else
-        {
-                Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while changing the password.'));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while changing the password.'));
         }
 
         return $this->redirect(['update', 'id' => $model->id]);
@@ -243,8 +208,7 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        if ( !Yii::$app->user->can(UserPermissions::DELETE))
-        {
+        if ( !Yii::$app->user->can(UserPermissions::DELETE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
@@ -262,12 +226,9 @@ class UserController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null)
-        {
+        if (($model = User::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

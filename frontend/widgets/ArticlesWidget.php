@@ -6,7 +6,8 @@ use yii;
 use yii\base\Widget;
 use frontend\models\Article;
 
-class ArticlesWidget extends Widget {
+class ArticlesWidget extends Widget
+{
 
     const ON_MAIN_PAGE = 'main';
     const ON_SECOND_PAGE = 'second';
@@ -29,12 +30,9 @@ class ArticlesWidget extends Widget {
     public function run()
     {
         $model = new Article();
-        if ($this->mode == static::MODE_LAST_ARTICLES)
-        {
+        if ($this->mode == static::MODE_LAST_ARTICLES) {
             $articles = $model->getLastArticles($this->quantity);
-        }
-        else
-        {
+        } else {
             throw new \Exception('This mode is not exists');
         }
 
@@ -61,8 +59,7 @@ class ArticlesWidget extends Widget {
      */
     public function setQuantity($quantity)
     {
-        if ( ! is_int($quantity))
-        {
+        if ( !is_int($quantity)) {
             throw new yii\base\InvalidParamException('The parameter must be an integer value');
         }
 
@@ -82,7 +79,7 @@ class ArticlesWidget extends Widget {
      */
     public function setPage($page)
     {
-        $this->page = $page == self::ON_MAIN_PAGE ? : self::ON_SECOND_PAGE;
+        $this->page = $page == self::ON_MAIN_PAGE ?: self::ON_SECOND_PAGE;
     }
 
     /**
@@ -98,6 +95,6 @@ class ArticlesWidget extends Widget {
      */
     public function setMode($mode)
     {
-        $this->mode = (int) $mode;
+        $this->mode = (int)$mode;
     }
 }

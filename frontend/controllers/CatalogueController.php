@@ -56,8 +56,7 @@ class CatalogueController extends \yii\web\Controller
 
     public function beforeAction($action)
     {
-        if (parent::beforeAction($action))
-        {
+        if (parent::beforeAction($action)) {
             $feedbackModel = new FeedbackForm();
             $this->getView()->params['feedbackModel'] = $feedbackModel;
 
@@ -81,8 +80,7 @@ class CatalogueController extends \yii\web\Controller
         $this->metaKeywords = Yii::$app->config->siteMetaKeywords;
 
         $seoInfo = SEOInformation::findModel('catalogue', 'index');
-        if ( ! is_null($seoInfo))
-        {
+        if ( !is_null($seoInfo)) {
             $this->heading = ($seoInfo->heading == '') ? $this->heading : $seoInfo->heading;
             $this->metaTitle = ($seoInfo->meta_title == '') ? $this->metaTitle : $seoInfo->meta_title;
             $this->metaDescription = ($seoInfo->meta_description == '') ? $this->metaDescription : $seoInfo->meta_description;
@@ -109,25 +107,20 @@ class CatalogueController extends \yii\web\Controller
     {
         $model = Catalogue::findOne(['uri' => $uri]);
 
-        if (is_null($model))
-        {
+        if (is_null($model)) {
             throw new NotFoundHttpException();
         }
 
-        $childCategoriesCount = (int) Catalogue::find()->where(['parent_id' => $model->id])->count();
+        $childCategoriesCount = (int)Catalogue::find()->where(['parent_id' => $model->id])->count();
         $childCategories = $this->getChildCategories($model, $childCategoriesCount);
-        if ($childCategoriesCount > 0)
-        {
+        if ($childCategoriesCount > 0) {
             $ids = ArrayHelper::getColumn($childCategories, 'id');
-        }
-        else
-        {
+        } else {
             $ids = [$model->id];
         }
 
         //Get the list of products with list of group products----------------------------------------------------------
-        if (! empty($filterParams))
-        {
+        if ( !empty($filterParams)) {
             $productsQuery = $this->prepareFilterQuery(Product::find(), $filterParams);
             $productsQueryPart = Product::find()
                 ->from(['q' => $productsQuery])
@@ -144,9 +137,7 @@ class CatalogueController extends \yii\web\Controller
             $productsQuery = Product::find()
                 ->select('*')
                 ->from(['a' => $productsQuery]);
-        }
-        else
-        {
+        } else {
             $productsQuery = Product::findByCategories($ids)->with(['groupProducts']);
         }
 
@@ -156,21 +147,17 @@ class CatalogueController extends \yii\web\Controller
         $amount = 0;
         $priceFrom = 0;
         $priceTo = 0;
-        if (isset($_POST['ProductSearch']) && is_array($_POST['ProductSearch']))
-        {
-            $amount = (int) trim($_POST['ProductSearch']['amount']);
-            $priceFrom = (float) preg_replace('/[,]/','.', trim($_POST['ProductSearch']['price']['from']));
-            $priceTo = (float) preg_replace('/[,]/','.', trim($_POST['ProductSearch']['price']['to']));
+        if (isset($_POST['ProductSearch']) && is_array($_POST['ProductSearch'])) {
+            $amount = (int)trim($_POST['ProductSearch']['amount']);
+            $priceFrom = (float)preg_replace('/[,]/', '.', trim($_POST['ProductSearch']['price']['from']));
+            $priceTo = (float)preg_replace('/[,]/', '.', trim($_POST['ProductSearch']['price']['to']));
 
             $productsQuery = $productsQuery->andWhere(['>=', 'free', $amount]);
             $productIdsQuery = $productIdsQuery->andWhere(['>=', 'free', $amount]);
-            if ($priceTo > 0)
-            {
+            if ($priceTo > 0) {
                 $productsQuery = $productsQuery->andWhere(['between', 'enduserprice', $priceFrom, $priceTo]);
                 $productIdsQuery = $productIdsQuery->andWhere(['between', 'enduserprice', $priceFrom, $priceTo]);
-            }
-            else
-            {
+            } else {
                 $productsQuery = $productsQuery->andWhere(['>=', 'enduserprice', $priceFrom]);
                 $productIdsQuery = $productIdsQuery->andWhere(['>=', 'enduserprice', $priceFrom]);
             }
@@ -204,11 +191,10 @@ class CatalogueController extends \yii\web\Controller
             ->groupBy(['type_id', 'filter_id'])
             ->all();
 
-        $productFilterTypes =[];
-        $productFilterIds =[];
+        $productFilterTypes = [];
+        $productFilterIds = [];
         $filtersArr = [];
-        foreach ($productFilters as $productFilter)
-        {
+        foreach ($productFilters as $productFilter) {
             /* @var $productFilter \frontend\models\ProductFilter */
             $productFilterTypes[] = $productFilter->type_id;
             $productFilterIds[] = $productFilter->filter_id;
@@ -221,8 +207,7 @@ class CatalogueController extends \yii\web\Controller
             ->joinWith([
                 'filters' => function ($query) use ($filtersArr) {
                     $orCondition = ['or'];
-                    foreach ($filtersArr as $filterType => $filterIds)
-                    {
+                    foreach ($filtersArr as $filterType => $filterIds) {
                         $orCondition[] = ['and', ['{{%filter}}.type_id' => $filterType], ['{{%filter}}.id' => $filterIds]];
                     }
                     $query->andWhere($orCondition)->orderBy(['{{%filter}}.name' => SORT_ASC]);
@@ -240,8 +225,7 @@ class CatalogueController extends \yii\web\Controller
         $this->metaKeywords = Yii::$app->config->siteMetaKeywords;
 
         $seoInfo = SEOInformation::findModel('catalogue', 'view', $model->id);
-        if ( ! is_null($seoInfo))
-        {
+        if ( !is_null($seoInfo)) {
             $this->heading = ($seoInfo->heading == '') ? $this->heading : $seoInfo->heading;
             $this->metaTitle = ($seoInfo->meta_title == '') ? $this->metaTitle : $seoInfo->meta_title;
             $this->metaDescription = ($seoInfo->meta_description == '') ? $this->metaDescription : $seoInfo->meta_description;
@@ -261,7 +245,7 @@ class CatalogueController extends \yii\web\Controller
         return $this->render('view', [
             'heading' => $this->heading,
             'uri' => $uri,
-            'filterParams' => ($filterParams == '')? [] : $this->parseFilterStringQuery($filterParams),
+            'filterParams' => ($filterParams == '') ? [] : $this->parseFilterStringQuery($filterParams),
             'model' => $model,
             'categories' => $childCategories,
             'productsProvider' => $productProvider,
@@ -281,13 +265,11 @@ class CatalogueController extends \yii\web\Controller
      */
     protected function prepareFilterQuery(yii\db\ActiveQuery $query, $filterParams)
     {
-        if (trim($filterParams) == '')
-        {
+        if (trim($filterParams) == '') {
             return $query;
         }
 
-        if (! preg_match('/^[\d]+\.[\d]+(\-[\d]+\.[\d]+)*$/', $filterParams))
-        {
+        if ( !preg_match('/^[\d]+\.[\d]+(\-[\d]+\.[\d]+)*$/', $filterParams)) {
             throw new InvalidParamException('Wrong parameter $filterParams of method ' . __METHOD__ . ' of class ' . __CLASS__ . '.');
         }
 
@@ -295,26 +277,20 @@ class CatalogueController extends \yii\web\Controller
         $productFiltersQuery = ProductFilter::find()->select('product_id');
         $existQueryToProductFilter = false;
         $counter = 0;
-        foreach($filters as $filterType => $filter)
-        {
-            if ($filterType == 8)
-            {
-                if ($filter == 229)
-                {
+        foreach ($filters as $filterType => $filter) {
+            if ($filterType == 8) {
+                if ($filter == 229) {
                     $query->andWhere(['status_id' => 0]);
                 }
-            }
-            else
-            {
+            } else {
                 $existQueryToProductFilter = true;
                 $counter++;
                 $productFiltersQuery->orWhere(['and', 'type_id=' . $filterType, 'filter_id=' . $filter]);
             }
         }
 
-        if ($existQueryToProductFilter === true)
-        {
-            $productFilter = $productFiltersQuery->groupBy('product_id')->having(['>', 'COUNT(product_id)', $counter-1])->all();
+        if ($existQueryToProductFilter === true) {
+            $productFilter = $productFiltersQuery->groupBy('product_id')->having(['>', 'COUNT(product_id)', $counter - 1])->all();
             $productIds = ArrayHelper::getColumn($productFilter, 'product_id');
             $query->andWhere(['id' => $productIds]);
         }
@@ -331,19 +307,16 @@ class CatalogueController extends \yii\web\Controller
     protected function parseFilterStringQuery($filterParams)
     {
         $filters = [];
-        if (trim($filterParams) == '')
-        {
+        if (trim($filterParams) == '') {
             return $filters;
         }
 
-        if (! preg_match('/^[\d]+\.[\d]+(\-[\d]+\.[\d]+)*$/', $filterParams))
-        {
+        if ( !preg_match('/^[\d]+\.[\d]+(\-[\d]+\.[\d]+)*$/', $filterParams)) {
             throw new InvalidParamException('Wrong parameter $filterParams of method ' . __METHOD__ . ' of class ' . __CLASS__ . '.');
         }
 
         $filterPairs = explode('-', $filterParams);
-        foreach($filterPairs as $filterPair)
-        {
+        foreach ($filterPairs as $filterPair) {
             list($filterType, $filter) = explode('.', $filterPair);
             $filterType = intval($filterType);
             $filter = intval($filter);
@@ -361,8 +334,7 @@ class CatalogueController extends \yii\web\Controller
     protected function getChildCategories(Catalogue $model, $childCategoriesCount)
     {
         //Get child categories
-        if ($childCategoriesCount > 0)
-        {
+        if ($childCategoriesCount > 0) {
             $childCategories = Catalogue::find()
                 ->select([
                     '{{%catalogue}}.*',
@@ -373,9 +345,7 @@ class CatalogueController extends \yii\web\Controller
                 ->groupBy('{{%catalogue}}.id')
                 ->orderBy(['{{%catalogue}}.id' => SORT_ASC])
                 ->all();
-        }
-        else
-        {
+        } else {
             $childCategories = Catalogue::find()
                 ->select([
                     '{{%catalogue}}.*',

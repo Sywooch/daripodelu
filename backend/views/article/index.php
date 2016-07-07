@@ -23,38 +23,44 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
-if( Yii::$app->session->hasFlash('error') ) 
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
         'body' => Yii::$app->session->getFlash('error'),
-    ]);    
+    ]);
 }
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') ) 
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
         'body' => Yii::$app->session->getFlash('success'),
-    ]);    
+    ]);
 }
 ?>
-    
+
 
 <div role="tabpanel">
     <ul class="nav nav-tabs">
-        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройки</a></li>
+        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main"
+                                                                                             aria-controls="main"
+                                                                                             role="tab"
+                                                                                             data-toggle="tab">Основное</a>
+        </li>
+        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#settings"
+                                                                                             aria-controls="settings"
+                                                                                             role="tab"
+                                                                                             data-toggle="tab">Настройки</a>
+        </li>
     </ul>
     <div class="tab-content cms">
         <div role="tabpanel" id="main" class="tab-pane<?php if ($tabIndex === 0) : ?> active<? endif; ?>">
-            <?= Button::widget ( [
+            <?= Button::widget([
                 'label' => '<i class="glyphicon glyphicon-trash"></i> ' . Yii::t('app', 'Delete'),
                 'encodeLabel' => false,
                 'options' => [
@@ -64,7 +70,7 @@ if( Yii::$app->session->hasFlash('success') )
                     'style' => 'margin:5px',
                 ],
                 'tagName' => 'a',
-            ] ); ?>
+            ]); ?>
             <?php $this->registerJs("
                 $('#article-del-btn').on('click', function(e){
                     var keys = $('#articleids').yiiGridView('getSelectedRows');
@@ -81,7 +87,7 @@ if( Yii::$app->session->hasFlash('success') )
                                 bootbox.alert('" . Yii::t('app', 'You must select at least one item!') . "');
                                 return false;
                             }
-                            if(! confirm('" . Yii::t('app','Are you sure you want to delete selected items?') . "'))
+                            if(! confirm('" . Yii::t('app', 'Are you sure you want to delete selected items?') . "'))
                             {
                                 return false;
                             }
@@ -105,7 +111,7 @@ if( Yii::$app->session->hasFlash('success') )
                     return false;
                 });
             "); ?>
-            <?= Button::widget ( [
+            <?= Button::widget([
                 'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
                 'encodeLabel' => false,
                 'options' => [
@@ -114,7 +120,7 @@ if( Yii::$app->session->hasFlash('success') )
                     'style' => 'margin:5px'
                 ],
                 'tagName' => 'a',
-            ] ); ?>
+            ]); ?>
             <div class="clearfix">&nbsp;</div>
             <?php Pjax::begin(['id' => 'article-gv-container']); ?>
             <?= GridView::widget([
@@ -128,31 +134,33 @@ if( Yii::$app->session->hasFlash('success') )
                             'value' => $model[$key]->id,
                         ],
                         'name' => 'articleids[]',
-                        'contentOptions' => ['style'=>'width: 30px'],
+                        'contentOptions' => ['style' => 'width: 30px'],
                     ],
                     'name',
                     [
                         'attribute' => 'published_date',
                         'format' => 'datetime',
-                        'contentOptions' => ['style'=>'width: 220px'],
+                        'contentOptions' => ['style' => 'width: 220px'],
                     ],
                     [
                         'attribute' => 'last_update_date',
-                        'value' => function($model){
-                            return $model->last_update_date ? Yii::$app->formatter->asDatetime($model->last_update_date): '---';
+                        'value' => function ($model) {
+                            return $model->last_update_date ? Yii::$app->formatter->asDatetime($model->last_update_date) : '---';
                         },
-                        'contentOptions' => ['style'=>'width: 220px'],
+                        'contentOptions' => ['style' => 'width: 220px'],
                     ],
                     [
                         'attribute' => 'status',
                         'filter' => Article::getStatusOptions(),
-                        'value' => function($model){ return Article::getStatusName($model->status); },
-                        'contentOptions' => ['style'=>'width: 190px'],
+                        'value' => function ($model) {
+                            return Article::getStatusName($model->status);
+                        },
+                        'contentOptions' => ['style' => 'width: 190px'],
                     ],
                     [
                         'class' => ActionColumn::className(),
                         'template' => '{update} {delete}',
-                        'contentOptions' => ['style'=>'width: 50px'],
+                        'contentOptions' => ['style' => 'width: 50px'],
                     ],
                 ],
             ]); ?>

@@ -18,35 +18,33 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
 
-if( Yii::$app->session->hasFlash('error') ) 
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
         'body' => Yii::$app->session->getFlash('error'),
-    ]);    
+    ]);
 }
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') ) 
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
         'body' => Yii::$app->session->getFlash('success'),
-    ]);    
+    ]);
 }
 ?>
 
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-trash"></i> ' . Yii::t('app', 'Delete'),
     'encodeLabel' => false,
     'options' => [
@@ -56,7 +54,7 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px',
     ],
     'tagName' => 'a',
-] ); ?>
+]); ?>
 <?php $this->registerJs("
     $('#page-del-btn').on('click', function(e){
         var keys = $('#pageids').yiiGridView('getSelectedRows');
@@ -71,13 +69,13 @@ if( Yii::$app->session->hasFlash('success') )
                     bootbox.alert('" . Yii::t('app', 'You must select at least one item!') . "'); 
                     return false;
                 }
-                if(! confirm('" . Yii::t('app','Are you sure you want to delete selected items?') . "'))
+                if(! confirm('" . Yii::t('app', 'Are you sure you want to delete selected items?') . "'))
                 {
                     return false;
                 }
                 
                 /*
-                bootbox.confirm('" . Yii::t('yii','Are you sure you want to delete this item?') . "', function(result){
+                bootbox.confirm('" . Yii::t('yii', 'Are you sure you want to delete this item?') . "', function(result){
 
                 });*/
             },
@@ -100,7 +98,7 @@ if( Yii::$app->session->hasFlash('success') )
         return false;
     });
 "); ?>
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
     'encodeLabel' => false,
     'options' => [
@@ -109,8 +107,8 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px'
     ],
     'tagName' => 'a',
-] ); ?>
-<div class="clearfix">&nbsp;</div>
+]); ?>
+    <div class="clearfix">&nbsp;</div>
 <?php Pjax::begin(['id' => 'pages-gv-container']); ?>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
@@ -118,31 +116,33 @@ if( Yii::$app->session->hasFlash('success') )
     'filterModel' => $searchModel,
     'columns' => [
         [
-            'class' => CheckboxColumn::className(), 
+            'class' => CheckboxColumn::className(),
             'checkboxOptions' => [
                 'value' => $model[$key]->id,
             ],
             'name' => 'pageids[]',
-            'contentOptions' => ['style'=>'width: 30px'],
+            'contentOptions' => ['style' => 'width: 30px'],
         ],
         'name',
         [
             'attribute' => 'last_update_date',
-            'value' => function($model){ 
-                return $model->last_update_date ? Yii::$app->formatter->asDatetime($model->last_update_date): '---'; 
+            'value' => function ($model) {
+                return $model->last_update_date ? Yii::$app->formatter->asDatetime($model->last_update_date) : '---';
             },
-            'contentOptions' => ['style'=>'width: 220px'],
+            'contentOptions' => ['style' => 'width: 220px'],
         ],
         [
             'attribute' => 'status',
             'filter' => Page::getStatusOptions(),
-            'value' => function($model){ return Page::getStatusName($model->status); },
-            'contentOptions' => ['style'=>'width: 190px'],
+            'value' => function ($model) {
+                return Page::getStatusName($model->status);
+            },
+            'contentOptions' => ['style' => 'width: 190px'],
         ],
         [
             'class' => ActionColumn::className(),
             'template' => '{update} {delete}',
-            'contentOptions' => ['style'=>'width: 50px'],
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
     ],
 ]) ?>

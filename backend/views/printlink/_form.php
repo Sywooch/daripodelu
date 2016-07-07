@@ -14,22 +14,22 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
     <div role="tabpanel">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
+            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a>
+            </li>
         </ul>
 
         <div class="tab-content cms">
             <div role="tabpanel" id="main" class="tab-pane active">
 
-            <?php
-            $printsArr = [];
-            foreach ($prints as $print)
-            {
-                $printsArr[$print->name] = $print->name . ' - ' . $print->description;
-            }
-            ?>
-            <?= $form->field($model, 'code')->dropDownList(array_merge(['' => 'Выберите метод нанесения...'], $printsArr)); ?>
+                <?php
+                $printsArr = [];
+                foreach ($prints as $print) {
+                    $printsArr[$print->name] = $print->name . ' - ' . $print->description;
+                }
+                ?>
+                <?= $form->field($model, 'code')->dropDownList(array_merge(['' => 'Выберите метод нанесения...'], $printsArr)); ?>
 
-            <?= $form->field($model, 'link')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'link')->textInput(['maxlength' => true]) ?>
             </div>
 
         </div>

@@ -64,6 +64,7 @@ class Cart extends ActiveRecord
     public static function removeExpired()
     {
         $secondsNumber = yii::$app->params['cartCookieValidityPeriod'];
+
         return static::deleteAll(['<', 'last_use_date', new Expression('NOW() - INTERVAL ' . $secondsNumber . ' SECOND')]);
     }
 }

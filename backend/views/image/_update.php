@@ -11,9 +11,8 @@ use kartik\spinner\Spinner;
 /* @var $model app\models\Image */
 /* @var $form yii\bootstrap\ActiveForm */
 
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -21,9 +20,8 @@ if( Yii::$app->session->hasFlash('error') )
     ]);
 }
 
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -51,7 +49,7 @@ if( Yii::$app->session->hasFlash('success') )
 
     <div style="border-top: 1px solid #e5e5e5; padding-bottom: 5px;">&nbsp;</div>
     <div class="form-group btn-ctrl">
-        <?= Html::submitButton(Yii::t('app', 'Save'),[
+        <?= Html::submitButton(Yii::t('app', 'Save'), [
                 'class' => 'btn btn-primary',
                 'name' => 'saveImage',
                 'id' => 'saveImage',
@@ -69,12 +67,12 @@ if( Yii::$app->session->hasFlash('success') )
                         data: form.serialize(),
                         beforeSend: function () {
                             $('#update-photo-modal .modal-body').html('" .
-                            Spinner::widget([
-                                    'preset' => Spinner::MEDIUM,
-                                    'color' => 'grey',
-                                    'align' => 'center']
-                            ) .
-                            "');
+                    Spinner::widget([
+                            'preset' => Spinner::MEDIUM,
+                            'color' => 'grey',
+                            'align' => 'center']
+                    ) .
+                    "');
                         },
                         success: function (data) {
                             $('#update-photo-modal .modal-body').html(data);
@@ -86,7 +84,7 @@ if( Yii::$app->session->hasFlash('success') )
                 ",
             ]
         ) ?>
-        <?/*= Html::submitButton(
+        <? /*= Html::submitButton(
             Yii::t('app', 'Apply'),
             ['class' => 'btn btn-default', 'name' => 'applyImage', 'id' => 'applyImage']
         );*/ ?>

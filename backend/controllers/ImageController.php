@@ -43,16 +43,13 @@ class ImageController extends \yii\web\Controller
         $catId = $model->ctg_id;
         $model->delete();
 
-        if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-        {
+        if (Yii::$app->request->isAjax || Yii::$app->request->isPjax) {
             $dataProvider = $model->getDataProvider($controllerId, $itemId, $catId);
 
             return $this->renderPartial('_gridview', [
                 'dataProvider' => $dataProvider
             ]);
-        }
-        else
-        {
+        } else {
             $this->redirect([$controllerId . '/update', 'id' => $itemId]);
         }
     }
@@ -75,16 +72,13 @@ class ImageController extends \yii\web\Controller
             Yii::$app->session->setFlash('image-error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
         }*/
 
-        if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-        {
+        if (Yii::$app->request->isAjax || Yii::$app->request->isPjax) {
             $dataProvider = $model->getDataProvider($model->model, $model->owner_id, $model->ctg_id);
 
             return $this->renderAjax('_gridview', [
                 'dataProvider' => $dataProvider,
             ]);
-        }
-        else
-        {
+        } else {
             $this->redirect([$model->model . '/update', 'id' => $model->owner_id]);
         }
     }
@@ -93,21 +87,15 @@ class ImageController extends \yii\web\Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save(true, ['title', 'description', 'status']))
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(true, ['title', 'description', 'status'])) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
             }
 
             return $this->renderAjax('_update', ['model' => $model]);
-        }
-        else
-        {
+        } else {
             return $this->renderAjax('_update', ['model' => $model]);
         }
     }
@@ -116,13 +104,10 @@ class ImageController extends \yii\web\Controller
     {
         $counter = 0;
         $status = 'no_data_found';
-        if (isset($_POST['sortData']))
-        {
+        if (isset($_POST['sortData'])) {
             $sortData = Yii::$app->request->post('sortData');
-            if (is_array($sortData) && count($sortData) > 0)
-            {
-                foreach ($sortData as $index => $id)
-                {
+            if (is_array($sortData) && count($sortData) > 0) {
+                foreach ($sortData as $index => $id) {
                     $counter += (Image::updateAll(['weight' => $index], ['id' => intval($id)])) ? 1 : 0;
                 }
             }
@@ -142,12 +127,9 @@ class ImageController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = Image::findOne($id)) !== null)
-        {
+        if (($model = Image::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

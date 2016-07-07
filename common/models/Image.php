@@ -147,14 +147,10 @@ class Image extends ActiveRecord
      */
     public function setMaxHeight($maxHeight)
     {
-        if ( !is_integer($maxHeight))
-        {
+        if ( !is_integer($maxHeight)) {
             throw new yii\base\InvalidArgumentException('Max height must be integer');
-        }
-        else
-        {
-            if ($maxHeight <= 0)
-            {
+        } else {
+            if ($maxHeight <= 0) {
                 throw new yii\base\InvalidArgumentException('Max height must be greater than 0');
             }
         }
@@ -177,14 +173,10 @@ class Image extends ActiveRecord
      */
     public function setMaxWidth($maxWidth)
     {
-        if ( !is_integer($maxWidth))
-        {
+        if ( !is_integer($maxWidth)) {
             throw new yii\base\InvalidArgumentException('Max width must be integer');
-        }
-        else
-        {
-            if ($maxWidth <= 0)
-            {
+        } else {
+            if ($maxWidth <= 0) {
                 throw new yii\base\InvalidArgumentException('Max width must be greater than 0');
             }
         }
@@ -202,10 +194,8 @@ class Image extends ActiveRecord
     public function delete()
     {
         $rslt = parent::delete();
-        if ($rslt)
-        {
-            if ($this->is_main)
-            {
+        if ($rslt) {
+            if ($this->is_main) {
                 $this->setMainDefault();
             }
             $this->deleteFiles();
@@ -239,8 +229,7 @@ class Image extends ActiveRecord
             ]
         )->all();
 
-        if (count($imageModels))
-        {
+        if (count($imageModels)) {
             $deletedItemsCnt = Image::deleteAll(
                 'model = :model and owner_id = :owner_id and ctg_id = :ctg_id',
                 [
@@ -250,11 +239,9 @@ class Image extends ActiveRecord
                 ]
             );
 
-            if ($deletedItemsCnt > 0)
-            {
+            if ($deletedItemsCnt > 0) {
                 /* @var $imageModel Image */
-                foreach ($imageModels as $imageModel)
-                {
+                foreach ($imageModels as $imageModel) {
                     $imageModel->deleteFiles();
                 }
             }
@@ -321,8 +308,7 @@ class Image extends ActiveRecord
         $model = Image::find()->where('model = :model and owner_id = :owner_id and ctg_id = :ctg_id and status = 1 and is_main <> 1', [':model' => $this->model, ':owner_id' => $this->owner_id, ':ctg_id' => $this->ctg_id])->orderBy('weight ASC')->one();
         $rslt = false;
 
-        if ($model)
-        {
+        if ($model) {
             $model->is_main = Image::IS_MAIN;
             $rslt = $model->save(true, ['is_main']);
         }
@@ -332,15 +318,12 @@ class Image extends ActiveRecord
 
     public function __get($name)
     {
-        if (preg_match('/^image_url_\d+x\d+/', $name))
-        {
+        if (preg_match('/^image_url_\d+x\d+/', $name)) {
             $tmp = explode('_', $name);
             list($width, $height) = explode('x', $tmp[2]);
 
-            if ( !file_exists($this->_getImagePath(['width' => $width, 'height' => $height])))
-            {
-                if ( !file_exists($this->getImageTmbDirPath()))
-                {
+            if ( !file_exists($this->_getImagePath(['width' => $width, 'height' => $height]))) {
+                if ( !file_exists($this->getImageTmbDirPath())) {
                     mkdir($this->getImageTmbDirPath(), 0777, true);
                 }
 
@@ -349,9 +332,7 @@ class Image extends ActiveRecord
             }
 
             return $this->_getImageUrl(['width' => $width, 'height' => $height]);
-        }
-        else
-        {
+        } else {
             return parent::__get($name);
         }
     }
@@ -376,54 +357,41 @@ class Image extends ActiveRecord
     public function save($runValidation = true, $attributeNames = null)
     {
         $trans = $this->getDb()->beginTransaction();
-        try
-        {
-            if (parent::save($runValidation, $attributeNames))
-            {
-                if ($this->file)
-                {
-                    if ( !file_exists($this->getModelDirPath()))
-                    {
+        try {
+            if (parent::save($runValidation, $attributeNames)) {
+                if ($this->file) {
+                    if ( !file_exists($this->getModelDirPath())) {
                         mkdir($this->getModelDirPath(), 0777, true);
                     }
 
-                    if ( !file_exists($this->getImageDirPath()))
-                    {
+                    if ( !file_exists($this->getImageDirPath())) {
                         mkdir($this->getImageDirPath(), 0777, true);
                     }
 
                     components\Image::$driver = components\Image::DRIVER_GD2;
                     $img = components\Image::getImagine()->open($this->file->tempName);
-                    if ($img->getSize()->getWidth() > $this->getMaxWidth() || $img->getSize()->getHeight() > $this->getMaxHeight())
-                    {
+                    if ($img->getSize()->getWidth() > $this->getMaxWidth() || $img->getSize()->getHeight() > $this->getMaxHeight()) {
 
-                        if (components\Image::proportionalResize($this->file->tempName, $this->getMaxSizeString())->save($this->_getImagePath()))
-                        {
+                        if (components\Image::proportionalResize($this->file->tempName, $this->getMaxSizeString())->save($this->_getImagePath())) {
                             $trans->commit();
 
                             return true;
-                        }
-                        else
-                        {
+                        } else {
                             throw new \Exception('s');
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->file->saveAs($this->_getImagePath());
                     }
                 }
 
-                if ( !$this->isNewRecord)
-                {
+                if ( !$this->isNewRecord) {
                     $trans->commit();
 
                     return true;
                 }
             }
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             $trans->rollBack();
         }
 
@@ -432,25 +400,19 @@ class Image extends ActiveRecord
 
     protected function getMaxSizeString()
     {
-        if (isset($this->maxWidth) && isset($this->maxHeight))
-        {
+        if (isset($this->maxWidth) && isset($this->maxHeight)) {
             return $this->getMaxWidth() . 'x' . $this->getMaxHeight();
-        }
-        else
-        {
+        } else {
             throw new yii\base\InvalidValueException('Invalid value');
         }
     }
 
     protected function _getImagePath($options = null)
     {
-        if (is_array($options))
-        {
+        if (is_array($options)) {
             list($fname, $ext) = explode('.', $this->file_name);
             $path = $this->getImageTmbDirPath() . '/' . $fname . '_' . $options['width'] . 'x' . $options['height'] . '.' . $ext;
-        }
-        else
-        {
+        } else {
             $path = $this->getImageDirPath() . '/' . $this->file_name;
         }
 
@@ -459,13 +421,10 @@ class Image extends ActiveRecord
 
     protected function _getImageUrl($options = null)
     {
-        if (is_array($options))
-        {
+        if (is_array($options)) {
             list($fname, $ext) = explode('.', $this->file_name);
             $url = Yii::$app->params['baseUploadURL'] . '/' . $this->model . '/fldr_' . intval($this->ctg_id) . '_' . intval($this->owner_id) . '/.tmb/' . $fname . '_' . $options['width'] . 'x' . $options['height'] . '.' . $ext;
-        }
-        else
-        {
+        } else {
             $url = Yii::$app->params['baseUploadURL'] . '/' . $this->model . '/fldr_' . intval($this->ctg_id) . '_' . intval($this->owner_id) . '/' . $this->file_name;
         }
 
@@ -484,16 +443,14 @@ class Image extends ActiveRecord
             ]
         );
 
-        foreach ($tmbImages as $file)
-        {
+        foreach ($tmbImages as $file) {
             unlink($file);
         }
     }
 
     public function deleteFolderIfEmpty()
     {
-        if (file_exists($this->getImageTmbDirPath()))
-        {
+        if (file_exists($this->getImageTmbDirPath())) {
             $tmbImages = FileHelper::findFiles(
                 $this->getImageTmbDirPath(),
                 [
@@ -502,8 +459,7 @@ class Image extends ActiveRecord
             );
         }
 
-        if (file_exists($this->getImageDirPath()))
-        {
+        if (file_exists($this->getImageDirPath())) {
             $origImages = FileHelper::findFiles(
                 $this->getImageDirPath(),
                 [
@@ -511,8 +467,7 @@ class Image extends ActiveRecord
                 ]
             );
 
-            if (count($tmbImages) == 0 && count($origImages) == 0)
-            {
+            if (count($tmbImages) == 0 && count($origImages) == 0) {
                 FileHelper::removeDirectory($this->getImageDirPath());
             }
         }

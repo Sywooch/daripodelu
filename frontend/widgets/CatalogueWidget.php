@@ -26,7 +26,8 @@ class CatalogueWidget extends Widget
     private $template = 'index';
 
     public function init()
-    {}
+    {
+    }
 
     public function run()
     {

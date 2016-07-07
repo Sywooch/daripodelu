@@ -17,4 +17,5 @@ use common\models\Order as OrderCommon;
  * @property integer $status
  */
 class Order extends OrderCommon
-{}
+{
+}

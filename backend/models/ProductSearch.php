@@ -59,16 +59,14 @@ class ProductSearch extends Product
         $this->load($params);
 
         $categoryName = trim($this->catalogue_id);
-        if ($categoryName != '')
-        {
+        if ($categoryName != '') {
             $categories = Catalogue::find()->where(['like', 'name', $categoryName])->all();
-            if (count($categories) > 0)
-            {
+            if (count($categories) > 0) {
                 $catalogueIds = ArrayHelper::getColumn($categories, 'id');
             }
         }
 
-        if (!$this->validate()) {
+        if ( !$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;

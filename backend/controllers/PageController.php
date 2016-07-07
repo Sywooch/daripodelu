@@ -79,39 +79,29 @@ class PageController extends Controller
             'itemIdAttribute' => 'id',
         ]);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The page added successfully.'));
 
                 $model->alias = $_POST['MenuTree']['alias'];
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
                 $model->showInMenu = $_POST['MenuTree']['show_in_menu'];
 
-                if ( !$model->saveAlias())
-                {
+                if ( !$model->saveAlias()) {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of page.'));
                 }
 
-                if (isset($_POST['savePage']))
-                {
+                if (isset($_POST['savePage'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -134,43 +124,33 @@ class PageController extends Controller
             'itemIdAttribute' => 'id',
         ]);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $timeOffset = \DateTime::createFromFormat('d.m.Y, H:i:s', $model->created_date, new \DateTimeZone(Yii::$app->formatter->timeZone))->getOffset();
             $timeStamp = \DateTime::createFromFormat('d.m.Y, H:i:s', $model->created_date, new \DateTimeZone(Yii::$app->formatter->timeZone))->getTimestamp();
             $model->created_date = date('Y-m-d H:i:s', $timeStamp - $timeOffset);
 
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
                 $model->alias = $_POST['MenuTree']['alias'];
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
                 $model->show_in_menu = $_POST['MenuTree']['show_in_menu'];
 
-                if ( !$model->saveAlias())
-                {
+                if ( !$model->saveAlias()) {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }
 
-                if (isset($_POST['savePage']))
-                {
+                if (isset($_POST['savePage'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </ strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $model->last_update_date = Yii::$app->formatter->asDatetime($model->last_update_date);
             $model->created_date = Yii::$app->formatter->asDatetime($model->created_date);
 
@@ -199,16 +179,12 @@ class PageController extends Controller
      */
     public function actionDeletescope()
     {
-        if (isset($_POST['ids']))
-        {
+        if (isset($_POST['ids'])) {
             $keys = Yii::$app->request->post('ids');
             $rslt = Page::deleteAll(['id' => $keys]);
-            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-            {
+            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax) {
                 echo helpers\Json::encode(['status' => 'success', 'rslt' => $rslt]);
-            }
-            else
-            {
+            } else {
                 return $this->redirect(isset($_POST['returnURL']) ? Yii::$app->request->post('returnURL') : ['index']);
             }
         }
@@ -223,12 +199,9 @@ class PageController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Page::findOne($id)) !== null)
-        {
+        if (($model = Page::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

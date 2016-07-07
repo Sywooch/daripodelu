@@ -67,8 +67,7 @@ class Settings extends ActiveRecord
         $items = $this->getParams();
 
         /* @var $item Settings */
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             $params[$item->param] = $item;
         }
 

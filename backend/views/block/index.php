@@ -26,9 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -38,9 +37,8 @@ if( Yii::$app->session->hasFlash('error') )
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -49,7 +47,7 @@ if( Yii::$app->session->hasFlash('success') )
 }
 ?>
 
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-trash"></i> ' . Yii::t('app', 'Delete'),
     'encodeLabel' => false,
     'options' => [
@@ -59,7 +57,7 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px',
     ],
     'tagName' => 'a',
-] ); ?>
+]); ?>
 <?php $this->registerJs("
     $('#block-del-btn').on('click', function(e){
         var keys = $('.blockids').yiiGridView('getSelectedRows');
@@ -74,13 +72,13 @@ if( Yii::$app->session->hasFlash('success') )
                     bootbox.alert('" . Yii::t('app', 'You must select at least one item!') . "');
                     return false;
                 }
-                if(! confirm('" . Yii::t('app','Are you sure you want to delete selected items?') . "'))
+                if(! confirm('" . Yii::t('app', 'Are you sure you want to delete selected items?') . "'))
                 {
                     return false;
                 }
 
                 /*
-                bootbox.confirm('" . Yii::t('yii','Are you sure you want to delete this item?') . "', function(result){
+                bootbox.confirm('" . Yii::t('yii', 'Are you sure you want to delete this item?') . "', function(result){
 
                 });*/
             },
@@ -103,7 +101,7 @@ if( Yii::$app->session->hasFlash('success') )
         return false;
     });
 "); ?>
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
     'encodeLabel' => false,
     'options' => [
@@ -112,56 +110,57 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px'
     ],
     'tagName' => 'a',
-] ); ?>
+]); ?>
 <div class="clearfix">&nbsp;</div>
 <?php foreach ($positions as $code => $name): ?>
-    <div style="padding: 10px 0 2px; font-size: 24px"><?= $name; ?><?php if ($code != Block::NO_POS): ?> &ndash; {<?= $code ?>}<?php endif; ?></div>
+    <div
+        style="padding: 10px 0 2px; font-size: 24px"><?= $name; ?><?php if ($code != Block::NO_POS): ?> &ndash; {<?= $code ?>}<?php endif; ?></div>
     <?php Pjax::begin(['id' => 'blocks-gv-container-' . $code]); ?>
-        <?= Html::a('<span class="glyphicon glyphicon-floppy-save"></span>' . Yii::t('app', 'Save changes'),
-            ['order'],
+    <?= Html::a('<span class="glyphicon glyphicon-floppy-save"></span>' . Yii::t('app', 'Save changes'),
+        ['order'],
+        [
+            'class' => 'btn btn-primary btn-sm pull-right',
+            'id' => 'save-order_' . $code,
+            'disabled' => 'disabled',
+            'title' => Yii::t('app', 'Save changes after sorting'),
+            'style' => 'margin: 5px;',
+        ]
+    );
+    ?>
+    <div class="clearfix">&nbsp;</div>
+    <?= GridView::widget([
+        'dataProvider' => $dataProviders[$code],
+        'filterModel' => null,
+        'columns' => [
             [
-                'class' => 'btn btn-primary btn-sm pull-right',
-                'id' => 'save-order_' . $code,
-                'disabled' => 'disabled',
-                'title' => Yii::t('app', 'Save changes after sorting'),
-                'style' => 'margin: 5px;',
-            ]
-        );
-        ?>
-        <div class="clearfix">&nbsp;</div>
-        <?= GridView::widget([
-            'dataProvider' => $dataProviders[$code],
-            'filterModel' => null,
-            'columns' => [
-                [
-                    'class' => CheckboxColumn::className(),
-                    'checkboxOptions' => [
-                        'value' => $model[$key]->id,
-                    ],
-                    'name' => 'blockids[]',
-                    'contentOptions' => ['style'=>'width: 30px'],
+                'class' => CheckboxColumn::className(),
+                'checkboxOptions' => [
+                    'value' => $model[$key]->id,
                 ],
-                'name',
-                'title',
-                // 'show_all_pages',
-
-                [
-                    'class' => ActionColumn::className(),
-                    'template' => '{update} {delete}',
-                    'contentOptions' => ['style'=>'width: 50px'],
-                ],
+                'name' => 'blockids[]',
+                'contentOptions' => ['style' => 'width: 30px'],
             ],
-            'options' => [
-                'class' => 'grid-view blockids',
+            'name',
+            'title',
+            // 'show_all_pages',
+
+            [
+                'class' => ActionColumn::className(),
+                'template' => '{update} {delete}',
+                'contentOptions' => ['style' => 'width: 50px'],
             ],
-            'tableOptions' => [
-                'id' => 'table_' . $code,
-                'class' => 'table table-striped table-bordered',
-            ],
-        ]); ?>
+        ],
+        'options' => [
+            'class' => 'grid-view blockids',
+        ],
+        'tableOptions' => [
+            'id' => 'table_' . $code,
+            'class' => 'table table-striped table-bordered',
+        ],
+    ]); ?>
 
 
-        <?php $this->registerJs("
+    <?php $this->registerJs("
 
             var fixHelper_$code = function(e, ui) {
                     ui.children().each(function() {

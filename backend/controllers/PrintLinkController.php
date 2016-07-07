@@ -58,30 +58,21 @@ class PrintlinkController extends Controller
     {
         $model = new PrintLink();
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The link added successfully.'));
 
-                if (isset($_POST['savePrintLink']))
-                {
+                if (isset($_POST['savePrintLink'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->code]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
 
             $existsPrintLinks = PrintLink::find()->all();
             $existsPrintLinkCodes = ArrayHelper::getColumn($existsPrintLinks, 'code');
@@ -105,30 +96,21 @@ class PrintlinkController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['savePrintLink']))
-                {
+                if (isset($_POST['savePrintLink'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->code]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $existsPrintLinks = PrintLink::find()->where(['not', ['code' => $id]])->all();
             $existsPrintLinkCodes = ArrayHelper::getColumn($existsPrintLinks, 'code');
 
@@ -163,12 +145,9 @@ class PrintlinkController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = PrintLink::find()->where(['code' => $id])->one()) !== null)
-        {
+        if (($model = PrintLink::find()->where(['code' => $id])->one()) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

@@ -36,32 +36,24 @@ class SettingsController extends Controller
 
     public function actionIndex()
     {
-        if ( !Yii::$app->user->can(SettingsPermissions::INDEX))
-        {
+        if ( !Yii::$app->user->can(SettingsPermissions::INDEX)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = new SettingsForm();
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ( !Yii::$app->user->can(SettingsPermissions::UPDATE))
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ( !Yii::$app->user->can(SettingsPermissions::UPDATE)) {
                 throw new ForbiddenHttpException('Access denied');
             }
 
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
             }
 
             return $this->redirect(['index']);
-        }
-        else
-        {
+        } else {
             $model = SettingsForm::fillAttributes();
         }
 
@@ -73,8 +65,7 @@ class SettingsController extends Controller
 
     public function actionUpdate()
     {
-        if ( !Yii::$app->user->can(SettingsPermissions::UPDATE))
-        {
+        if ( !Yii::$app->user->can(SettingsPermissions::UPDATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 

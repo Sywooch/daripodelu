@@ -23,16 +23,14 @@ $parents = $category->parents();
 
 $this->title = $category->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Catalogue'), 'url' => ['index']];
-for ($i = 0; $i < count($parents) - 1; $i++)
-{
+for ($i = 0; $i < count($parents) - 1; $i++) {
     $this->params['breadcrumbs'][] = ['label' => $parents[$i]->name, 'url' => ['category', 'id' => $parents[$i]->id]];
 }
 $this->params['breadcrumbs'][] = $category->name;
 
 
 $title = $this->title;
-for ($i = count($parents) - 2; $i >= 0; $i--)
-{
+for ($i = count($parents) - 2; $i >= 0; $i--) {
     $title .= ' :: ' . $parents[$i]->name;
 }
 $title = $title . ' :: ' . Yii::t('app', 'Catalogue') . ' :: ' . Yii::$app->config->siteName;
@@ -43,9 +41,8 @@ $title = $title . ' :: ' . Yii::t('app', 'Catalogue') . ' :: ' . Yii::$app->conf
 <h3>Категории</h3>
 <?php
 $this->title = $title;
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -55,9 +52,8 @@ if( Yii::$app->session->hasFlash('error') )
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -69,8 +65,16 @@ if( Yii::$app->session->hasFlash('success') )
 
 <div role="tabpanel">
     <ul class="nav nav-tabs">
-        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройки</a></li>
+        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main"
+                                                                                             aria-controls="main"
+                                                                                             role="tab"
+                                                                                             data-toggle="tab">Основное</a>
+        </li>
+        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#settings"
+                                                                                             aria-controls="settings"
+                                                                                             role="tab"
+                                                                                             data-toggle="tab">Настройки</a>
+        </li>
     </ul>
     <div class="tab-content cms">
         <div role="tabpanel" id="main" class="tab-pane<?php if ($tabIndex === 0) : ?> active<? endif; ?>">
@@ -125,7 +129,7 @@ if( Yii::$app->session->hasFlash('success') )
                     return false;
                 });
             "); */ ?>
-            <?= Button::widget ( [
+            <?= Button::widget([
                 'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create category'),
                 'encodeLabel' => false,
                 'options' => [
@@ -134,7 +138,7 @@ if( Yii::$app->session->hasFlash('success') )
                     'style' => 'margin:5px'
                 ],
                 'tagName' => 'a',
-            ] ); ?>
+            ]); ?>
             <div class="clearfix">&nbsp;</div>
             <?php Pjax::begin(['id' => 'category-gv-container']); ?>
             <?= GridView::widget([
@@ -153,14 +157,14 @@ if( Yii::$app->session->hasFlash('success') )
                     [
                         'attribute' => 'name',
                         'format' => 'raw',
-                        'value' => function($row){
+                        'value' => function ($row) {
                             return Html::a($row->name, ['category', 'id' => $row->id], ['data' => ['pjax' => 0]]);
                         }
                     ],
                     [
                         'class' => ActionColumn::className(),
                         'template' => '{update} {delete}',
-                        'contentOptions' => ['style'=>'width: 50px'],
+                        'contentOptions' => ['style' => 'width: 50px'],
                     ],
                 ],
             ]); ?>
@@ -192,7 +196,7 @@ if( Yii::$app->session->hasFlash('success') )
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h3>Товары</h3>
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create product'),
     'encodeLabel' => false,
     'options' => [
@@ -201,8 +205,8 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px'
     ],
     'tagName' => 'a',
-] ); ?>
-    <div class="clearfix">&nbsp;</div>
+]); ?>
+<div class="clearfix">&nbsp;</div>
 <?php Pjax::begin(['id' => 'products-gv-container']); ?>
 <?= GridView::widget([
     'dataProvider' => $productDataProvider,
@@ -211,12 +215,12 @@ if( Yii::$app->session->hasFlash('success') )
     'columns' => [
         [
             'attribute' => 'id',
-            'contentOptions' => ['style'=>'width: 50px'],
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
         [
             'format' => 'html',
-            'contentOptions' => ['class' => 'gv-td-img-90', 'style'=>'width: 90px'],
-            'value' => function($row) {
+            'contentOptions' => ['class' => 'gv-td-img-90', 'style' => 'width: 90px'],
+            'value' => function ($row) {
                 $src = is_null($row->small_image) ? '/admin/img/no-image.png' : '/uploads/' . $row->id . '/' . $row->small_image;
 
                 return Html::img($src, ['class' => 'gv-prod-img-90']);
@@ -224,15 +228,15 @@ if( Yii::$app->session->hasFlash('success') )
         ],
         [
             'attribute' => 'code',
-            'contentOptions' => ['style'=>'width: 80px'],
+            'contentOptions' => ['style' => 'width: 80px'],
         ],
         [
             'attribute' => 'name',
         ],
         [
             'attribute' => 'enduserprice',
-            'contentOptions' => ['style'=>'width: 120px; text-align: right;'],
-            'value' => function($row) {
+            'contentOptions' => ['style' => 'width: 120px; text-align: right;'],
+            'value' => function ($row) {
                 return Yii::$app->formatter->asDecimal($row->enduserprice, 2);
             }
         ],
@@ -240,8 +244,8 @@ if( Yii::$app->session->hasFlash('success') )
             'attribute' => 'user_row',
             'filter' => Product::getCreateMethods(),
             'headerOptions' => ['style' => 'white-space: normal; text-align: center;'],
-            'contentOptions' => ['style'=>'width: 50px; text-align: center;'],
-            'value' => function($row){
+            'contentOptions' => ['style' => 'width: 50px; text-align: center;'],
+            'value' => function ($row) {
                 return Product::getCreateMethodName($row->user_row);
             },
         ],
@@ -249,7 +253,7 @@ if( Yii::$app->session->hasFlash('success') )
             'class' => ActionColumn::className(),
             'controller' => 'product',
             'template' => '{update} {delete}',
-            'contentOptions' => ['style'=>'width: 50px'],
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
     ],
 ]); ?>

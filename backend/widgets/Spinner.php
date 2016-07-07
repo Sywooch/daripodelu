@@ -27,7 +27,7 @@ class Spinner extends \kartik\spinner\Spinner
     {
 //        parent::init();
         \yii\base\Widget::init();
-        $this->_validPreset = (!empty($this->preset) && in_array($this->preset, $this->_presets));
+        $this->_validPreset = ( !empty($this->preset) && in_array($this->preset, $this->_presets));
         if (empty($this->options['id'])) {
             $this->options['id'] = $this->getId();
         }

@@ -151,8 +151,7 @@ class Product extends \yii\db\ActiveRecord
      */
     public static function findByCategories($ids)
     {
-        if ( ! is_array($ids))
-        {
+        if ( !is_array($ids)) {
             throw new InvalidParamException('Wrong parameter $ids of method ' . __METHOD__ . ' of class ' . __CLASS__ . '. $ids must be an array.');
         }
 
@@ -175,13 +174,11 @@ class Product extends \yii\db\ActiveRecord
 
     public function __get($name)
     {
-        if (preg_match('/^image_url_\d+x\d+/', $name))
-        {
+        if (preg_match('/^image_url_\d+x\d+/', $name)) {
             $tmp = explode('_', $name);
             list($width, $height) = explode('x', $tmp[2]);
 
-            if ( !file_exists($this->_getImagePath(['width' => $width, 'height' => $height])))
-            {
+            if ( !file_exists($this->_getImagePath(['width' => $width, 'height' => $height]))) {
                 /*if ( !file_exists($this->_getImageTmbDirPath()))
                 {
                     mkdir($this->_getImageTmbDirPath());
@@ -192,9 +189,7 @@ class Product extends \yii\db\ActiveRecord
             }
 
             return $this->_getImageUrl(['width' => $width, 'height' => $height]);
-        }
-        else
-        {
+        } else {
             return parent::__get($name);
         }
     }
@@ -251,15 +246,12 @@ class Product extends \yii\db\ActiveRecord
 
     protected function _getImagePath($options = null)
     {
-        if (is_array($options))
-        {
+        if (is_array($options)) {
             $fname = mb_substr($this->super_big_image, 0, mb_strrpos($this->super_big_image, '.', null, 'UTF-8'), 'UTF-8');
             $lastPointPos = mb_strrpos($this->super_big_image, '.', null, 'UTF-8');
             $ext = mb_substr($this->super_big_image, $lastPointPos + 1, null, 'UTF-8');
             $path = $this->getImagesDirPath() . '/' . $fname . '_' . $options['width'] . 'x' . $options['height'] . '.' . $ext;
-        }
-        else
-        {
+        } else {
             $path = $this->getImagesDirPath() . '/' . $this->super_big_image;
         }
 
@@ -268,15 +260,12 @@ class Product extends \yii\db\ActiveRecord
 
     protected function _getImageUrl($options = null)
     {
-        if (is_array($options))
-        {
+        if (is_array($options)) {
             $fname = mb_substr($this->super_big_image, 0, mb_strrpos($this->super_big_image, '.', null, 'UTF-8'), 'UTF-8');
             $lastPointPos = mb_strrpos($this->super_big_image, '.', null, 'UTF-8');
             $ext = mb_substr($this->super_big_image, $lastPointPos + 1, null, 'UTF-8');
             $url = Yii::$app->params['baseUploadURL'] . '/' . $this->id . '/' . $fname . '_' . $options['width'] . 'x' . $options['height'] . '.' . $ext;
-        }
-        else
-        {
+        } else {
             $url = Yii::$app->params['baseUploadURL'] . '/' . $this->id . '/' . $this->super_big_image;
         }
 

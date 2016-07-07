@@ -36,12 +36,12 @@ class RbacController extends Controller
         $admin = $authManager->createRole(User::getRoleStringId(User::ROLE_ADMIN));
 
         // Create simple, based on action{$NAME} permissions
-        $login  = $authManager->createPermission(DefaultPermissions::LOGIN);
+        $login = $authManager->createPermission(DefaultPermissions::LOGIN);
         $logout = $authManager->createPermission(DefaultPermissions::LOGOUT);
-        $error  = $authManager->createPermission(DefaultPermissions::ERROR);
+        $error = $authManager->createPermission(DefaultPermissions::ERROR);
         $signUp = $authManager->createPermission(DefaultPermissions::SIGNUP);
-        $index  = $authManager->createPermission(DefaultPermissions::INDEX);
-        $view   = $authManager->createPermission(DefaultPermissions::VIEW);
+        $index = $authManager->createPermission(DefaultPermissions::INDEX);
+        $view = $authManager->createPermission(DefaultPermissions::VIEW);
         $update = $authManager->createPermission(DefaultPermissions::UPDATE);
         $delete = $authManager->createPermission(DefaultPermissions::DELETE);
 
@@ -218,9 +218,9 @@ class RbacController extends Controller
         $authManager->add($userProfileOwnerRule);
 
         // Add rule "UserRoleRule" in roles
-        $guest->ruleName  = $userRoleRule->name;
-        $moderator->ruleName  = $userRoleRule->name;
-        $admin->ruleName  = $userRoleRule->name;
+        $guest->ruleName = $userRoleRule->name;
+        $moderator->ruleName = $userRoleRule->name;
+        $admin->ruleName = $userRoleRule->name;
         $updateOwnProfile->ruleName = $userProfileOwnerRule->name;
 
 

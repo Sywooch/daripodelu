@@ -73,14 +73,12 @@ class Catalogue extends \yii\db\ActiveRecord
         $parentId = is_null($parentId) ? $this->parent_id : $parentId;
         $category = $this->findOne(['id' => $parentId]);
 
-        if (is_null($category))
-        {
+        if (is_null($category)) {
             return [];
         }
         $list[] = $category;
 
-        if ($category->parent_id !== 0)
-        {
+        if ($category->parent_id !== 0) {
             $list = array_merge($list, $this->parents($category->parent_id));
         }
 

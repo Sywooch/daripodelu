@@ -6,8 +6,8 @@ namespace common\components\rbac;
 
 class ImagePermissions
 {
-    const INDEX  = 'image_index';
-    const VIEW   = 'image_view';
+    const INDEX = 'image_index';
+    const VIEW = 'image_view';
     const CREATE = 'image_create';
     const UPDATE = 'image_update';
     const DELETE = 'image_delete';

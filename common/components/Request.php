@@ -17,12 +17,9 @@ class Request extends \yii\web\Request
 
     public function resolvePathInfo()
     {
-        if ($this->getUrl() === $this->adminUrl)
-        {
+        if ($this->getUrl() === $this->adminUrl) {
             return '';
-        }
-        else
-        {
+        } else {
             return parent::resolvePathInfo();
         }
     }

@@ -21,44 +21,45 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
 </head>
 <body>
-    <?php $this->beginBody() ?>
-    <div class="wrap">
-        <?php
-            NavBar::begin([
-                'brandLabel' => 'Панель управления',
-                'brandUrl' => Yii::$app->homeUrl,
-                'options' => [
-                    'class' => 'navbar-inverse navbar-fixed-top',
-                ],
-            ]);
-            /*
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-left', 'style' => 'margin-left: 40px;'],
-                'items' => []
-            ]);
-            */
-            NavBar::end();
-        ?>
-        <div class="container">
+<?php $this->beginBody() ?>
+<div class="wrap">
+    <?php
+    NavBar::begin([
+        'brandLabel' => 'Панель управления',
+        'brandUrl' => Yii::$app->homeUrl,
+        'options' => [
+            'class' => 'navbar-inverse navbar-fixed-top',
+        ],
+    ]);
+    /*
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-left', 'style' => 'margin-left: 40px;'],
+        'items' => []
+    ]);
+    */
+    NavBar::end();
+    ?>
+    <div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-            'homeLink'=>[
+            'homeLink' => [
                 'label' => 'Главная',
                 'url' => ['site/index'],
             ],
         ]) ?>
         <?= $content ?>
-        </div>
     </div>
+</div>
 
-    <footer class="footer">
-        <div class="container">
+<footer class="footer">
+    <div class="container">
         <p class="pull-left">&copy; <?= Yii::$app->params['SITE.TITLE']; ?> <?= date('Y') ?></p>
-        <p class="pull-right"><?/*= Yii::powered()*/ ?></p>
-        </div>
-    </footer>
 
-    <?php $this->endBody() ?>
+        <p class="pull-right"><? /*= Yii::powered()*/ ?></p>
+    </div>
+</footer>
+
+<?php $this->endBody() ?>
 </body>
 </html>
 <?php $this->endPage() ?>

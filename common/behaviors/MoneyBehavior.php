@@ -24,19 +24,13 @@ class MoneyBehavior extends Behavior
      */
     public function setMoneyAttributes($moneyAttributes)
     {
-        if (is_string($moneyAttributes))
-        {
+        if (is_string($moneyAttributes)) {
             $this->moneyAttributes[] = trim($moneyAttributes);
-        }
-        elseif (is_array($moneyAttributes))
-        {
-            foreach ($moneyAttributes as $attr)
-            {
+        } elseif (is_array($moneyAttributes)) {
+            foreach ($moneyAttributes as $attr) {
                 $this->moneyAttributes[] = $attr;
             }
-        }
-        else
-        {
+        } else {
             throw new yii\base\InvalidArgumentException('The parameter $moneyAttributes should be a string or an array.');
         }
     }
@@ -54,16 +48,14 @@ class MoneyBehavior extends Behavior
 
     public function toCents($events)
     {
-        foreach ($this->moneyAttributes as $attr)
-        {
+        foreach ($this->moneyAttributes as $attr) {
             $this->owner->{$attr} = $this->owner->{$attr} * 100;
         }
     }
 
     public function toMoney($events)
     {
-        foreach ($this->moneyAttributes as $attr)
-        {
+        foreach ($this->moneyAttributes as $attr) {
             $this->owner->{$attr} = $this->owner->{$attr} / 100;
         }
     }

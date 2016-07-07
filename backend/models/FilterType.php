@@ -15,6 +15,7 @@ use Yii;
 class FilterType extends \yii\db\ActiveRecord
 {
     public $value = '';
+
     /**
      * @inheritdoc
      */

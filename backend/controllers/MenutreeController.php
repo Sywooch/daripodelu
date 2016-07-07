@@ -50,13 +50,11 @@ class MenutreeController extends Controller
      */
     public function actionIndex()
     {
-        if ( !Yii::$app->user->can(MenuPermissions::INDEX))
-        {
+        if ( !Yii::$app->user->can(MenuPermissions::INDEX)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
-        if ( !Yii::$app->request->get('MenuTreeSearch'))
-        {
+        if ( !Yii::$app->request->get('MenuTreeSearch')) {
             return $this->redirect(['index', 'MenuTreeSearch[show_in_menu]' => 1]);
         }
 
@@ -81,51 +79,38 @@ class MenutreeController extends Controller
      */
     public function actionCreate()
     {
-        if ( !Yii::$app->user->can(MenuPermissions::CREATE))
-        {
+        if ( !Yii::$app->user->can(MenuPermissions::CREATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = new MenuTree(Yii::$app->cache);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $parent = $model->findOne(['id' => $model->parent_id]);
-            if ( !is_null($parent))
-            {
-                if ($model->prev_id > 0)
-                {
+            if ( !is_null($parent)) {
+                if ($model->prev_id > 0) {
                     $previous = $model->findOne(['id' => $model->prev_id]);
                     $saveResult = $model->insertAfter($previous);
-                }
-                else
-                {
+                } else {
                     $parent = $model->findOne(['id' => $model->parent_id]);
                     $saveResult = $model->prependTo($parent);
                 }
 
-                if ($saveResult)
-                {
+                if ($saveResult) {
                     Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The menu item added successfully.'));
-                }
-                else
-                {
+                } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                 }
 
                 return $this->redirect(['index']);
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> The parent menu item not found.'));
 
                 return $this->render('create', [
                     'model' => $model,
                 ]);
             }
-        }
-        else
-        {
+        } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -142,63 +127,44 @@ class MenutreeController extends Controller
      */
     public function actionUpdate($id)
     {
-        if ( !Yii::$app->user->can(MenuPermissions::UPDATE))
-        {
+        if ( !Yii::$app->user->can(MenuPermissions::UPDATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = $this->findModel($id);
         $model->attachCache(Yii::$app->cache);
 
-        if ($id != 1)
-        {
-            if ($model->load(Yii::$app->request->post()))
-            {
-                if ($model->parent_id === $model->id)
-                {
+        if ($id != 1) {
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->parent_id === $model->id) {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> Can not move a node when the target node is same.'));
-                }
-                else
-                {
-                    if ($model->prev_id > 0)
-                    {
+                } else {
+                    if ($model->prev_id > 0) {
                         $previous = $model->findOne(['id' => $model->prev_id]);
                         $saveResult = $model->insertAfter($previous);
-                    }
-                    else
-                    {
+                    } else {
                         $parent = $model->findOne(['id' => $model->parent_id]);
                         $saveResult = $model->prependTo($parent);
                     }
 
-                    if ($saveResult)
-                    {
+                    if ($saveResult) {
                         Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-                    }
-                    else
-                    {
+                    } else {
                         Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                     }
                 }
 
-                if (isset($_POST['saveMenuItem']))
-                {
+                if (isset($_POST['saveMenuItem'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 return $this->render('update', [
                     'model' => $model,
                 ]);
             }
-        }
-        else
-        {
+        } else {
             Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> You can not edit the root node.'));
 
             return $this->redirect(['index']);
@@ -215,31 +181,25 @@ class MenutreeController extends Controller
      */
     public function actionDelete($id)
     {
-        if ( !Yii::$app->user->can(MenuPermissions::DELETE))
-        {
+        if ( !Yii::$app->user->can(MenuPermissions::DELETE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
-        if ($id != 1)
-        {
+        if ($id != 1) {
             $model = $this->findModel($id);
             $model->attachCache(Yii::$app->cache);
 
-            if ($model->children()->count() > 0)
-            {
+            if ($model->children()->count() > 0) {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> You can not delete the menu item. It has children nodes. At the beginning, you must delete or move children nodes.'));
 
                 return $this->redirect(['index']);
             }
 
 
-            if ($model->delete())
-            {
+            if ($model->delete()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The menu item deleted successfully.'));
             }
-        }
-        else
-        {
+        } else {
             Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> You can not delete the root node.'));
         }
 
@@ -249,8 +209,7 @@ class MenutreeController extends Controller
     public function actionMakealias($phrase)
     {
         $result = Json::encode(['status' => 'not-ajax-request', 'rslt' => null]);;
-        if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-        {
+        if (Yii::$app->request->isAjax || Yii::$app->request->isPjax) {
             $phrase = preg_replace('/[ьъыЬЪЫ]+/u', '', $phrase);
             $string = trim(mb_strtolower(TransliteratorHelper::process($phrase)));
             $string = preg_replace('/[^\/\\\a-zA-Z0-9=\s—–-]+/u', '', $string);
@@ -264,8 +223,7 @@ class MenutreeController extends Controller
 
     public function actionSiblings()
     {
-        if (isset($_POST['depdrop_parents']))
-        {
+        if (isset($_POST['depdrop_parents'])) {
             $out = [];
             $parents = $_POST['depdrop_parents'];
             $model = new MenuTree();
@@ -273,8 +231,7 @@ class MenutreeController extends Controller
             $model->parent_id = $parents[0];
             $siblings = ArrayHelper::merge([-1 => '--- ' . Yii::t('app', 'At the beginning') . ' ---'], ArrayHelper::map($model->getSiblingItems(), 'id', 'name'));
 
-            foreach ($siblings as $key => $value)
-            {
+            foreach ($siblings as $key => $value) {
                 $out[] = ['id' => $key, 'name' => $value];
             }
 
@@ -295,12 +252,9 @@ class MenutreeController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = MenuTree::findOne($id)) !== null)
-        {
+        if (($model = MenuTree::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

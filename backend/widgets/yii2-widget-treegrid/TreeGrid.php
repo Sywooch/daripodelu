@@ -20,15 +20,11 @@ class TreeGrid extends GridView
         $view = $this->getView();
         TreeGridAssets::register($view);
         $options = '';
-        if (is_array($this->pluginOptions))
-        {
-            if ( !empty($this->pluginOptions))
-            {
+        if (is_array($this->pluginOptions)) {
+            if ( !empty($this->pluginOptions)) {
                 $options = Json::encode($this->pluginOptions);
             }
-        }
-        else
-        {
+        } else {
             throw new \InvalidArgumentException('Attribute "pluginOptions" must be an array.');
         }
 
@@ -51,24 +47,19 @@ class TreeGrid extends GridView
 
         $cells = [];
         /* @var $column Column */
-        foreach ($this->columns as $column)
-        {
+        foreach ($this->columns as $column) {
             $cells[] = $column->renderDataCell($model, $key, $index);
         }
-        if ($this->rowOptions instanceof Closure)
-        {
+        if ($this->rowOptions instanceof Closure) {
             $options = call_user_func($this->rowOptions, $model, $key, $index, $this);
-        }
-        else
-        {
+        } else {
             $options = $this->rowOptions;
         }
         $options['data-key'] = is_array($key) ? json_encode($key) : (string)$key;
 
         $class = 'treegrid-' . $nodeId;
 
-        if ($parentNodeId)
-        {
+        if ($parentNodeId) {
             $class .= ' treegrid-parent-' . $parentNodeId;
         }
 //        $class .= ' treegrid-expanded';

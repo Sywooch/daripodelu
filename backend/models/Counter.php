@@ -13,12 +13,12 @@ use yii\base\InvalidParamException;
  */
 class Counter extends \yii\db\ActiveRecord
 {
-    const CATALOGUE_ID= 'catalogue_id';
-    const PRODUCT_GROUP_ID= 'product_group_id';
-    const SLAVE_PRODUCT_ID= 'slave_product_id';
+    const CATALOGUE_ID = 'catalogue_id';
+    const PRODUCT_GROUP_ID = 'product_group_id';
+    const SLAVE_PRODUCT_ID = 'slave_product_id';
 
     protected $internalUpdateFlag = false;
-    
+
     /**
      * @inheritdoc
      */
@@ -59,8 +59,7 @@ class Counter extends \yii\db\ActiveRecord
     {
         $model = static::find()->where(['name' => $counterName])->one();
         /* @var $model Counter */
-        if (is_null($model))
-        {
+        if (is_null($model)) {
             throw new InvalidParamException('No counter with name "' . $counterName . '"');
         }
 
@@ -71,8 +70,7 @@ class Counter extends \yii\db\ActiveRecord
     {
         $model = static::find()->where(['name' => $counterName])->one();
         /* @var $model Counter */
-        if (is_null($model))
-        {
+        if (is_null($model)) {
             throw new InvalidParamException('No counter with name "' . $counterName . '"');
         }
 

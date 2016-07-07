@@ -50,15 +50,12 @@ class ContactsController extends Controller
      */
     public function actionIndex()
     {
-        if ( !Yii::$app->user->can(ContactsPermissions::INDEX))
-        {
+        if ( !Yii::$app->user->can(ContactsPermissions::INDEX)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
-        if (Yii::$app->request->post('hasEditable'))
-        {
-            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
-            {
+        if (Yii::$app->request->post('hasEditable')) {
+            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE)) {
                 throw new ForbiddenHttpException('Access denied');
             }
 
@@ -70,12 +67,10 @@ class ContactsController extends Controller
             $posted = current($_POST['ContactsItem']);
             $post = ['ContactsItem' => $posted];
 
-            if ($model->load($post))
-            {
+            if ($model->load($post)) {
                 $model->save();
                 $output = '';
-                if (isset($posted['status']))
-                {
+                if (isset($posted['status'])) {
                     $output = ContactsItem::getStatusName($model->status);
                 }
 
@@ -91,23 +86,17 @@ class ContactsController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $seoInfo = SEOInformation::findModel('contacts', 'index');
-        if (is_null($seoInfo))
-        {
+        if (is_null($seoInfo)) {
             $seoInfo = new SEOInformation();
             $seoInfo->controller_id = 'contacts';
             $seoInfo->action_id = 'index';
         }
 
-        if (isset($_POST['saveSEO']))
-        {
-            if ($seoInfo->load(Yii::$app->request->post()))
-            {
-                if ($seoInfo->save())
-                {
+        if (isset($_POST['saveSEO'])) {
+            if ($seoInfo->load(Yii::$app->request->post())) {
+                if ($seoInfo->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-                }
-                else
-                {
+                } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                 }
 
@@ -131,32 +120,24 @@ class ContactsController extends Controller
      */
     public function actionCreate()
     {
-        if ( !Yii::$app->user->can(ContactsPermissions::CREATE))
-        {
+        if ( !Yii::$app->user->can(ContactsPermissions::CREATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = new ContactsItem();
         $contactItems = ContactsItem::find()->orderBy(['weight' => SORT_ASC])->all();
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
 
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveContact']))
-                {
+                if (isset($_POST['saveContact'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->render('create', [
@@ -164,9 +145,7 @@ class ContactsController extends Controller
                     'contactItems' => $contactItems,
                 ]);
             }
-        }
-        else
-        {
+        } else {
             return $this->render('create', [
                 'model' => $model,
                 'contactItems' => $contactItems,
@@ -183,50 +162,39 @@ class ContactsController extends Controller
      */
     public function actionUpdate($id)
     {
-        if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
-        {
+        if ( !Yii::$app->user->can(ContactsPermissions::UPDATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $id = intval($id);
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $trans = $model->getDb()->beginTransaction();
-            try
-            {
+            try {
                 $model->changeOrder($model->weight, false);
                 $saveResult = $model->save();
                 $trans->commit();
-            } catch (\Exception $e)
-            {
+            }
+            catch (\Exception $e) {
                 $saveResult = false;
                 $trans->rollBack();
             }
 
-            if ($saveResult)
-            {
+            if ($saveResult) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveContact']))
-                {
+                if (isset($_POST['saveContact'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $contactItems = ContactsItem::find()->where(['<>', 'id', $model->id])->orderBy(['weight' => SORT_ASC])->all();
 
             return $this->render('update', [
@@ -238,10 +206,8 @@ class ContactsController extends Controller
 
     public function actionUpdateName()
     {
-        if (Yii::$app->request->post('hasEditable'))
-        {
-            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
-            {
+        if (Yii::$app->request->post('hasEditable')) {
+            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE)) {
                 throw new ForbiddenHttpException('Access denied');
             }
 
@@ -253,12 +219,10 @@ class ContactsController extends Controller
             $posted = current($_POST['ContactsItem']);
             $post = ['ContactsItem' => $posted];
 
-            if ($model->load($post))
-            {
+            if ($model->load($post)) {
                 $model->save();
                 $output = '';
-                if (isset($posted['name']))
-                {
+                if (isset($posted['name'])) {
                     $output = $model->name;
                 }
 
@@ -272,10 +236,8 @@ class ContactsController extends Controller
 
     public function actionUpdateValue()
     {
-        if (Yii::$app->request->post('hasEditable'))
-        {
-            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE))
-            {
+        if (Yii::$app->request->post('hasEditable')) {
+            if ( !Yii::$app->user->can(ContactsPermissions::UPDATE)) {
                 throw new ForbiddenHttpException('Access denied');
             }
 
@@ -287,12 +249,10 @@ class ContactsController extends Controller
             $posted = current($_POST['ContactsItem']);
             $post = ['ContactsItem' => $posted];
 
-            if ($model->load($post))
-            {
+            if ($model->load($post)) {
                 $model->save();
                 $output = '';
-                if (isset($posted['value']))
-                {
+                if (isset($posted['value'])) {
                     $output = $model->name;
                 }
 
@@ -313,8 +273,7 @@ class ContactsController extends Controller
      */
     public function actionDelete($id)
     {
-        if ( !Yii::$app->user->can(ContactsPermissions::DELETE))
-        {
+        if ( !Yii::$app->user->can(ContactsPermissions::DELETE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
@@ -333,21 +292,18 @@ class ContactsController extends Controller
      */
     public function actionChangeField($id = null)
     {
-        if ( !Yii::$app->user->can(ContactsPermissions::CREATE) && !Yii::$app->user->can(ContactsPermissions::UPDATE))
-        {
+        if ( !Yii::$app->user->can(ContactsPermissions::CREATE) && !Yii::$app->user->can(ContactsPermissions::UPDATE)) {
             throw new ForbiddenHttpException('Access denied');;
         }
 
         $result = ['status' => 'not_success', 'rslt' => null, 'msg' => 'Method is not Post'];
-        if (Yii::$app->request->isPost)
-        {
+        if (Yii::$app->request->isPost) {
             $fieldType = Yii::$app->request->post('fieldType', null);
 
             $model = is_null($id) ? new ContactsItem() : $this->findModel($id);
 
             $msg = 'The input field was created successfully';
-            switch ($fieldType)
-            {
+            switch ($fieldType) {
                 case ContactsItem::TYPE_FAX:
                 case ContactsItem::TYPE_PHONE:
                     $template = '_phoneField';
@@ -377,8 +333,7 @@ class ContactsController extends Controller
             ];
         }
 
-        if (Yii::$app->request->isPost && Yii::$app->request->isAjax)
-        {
+        if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
             return Json::encode($result);
         }
     }
@@ -387,13 +342,10 @@ class ContactsController extends Controller
     {
         $counter = 0;
         $status = 'no_data_found';
-        if (isset($_POST['sortData']))
-        {
+        if (isset($_POST['sortData'])) {
             $sortData = Yii::$app->request->post('sortData');
-            if (is_array($sortData) && count($sortData) > 0)
-            {
-                foreach ($sortData as $index => $id)
-                {
+            if (is_array($sortData) && count($sortData) > 0) {
+                foreach ($sortData as $index => $id) {
                     $counter += (ContactsItem::updateAll(['weight' => $index], ['id' => intval($id)])) ? 1 : 0;
                 }
             }
@@ -413,12 +365,9 @@ class ContactsController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = ContactsItem::findOne($id)) !== null)
-        {
+        if (($model = ContactsItem::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

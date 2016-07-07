@@ -1,7 +1,7 @@
 <?php
 
 namespace app\assets;
- 
+
 use Yii;
 use yii\web\AssetBundle;
 
@@ -11,7 +11,7 @@ class BootboxAsset extends AssetBundle
     public $js = [
         'bootbox.js',
     ];
-    
+
     public static function overrideSystemConfirm()
     {
         Yii::$app->view->registerJs('

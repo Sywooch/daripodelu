@@ -55,23 +55,17 @@ class CatalogueController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Catalogue::find()->with('photo')->where(['parent_id' => 1]));
 
         $seoInfo = SEOInformation::findModel('catalogue', 'index');
-        if (is_null($seoInfo))
-        {
+        if (is_null($seoInfo)) {
             $seoInfo = new SEOInformation();
             $seoInfo->controller_id = 'catalogue';
             $seoInfo->action_id = 'index';
         }
 
-        if (isset($_POST['saveSEO']))
-        {
-            if ($seoInfo->load(Yii::$app->request->post()))
-            {
-                if ($seoInfo->save())
-                {
+        if (isset($_POST['saveSEO'])) {
+            if ($seoInfo->load(Yii::$app->request->post())) {
+                if ($seoInfo->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-                }
-                else
-                {
+                } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                 }
 
@@ -102,24 +96,18 @@ class CatalogueController extends Controller
         $productDataProvider = $productSearchModel->search(Yii::$app->request->queryParams, Product::find()->where(['catalogue_id' => $id]));
 
         $seoInfo = SEOInformation::findModel('catalogue', 'view', $id);
-        if (is_null($seoInfo))
-        {
+        if (is_null($seoInfo)) {
             $seoInfo = new SEOInformation();
             $seoInfo->controller_id = 'catalogue';
             $seoInfo->action_id = 'view';
             $seoInfo->item_id = $id;
         }
 
-        if (isset($_POST['saveSEO']))
-        {
-            if ($seoInfo->load(Yii::$app->request->post()))
-            {
-                if ($seoInfo->save())
-                {
+        if (isset($_POST['saveSEO'])) {
+            if ($seoInfo->load(Yii::$app->request->post())) {
+                if ($seoInfo->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-                }
-                else
-                {
+                } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                 }
 
@@ -135,7 +123,7 @@ class CatalogueController extends Controller
             'productDataProvider' => $productDataProvider,
             'seoInfo' => $seoInfo,
             'tabIndex' => $tabIndex,
-            'parentId' => (int) $id,
+            'parentId' => (int)$id,
         ]);
     }
 
@@ -149,61 +137,45 @@ class CatalogueController extends Controller
         $model = new Catalogue();
         $seoInfo = new SEOInformation();
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $model->id = Counter::getNextNumber(Counter::CATALOGUE_ID);
             $model->user_row = Catalogue::IS_USER_ROW;
 
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Counter::incrementValue(Counter::CATALOGUE_ID);
-                if ($seoInfo->load(Yii::$app->request->post()))
-                {
+                if ($seoInfo->load(Yii::$app->request->post())) {
                     $seoInfo->controller_id = 'catalogue';
                     $seoInfo->action_id = 'view';
                     $seoInfo->item_id = $model->id;
-                    if (isset($_POST['SEOInformation']) && $seoInfo->save())
-                    {
+                    if (isset($_POST['SEOInformation']) && $seoInfo->save()) {
                         Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> SEO data saved successfully.'));
-                    }
-                    else
-                    {
+                    } else {
                         Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the SEO data.'));
                     }
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Category saved successfully.'));
-                if (isset($_POST['saveCategory']))
-                {
+                if (isset($_POST['saveCategory'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $categories = Catalogue::find()->all();
             $categoriesArr = $this->makeTreeForDroplist($categories);
             $category = null;
-            if (intval($id) > 0)
-            {
-                foreach ($categories as $item)
-                {
-                    if ($item->id == $id)
-                    {
+            if (intval($id) > 0) {
+                foreach ($categories as $item) {
+                    if ($item->id == $id) {
                         $category = $item;
                     }
                 }
-                $model->parent_id = (int) $id;
+                $model->parent_id = (int)$id;
             }
 
             return $this->render('create', [
@@ -226,65 +198,45 @@ class CatalogueController extends Controller
         $tabIndex = 0;
         $model = $this->findModel($id);
         $seoInfo = SEOInformation::findModel('catalogue', 'view', $model->id);
-        if (is_null($seoInfo))
-        {
+        if (is_null($seoInfo)) {
             $seoInfo = new SEOInformation();
             $seoInfo->controller_id = 'catalogue';
             $seoInfo->action_id = 'view';
             $seoInfo->item_id = $model->id;
         }
 
-        if (isset($_POST['SEOInformation']) && $seoInfo->load(Yii::$app->request->post()))
-        {
-            if ($seoInfo->save())
-            {
+        if (isset($_POST['SEOInformation']) && $seoInfo->load(Yii::$app->request->post())) {
+            if ($seoInfo->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> SEO data saved successfully.'));
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the SEO data.'));
             }
         }
 
-        if ((Yii::$app->request->isAjax || Yii::$app->request->isPjax) && isset($_FILES['model_images']))
-        {
+        if ((Yii::$app->request->isAjax || Yii::$app->request->isPjax) && isset($_FILES['model_images'])) {
             $images = UploadedFile::getInstancesByName('model_images');
-            foreach ($images as $image)
-            {
-                if ($model->getBehavior('photo')->saveImage($image))
-                {
+            foreach ($images as $image) {
+                if ($model->getBehavior('photo')->saveImage($image)) {
                     echo Json::encode(['status' => 1, 'message' => Yii::t('app', 'upload_success')]);
-                }
-                else
-                {
+                } else {
                     echo '';
                 }
             }
-        }
-        elseif ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        } elseif ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveCategory']))
-                {
+                if (isset($_POST['saveCategory'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $categories = Catalogue::find()->all();
             $categoriesArr = $this->makeTreeForDroplist($categories);
 
@@ -307,11 +259,9 @@ class CatalogueController extends Controller
     {
         $model = $this->findModel($id);
         $id = $model->id;
-        if ($model->delete())
-        {
+        if ($model->delete()) {
             $seoInfo = SEOInformation::findModel('catalogue', 'view', $id);
-            if ( !is_null($seoInfo))
-            {
+            if ( !is_null($seoInfo)) {
                 $seoInfo->delete();
             }
         }
@@ -328,12 +278,9 @@ class CatalogueController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Catalogue::findOne($id)) !== null)
-        {
+        if (($model = Catalogue::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
@@ -347,10 +294,8 @@ class CatalogueController extends Controller
     protected function makeTreeForDroplist($categories, $parentId = 0, $level = 0)
     {
         $arr = [];
-        foreach ($categories as $category)
-        {
-            if ($category->parent_id == $parentId)
-            {
+        foreach ($categories as $category) {
+            if ($category->parent_id == $parentId) {
                 $arr[$category->id] = str_repeat('- - ', $level) . $category->name;
 //                $arr = array_merge($arr, $this->makeTreeForDroplist($categories, $category->id, $level + 1));
                 $arr = $arr + $this->makeTreeForDroplist($categories, $category->id, $level + 1);

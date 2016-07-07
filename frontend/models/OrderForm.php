@@ -45,22 +45,18 @@ class OrderForm extends Model
 
     public function save(ShopCart $cart, $runValidation = true)
     {
-        if ($cart->getItemsCount() == 0)
-        {
+        if ($cart->getItemsCount() == 0) {
             return null;
         }
 
-        if ($runValidation && ! $this->validate())
-        {
+        if ($runValidation && !$this->validate()) {
             return false;
         }
 
         $cartAsArray = [];
-        foreach ($cart->items as $item)
-        {
+        foreach ($cart->items as $item) {
             $sizes = [];
-            foreach ($item->size as $size)
-            {
+            foreach ($item->size as $size) {
                 $sizes[] = [
                     'sizeId' => $size->sizeId,
                     'sizeCode' => $size->sizeCode,
@@ -81,15 +77,11 @@ class OrderForm extends Model
         /* @var $products \frontend\models\Product[] */
 
         $cartItemsCount = count($cartAsArray);
-        for ($i = 0; $i < $cartItemsCount; $i++)
-        {
-            foreach ($products as $product)
-            {
-                if ($product->id == $cartAsArray[$i]['productId'])
-                {
+        for ($i = 0; $i < $cartItemsCount; $i++) {
+            foreach ($products as $product) {
+                if ($product->id == $cartAsArray[$i]['productId']) {
                     $cartAsArray[$i]['name'] = $product->name;
-                    if (file_exists($product->smallImagePath))
-                    {
+                    if (file_exists($product->smallImagePath)) {
                         $type = pathinfo($product->smallImagePath, PATHINFO_EXTENSION);
                         $data = file_get_contents($product->smallImagePath);
                         $cartAsArray[$i]['image'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -104,32 +96,26 @@ class OrderForm extends Model
         $order->email = $this->email;
         $order->data = serialize($cartAsArray);
         $order->status = Order::STATUS_NEW;
-        if ($order->save())
-        {
+        if ($order->save()) {
             $order = Order::findOne($order->id);
-            if ( ! is_null($this->fileOne) && $this->fileOne instanceof UploadedFile)
-            {
+            if ( !is_null($this->fileOne) && $this->fileOne instanceof UploadedFile) {
                 $path = $order->getDirPath();
-                if ( ! file_exists($path))
-                {
+                if ( !file_exists($path)) {
                     mkdir($path, 0777, true);
                 }
                 $this->fileOne->saveAs($path . '/' . $order->id . '_1.' . $this->fileOne->extension);
             }
 
-            if ( ! is_null($this->fileTwo) && $this->fileTwo instanceof UploadedFile)
-            {
+            if ( !is_null($this->fileTwo) && $this->fileTwo instanceof UploadedFile) {
                 $path = $order->getDirPath();
-                if ( ! file_exists($path))
-                {
+                if ( !file_exists($path)) {
                     mkdir($path, 0777, true);
                 }
                 $this->fileTwo->saveAs($path . '/' . $order->id . '_2.' . $this->fileTwo->extension);
             }
 
             $images = [];
-            foreach ($products as $product)
-            {
+            foreach ($products as $product) {
                 $images[$product->id] = $product->smallImagePath;
             }
 
@@ -161,30 +147,30 @@ class OrderForm extends Model
     protected function sendMailToClient($mail)
     {
         return Yii::$app->mailer->compose(
-                ['html' => '@app/views/mail-templates/order-mail-client'],
-                [
-                    'mail' => $mail,
-                    'logoMin' => yii::getAlias('@app/web/img/logo-min.png'),
-                ]
-            )
+            ['html' => '@app/views/mail-templates/order-mail-client'],
+            [
+                'mail' => $mail,
+                'logoMin' => yii::getAlias('@app/web/img/logo-min.png'),
+            ]
+        )
             ->setTo($mail['client']['email'])
             ->setFrom([yii::$app->config->siteEmail => yii::$app->config->siteName])
-            ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName )
+            ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName)
             ->send();
     }
 
     protected function sendMailToAdmin($mail)
     {
         return Yii::$app->mailer->compose(
-                ['html' => '@app/views/mail-templates/order-mail-admin'],
-                [
-                    'mail' => $mail,
-                    'logoMin' => yii::getAlias('@app/web/img/logo-min.png'),
-                ]
-            )
+            ['html' => '@app/views/mail-templates/order-mail-admin'],
+            [
+                'mail' => $mail,
+                'logoMin' => yii::getAlias('@app/web/img/logo-min.png'),
+            ]
+        )
             ->setTo(yii::$app->config->siteEmail)
             ->setFrom([yii::$app->config->siteEmail => yii::$app->config->siteName])
-            ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName )
+            ->setSubject('Заказ #' . $mail['order']['id'] . ' на сайте ' . yii::$app->config->siteName)
             ->send();
     }
 }

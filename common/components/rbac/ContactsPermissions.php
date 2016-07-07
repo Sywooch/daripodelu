@@ -6,8 +6,8 @@ namespace common\components\rbac;
 
 class ContactsPermissions
 {
-    const INDEX  = 'contacts_index';
-    const VIEW   = 'contacts_view';
+    const INDEX = 'contacts_index';
+    const VIEW = 'contacts_view';
     const CREATE = 'contacts_create';
     const UPDATE = 'contacts_update';
     const DELETE = 'contacts_delete';

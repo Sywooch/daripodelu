@@ -47,7 +47,7 @@ class ShopCartItemSize extends Object
      */
     public function setSizeId($sizeId)
     {
-        $this->sizeId = (int) $sizeId;
+        $this->sizeId = (int)$sizeId;
     }
 
     /**
@@ -63,7 +63,7 @@ class ShopCartItemSize extends Object
      */
     public function setSizeCode($sizeCode)
     {
-        $this->sizeCode = (string) $sizeCode;
+        $this->sizeCode = (string)$sizeCode;
     }
 
     /**
@@ -79,6 +79,6 @@ class ShopCartItemSize extends Object
      */
     public function setQuantity($quantity)
     {
-        $this->quantity = (int) $quantity;
+        $this->quantity = (int)$quantity;
     }
 }

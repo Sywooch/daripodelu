@@ -21,7 +21,7 @@ return [
             //'backupFilename' => 'Y-m-d_His',
             // also can be callable:
             'backupFilename' => function (\demi\backup\Component $component) {
-                    return 'dump_'.date('Y-m-d_His');
+                return 'dump_' . date('Y-m-d_His');
             },
 
             // Directories that will be added to backup
@@ -156,6 +156,9 @@ return [
         'updateGiftsDBLogger' => [
             'class' => 'common\components\UpdateGiftsDBLogger',
         ],
+        'yandexMapsApi' => [
+            'class' => 'rkdev\yandexmaps\Api',
+        ]
     ],
     'language' => 'ru-RU',
 ];

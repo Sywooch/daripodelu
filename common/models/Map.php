@@ -149,8 +149,7 @@ class Map extends \yii\db\ActiveRecord
     public static function getStatusName($index)
     {
         $options = static::getStatusOptions();
-        if (! isset($options[$index]))
-        {
+        if ( !isset($options[$index])) {
             throw new InvalidParamException;
         }
 
@@ -185,8 +184,7 @@ class Map extends \yii\db\ActiveRecord
     public static function getTypeName($index)
     {
         $types = static::getTypes();
-        if (! isset($types[$index]))
-        {
+        if ( !isset($types[$index])) {
             throw new InvalidParamException;
         }
 
@@ -216,8 +214,7 @@ class Map extends \yii\db\ActiveRecord
     public static function getVendorName($index)
     {
         $vendors = static::getVendors();
-        if (! isset($vendors[$index]))
-        {
+        if ( !isset($vendors[$index])) {
             throw new InvalidParamException;
         }
 

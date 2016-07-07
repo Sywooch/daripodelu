@@ -56,8 +56,7 @@ class EmailPhoneValidator extends Validator
             throw new InvalidConfigException('In order to use IDN validation intl extension must be installed and enabled.');
         }
 
-        if ($this->message === null)
-        {
+        if ($this->message === null) {
             $this->message = Yii::t('app', 'Enter correct email or phone number, please');
         }
     }
@@ -66,10 +65,9 @@ class EmailPhoneValidator extends Validator
     {
         $emailValidator = new EmailValidator();
         $matchValidator = new RegularExpressionValidator([
-            'pattern' => '/^' . $this->phonePattern .  '$/',
+            'pattern' => '/^' . $this->phonePattern . '$/',
         ]);
-        if ( ! $emailValidator->validate($model->$attribute) && ! $matchValidator->validate($model->$attribute))
-        {
+        if ( !$emailValidator->validate($model->$attribute) && !$matchValidator->validate($model->$attribute)) {
             $this->addError($attribute, $this->message);
         }
     }
@@ -83,7 +81,7 @@ class EmailPhoneValidator extends Validator
             'message' => Yii::$app->getI18n()->format($this->message, [
                 'attribute' => $model->getAttributeLabel($attribute),
             ], Yii::$app->language),
-            'enableIDN' => (bool) $this->enableIDN,
+            'enableIDN' => (bool)$this->enableIDN,
         ];
         if ($this->skipOnEmpty) {
             $options['skipOnEmpty'] = 1;

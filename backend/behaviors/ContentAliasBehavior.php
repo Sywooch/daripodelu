@@ -44,11 +44,9 @@ class ContentAliasBehavior extends Behavior
      */
     public function getAliasModel()
     {
-        if ($this->model === null)
-        {
+        if ($this->model === null) {
             $route = $this->moduleId === null ? $this->controllerId . '/' . $this->actionId : $this->moduleId . '/' . $this->controllerId . '/' . $this->actionId;
-            if ($model = MenuTree::findItemByRoute($route, $this->owner->{$this->itemIdAttribute}, $this->getCtgId()))
-            {
+            if ($model = MenuTree::findItemByRoute($route, $this->owner->{$this->itemIdAttribute}, $this->getCtgId())) {
                 $this->model = $model;
             }
         }
@@ -58,17 +56,13 @@ class ContentAliasBehavior extends Behavior
 
     public function getTreeForDropDownList($fullTree = false)
     {
-        if ($fullTree === true)
-        {
+        if ($fullTree === true) {
             $tree = MenuTree::find()->where(['status' => MenuTree::STATUS_ACTIVE])->orderBy('lft')->all();
-        }
-        else
-        {
+        } else {
             $tree = MenuTree::find()->where(['status' => MenuTree::STATUS_ACTIVE])->andWhere(['item_id' => null])->andWhere(['like', 'controller_id', $this->controllerId])->orderBy('lft')->all();
         }
         $optionsArray = [];
-        foreach ($tree as $item)
-        {
+        foreach ($tree as $item) {
             $optionsArray[$item->id] = str_repeat('- - ', $item->depth) . $item->name;
         }
 
@@ -280,8 +274,7 @@ class ContentAliasBehavior extends Behavior
     public function saveAlias()
     {
         $model = $this->getAliasModel();
-        if ($model === null)
-        {
+        if ($model === null) {
             $model = new MenuTree(Yii::$app->cache);
 
 
@@ -300,9 +293,7 @@ class ContentAliasBehavior extends Behavior
 
             $parent = $model->findOne(['id' => $model->parent_id]);
             $saveResult = $model->prependTo($parent);
-        }
-        else
-        {
+        } else {
             $model->attachCache(Yii::$app->cache);
             $model->alias = $this->alias;
             $model->show_in_menu = $this->showInMenu;
@@ -315,12 +306,10 @@ class ContentAliasBehavior extends Behavior
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_DELETE => function ($event)
-            {
+            ActiveRecord::EVENT_AFTER_DELETE => function ($event) {
                 $model = $this->getAliasModel();
 
-                if ($model !== null)
-                {
+                if ($model !== null) {
                     $model->attachCache(Yii::$app->cache);
                     $model->delete();
                 }

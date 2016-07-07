@@ -18,8 +18,10 @@ $totalPrice = 0
     <?php $form = ActiveForm::begin(); ?>
     <div role="tabpanel">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#order" aria-controls="order" role="tab" data-toggle="tab">Заказ</a></li>
-            <li role="presentation"><a href="#client" aria-controls="client" role="tab" data-toggle="tab">Клиент</a></li>
+            <li role="presentation" class="active"><a href="#order" aria-controls="order" role="tab" data-toggle="tab">Заказ</a>
+            </li>
+            <li role="presentation"><a href="#client" aria-controls="client" role="tab" data-toggle="tab">Клиент</a>
+            </li>
         </ul>
         <div class="tab-content cms">
             <div role="tabpanel" id="order" class="tab-pane active">
@@ -27,7 +29,8 @@ $totalPrice = 0
                     <dt>Номер заказа</dt>
                     <dd><?= $model->id; ?></dd>
                     <dt>Дата и время заказа</dt>
-                    <dd><?= date('d.m.Y', strtotime($model->order_date)); ?>&nbsp;&nbsp;<?= date('H:i:s', strtotime($model->order_date)); ?></dd>
+                    <dd><?= date('d.m.Y', strtotime($model->order_date)); ?>
+                        &nbsp;&nbsp;<?= date('H:i:s', strtotime($model->order_date)); ?></dd>
                     <dt>Статус заказа</dt>
                     <dd>
                         <?= $form->field($model, 'status')
@@ -38,7 +41,7 @@ $totalPrice = 0
                     <dt>Содержимое заказа</dt>
                     <dd>
                         <table class="table-bordered shop-cart">
-<!--                        <table border="1">-->
+                            <!--                        <table border="1">-->
                             <thead>
                             <tr>
                                 <th></th>
@@ -53,10 +56,12 @@ $totalPrice = 0
                             <?php foreach ($model->dataArr as $key => $item): ?>
                                 <tr>
                                     <td class="box"<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?>>
-                                        <div class="img-box"><img src="<?= $item['image'] ?>" alt="<?= $item['name'] ?>"></div>
+                                        <div class="img-box"><img src="<?= $item['image'] ?>"
+                                                                  alt="<?= $item['name'] ?>"></div>
                                     </td>
                                     <td class="name"<?php if (count($item['size']) > 1): ?> rowspan="<?= count($item['size']); ?>"<?php endif; ?>>
-                                        <a href="/product/<?= $item['productId']; ?>.html" target="_blank"><?= $item['name'] ?></a>
+                                        <a href="/product/<?= $item['productId']; ?>.html"
+                                           target="_blank"><?= $item['name'] ?></a>
                                     </td>
                                     <td class="item-price">
                                         <?= yii::$app->formatter->asDecimal($item['price'], 2); ?> руб.
@@ -64,7 +69,8 @@ $totalPrice = 0
                                     <td class="size"><?= $item['size'][0]['sizeCode']; ?></td>
                                     <td class="count-field-box"><?= $item['size'][0]['quantity']; ?> шт.</td>
                                     <td class="price">
-                                        <?= yii::$app->formatter->asDecimal($item['size'][0]['quantity'] * $item['price'], 2); ?> руб.
+                                        <?= yii::$app->formatter->asDecimal($item['size'][0]['quantity'] * $item['price'], 2); ?>
+                                        руб.
                                     </td>
                                     <?php $totalPrice += $item['size'][0]['quantity'] * $item['price']; ?>
                                 </tr>
@@ -76,7 +82,8 @@ $totalPrice = 0
                                         <td class="size"><?= $item['size'][$i]['sizeCode']; ?></td>
                                         <td class="count-field-box"><?= $item['size'][$i]['quantity']; ?> шт.</td>
                                         <td class="price">
-                                            <?= yii::$app->formatter->asDecimal($item['size'][$i]['quantity'] * $item['price'], 2); ?> руб.
+                                            <?= yii::$app->formatter->asDecimal($item['size'][$i]['quantity'] * $item['price'], 2); ?>
+                                            руб.
                                         </td>
                                         <?php $totalPrice += $item['size'][$i]['quantity'] * $item['price']; ?>
                                     </tr>
@@ -95,15 +102,15 @@ $totalPrice = 0
                     </dd>
                     <dt>Прикрепленные файлы</dt>
                     <dd>
-                    <?php if (count($files) > 0): ?>
-                        <ul>
-                            <?php foreach ($files as $file): ?>
-                            <li><a href="<?= $file; ?>" target="_blank"><?= basename($file); ?></a></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>Нет прикрепленных файлов.</p>
-                    <?php endif ?>
+                        <?php if (count($files) > 0): ?>
+                            <ul>
+                                <?php foreach ($files as $file): ?>
+                                    <li><a href="<?= $file; ?>" target="_blank"><?= basename($file); ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <p>Нет прикрепленных файлов.</p>
+                        <?php endif ?>
                     </dd>
                 </dl>
             </div>

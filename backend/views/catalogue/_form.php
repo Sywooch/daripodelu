@@ -15,9 +15,10 @@ use kartik\select2\Select2;
     <?php $form = ActiveForm::begin(); ?>
     <div role="tabpanel">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
+            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a>
+            </li>
             <li role="presentation"><a href="#photo" aria-controls="photo" role="tab" data-toggle="tab">Фото</a></li>
-<!--            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройки</a></li>-->
+            <!--            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройки</a></li>-->
             <li role="presentation"><a href="#seo" aria-controls="seo" role="tab" data-toggle="tab">SEO</a></li>
         </ul>
 
@@ -33,7 +34,7 @@ use kartik\select2\Select2;
                 ]) ?>
             </div>
             <div role="tabpanel" id="photo" class="tab-pane">
-                <?php if ( ! $model->isNewRecord): ?>
+                <?php if ( !$model->isNewRecord): ?>
                     <?= $this->render('@app/views/image/_gridview', [
                         'dataProvider' => $model->behaviors['photo']->dataProvider,
                     ]) ?>

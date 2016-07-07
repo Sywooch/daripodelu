@@ -36,10 +36,8 @@ class Config extends yii\base\Component
         $items = $config->getParams();
 
         /* @var $item Settings */
-        foreach ($items as $item)
-        {
-            if ($item->param)
-            {
+        foreach ($items as $item) {
+            if ($item->param) {
                 $this->data[$item->param] = (isset($item->value) && !is_null($item->value) && !empty($item->value)) ? $item->value : $item->default;
             }
         }
@@ -49,12 +47,9 @@ class Config extends yii\base\Component
 
     public function get($key)
     {
-        if (array_key_exists($key, $this->data))
-        {
+        if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
-        }
-        else
-        {
+        } else {
             throw new yii\base\Exception('Undefined parameter ' . $key);
         }
     }
@@ -66,20 +61,17 @@ class Config extends yii\base\Component
         $name = ucfirst($name);
         preg_match_all('/[A-Z][^A-Z]*?/Us', $name, $res, PREG_SET_ORDER);
 
-        foreach ($res as $word)
-        {
+        foreach ($res as $word) {
             $key .= strtoupper($word[0]) . '_';
         }
 
         $key = rtrim($key, '_');
-        try
-        {
+        try {
             $value = $this->get($key);
 
             return $value;
         }
-        catch (yii\base\Exception $e)
-        {
+        catch (yii\base\Exception $e) {
             return parent::__get($name);
         }
     }

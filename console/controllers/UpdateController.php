@@ -14,8 +14,7 @@ class UpdateController extends \yii\console\Controller
     public function actionStock()
     {
         $stockArr = [];
-        try
-        {
+        try {
             //Закгрузка файла stock.xml
             yii::beginProfile('update_StockFilePrepare');
             $stockXML = new \SimpleXMLElement(
@@ -23,8 +22,7 @@ class UpdateController extends \yii\console\Controller
             );
             yii::endProfile('update_StockFilePrepare');
 
-            if ($stockXML === false)
-            {
+            if ($stockXML === false) {
                 throw new SimpleXMLException('File stock.xml was not processed.');
             }
 
@@ -36,15 +34,12 @@ class UpdateController extends \yii\console\Controller
             $updateProductResult = 0;
             $updateSlaveProductResult = 0;
 
-            if (count($stockArr) > 0)
-            {
+            if (count($stockArr) > 0) {
                 $productResults = Yii::$app->db->createCommand('
                     SELECT [[id]], [[code]] FROM {{%product_tmp}}
                 ')->queryAll();
-                foreach ($productResults as $row)
-                {
-                    if (isset($stockArr[$row['id']]))
-                    {
+                foreach ($productResults as $row) {
+                    if (isset($stockArr[$row['id']])) {
                         $updateProductResult += (int)Yii::$app->db->createCommand()->update(
                             '{{%product_tmp}}',
                             [
@@ -65,10 +60,8 @@ class UpdateController extends \yii\console\Controller
                 $slaveProductResults = Yii::$app->db->createCommand('
                     SELECT [[id]], [[code]] FROM {{%slave_product_tmp}}
                 ')->queryAll();
-                foreach ($slaveProductResults as $row)
-                {
-                    if (isset($stockArr[$row['id']]))
-                    {
+                foreach ($slaveProductResults as $row) {
+                    if (isset($stockArr[$row['id']])) {
                         $updateSlaveProductResult += (int)Yii::$app->db->createCommand()->update(
                             '{{%slave_product_tmp}}',
                             [
@@ -118,8 +111,7 @@ class UpdateController extends \yii\console\Controller
                 Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров.');
             }
         }
-        catch (SimpleXMLException $xmlE)
-        {
+        catch (SimpleXMLException $xmlE) {
             yii::endProfile('update_StockFilePrepare');
             yii::endProfile('update_StockFileAnalyze');
             Yii::$app->updateGiftsDBLogger->error(
@@ -129,8 +121,7 @@ class UpdateController extends \yii\console\Controller
             );
             echo $xmlE->getMessage() . "\n";
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             yii::endProfile('update_StockFilePrepare');
             yii::endProfile('update_StockFileAnalyze');
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_STOCK, $e->getMessage());
@@ -143,8 +134,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionCategories()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_CATEGORY,
@@ -152,13 +142,10 @@ class UpdateController extends \yii\console\Controller
             );
             $newCategories = Yii::$app->db->createCommand('SELECT id FROM dpd_catalogue_tmp ct WHERE ct.id NOT IN (SELECT c.id FROM dpd_catalogue c WHERE ct.id = c.id)')->queryAll();
             $result = 0;
-            if (count($newCategories) > 0)
-            {
+            if (count($newCategories) > 0) {
                 $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_catalogue SELECT * FROM dpd_catalogue_tmp ct')->execute();
-                if ($result > 0)
-                {
-                    foreach ($newCategories as $item)
-                    {
+                if ($result > 0) {
+                    foreach ($newCategories as $item) {
                         Yii::$app->updateGiftsDBLogger->success(
                             UpdateGiftsDBLog::ACTION_INSERT,
                             UpdateGiftsDBLog::ITEM_CATEGORY,
@@ -169,8 +156,7 @@ class UpdateController extends \yii\console\Controller
                 }
             }
 
-            if (count($newCategories) == 0 || $result == 0)
-            {
+            if (count($newCategories) == 0 || $result == 0) {
                 Yii::$app->updateGiftsDBLogger->info(
                     UpdateGiftsDBLog::ACTION_INSERT,
                     UpdateGiftsDBLog::ITEM_CATEGORY,
@@ -183,8 +169,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых категорий в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_CATEGORY, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -199,8 +184,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionFilterTypes()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_FILTER_TYPE,
@@ -222,8 +206,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых типов фильтров в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_FILTER_TYPE, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -238,8 +221,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionFilters()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_FILTER,
@@ -261,8 +243,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых фильтров в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_FILTER, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -277,8 +258,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionPrints()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_PRINT,
@@ -300,8 +280,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых методов нанесения в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRINT, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -316,8 +295,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionProducts()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_PRODUCT,
@@ -326,13 +304,10 @@ class UpdateController extends \yii\console\Controller
 
             $newProducts = Yii::$app->db->createCommand('SELECT id FROM dpd_product_tmp pt WHERE pt.id NOT IN (SELECT p.id FROM dpd_product p WHERE pt.id = p.id)')->queryAll();
             $result = 0;
-            if (count($newProducts) > 0)
-            {
+            if (count($newProducts) > 0) {
                 $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_product SELECT * FROM dpd_product_tmp')->execute();
-                if ($result > 0)
-                {
-                    foreach ($newProducts as $item)
-                    {
+                if ($result > 0) {
+                    foreach ($newProducts as $item) {
                         Yii::$app->updateGiftsDBLogger->success(
                             UpdateGiftsDBLog::ACTION_INSERT,
                             UpdateGiftsDBLog::ITEM_PRODUCT,
@@ -355,8 +330,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых товаров в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -371,8 +345,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionSlaveProducts()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
@@ -394,8 +367,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых "подчиненных" товаров в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -410,8 +382,7 @@ class UpdateController extends \yii\console\Controller
      */
     public function actionProductAttachments()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
@@ -442,8 +413,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления информации о доп. файлах товаров в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -455,8 +425,7 @@ class UpdateController extends \yii\console\Controller
 
     public function actionPrintProductRel()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
@@ -487,8 +456,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых связей между товарами и методами нанесения в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -500,8 +468,7 @@ class UpdateController extends \yii\console\Controller
 
     public function actionProductFilterRel()
     {
-        try
-        {
+        try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
                 UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
@@ -531,8 +498,7 @@ class UpdateController extends \yii\console\Controller
                 'Окончание процесса добавления новых связей между товарами и фильтрами в БД.'
             );
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
@@ -545,8 +511,7 @@ class UpdateController extends \yii\console\Controller
     protected function makeArrFromStockTree(\SimpleXMLElement $tree)
     {
         $arr = [];
-        foreach ($tree->stock as $stock)
-        {
+        foreach ($tree->stock as $stock) {
             $productId = (int)$stock->product_id;
             $arr[$productId] = [
                 'product_id' => $productId,

@@ -60,16 +60,14 @@ class SlaveProductSearch extends SlaveProduct
         $this->load($params);
 
         $parentProductName = trim($this->parent_product_id);
-        if ($parentProductName != '')
-        {
+        if ($parentProductName != '') {
             $products = Product::find()->where(['like', 'name', $parentProductName])->all();
-            if ( count($products) > 0)
-            {
+            if (count($products) > 0) {
                 $parentProductIds = ArrayHelper::getColumn($products, 'id');
             }
         }
 
-        if (!$this->validate()) {
+        if ( !$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;

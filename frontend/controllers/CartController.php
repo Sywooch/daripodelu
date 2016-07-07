@@ -23,64 +23,47 @@ class CartController extends Controller
     public function actionAdd()
     {
         $result = ['status' => 'not_success', 'rslt' => null, 'msg' => 'Method is not Post'];
-        if ( yii::$app->request->isPost && yii::$app->request->post('size') !== null )
-        {
+        if (yii::$app->request->isPost && yii::$app->request->post('size') !== null) {
             $size = yii::$app->request->post('size');
 
             $cartItem = new ShopCartItem();
-            $cartItem->productId = (int) yii::$app->request->post('product');
+            $cartItem->productId = (int)yii::$app->request->post('product');
 
             $product = Product::find()->where(['id' => $cartItem->productId])->one();
             /* @var $product Product */
 
-            if ( ! is_null($product))
-            {
+            if ( !is_null($product)) {
                 $cartItem->price = $product->enduserprice;
-                if (is_array($size))
-                {
-                    foreach ($size as $key => $item)
-                    {
-                        if (intval($item) > 0)
-                        {
+                if (is_array($size)) {
+                    foreach ($size as $key => $item) {
+                        if (intval($item) > 0) {
                             list($sizeId, $sizeCode) = explode('_', $key, 2);
                             $cartItem->setSize(new ShopCartItemSize($sizeId, $sizeCode, $item));
                         }
                     }
-                }
-                else
-                {
-                    if (intval($size) > 0)
-                    {
+                } else {
+                    if (intval($size) > 0) {
                         $cartItem->setSize(new ShopCartItemSize(0, ShopCartItemSize::DEAFAULT_SIZE, $size));
                     }
                 }
 
-                if ($cartItem->getProductsCount() > 0)
-                {
-                    if (yii::$app->cart->add($cartItem))
-                    {
+                if ($cartItem->getProductsCount() > 0) {
+                    if (yii::$app->cart->add($cartItem)) {
                         $result['status'] = 'success';
                         $result['msg'] = 'Product is successfull added to cart';
                         $result['rslt'] = yii::$app->cart->getTotalPrice();
-                    }
-                    else
-                    {
+                    } else {
                         $result['msg'] = 'Product is not added to cart';
                     }
-                }
-                else
-                {
+                } else {
                     $result['msg'] = 'There is no products for adding to cart';
                 }
-            }
-            else
-            {
+            } else {
                 $result['msg'] = 'No product with id';
             }
         }
 
-        if (yii::$app->request->isAjax)
-        {
+        if (yii::$app->request->isAjax) {
             return Json::encode($result);
         }
     }
@@ -88,12 +71,10 @@ class CartController extends Controller
     public function actionIndex()
     {
         $orderForm = new OrderForm();
-        if ($orderForm->load(yii::$app->request->post()))
-        {
+        if ($orderForm->load(yii::$app->request->post())) {
             $orderForm->fileOne = UploadedFile::getInstance($orderForm, 'fileOne');
             $orderForm->fileTwo = UploadedFile::getInstance($orderForm, 'fileTwo');
-            if ($orderForm->save(yii::$app->cart))
-            {
+            if ($orderForm->save(yii::$app->cart)) {
                 $orderInfo = serialize([
                     'name' => $orderForm->name,
                     'phone' => $orderForm->phone,
@@ -106,8 +87,7 @@ class CartController extends Controller
 
         $cart = yii::$app->cart;
         $productIds = [];
-        foreach ($cart->items as $cartItem)
-        {
+        foreach ($cart->items as $cartItem) {
             $productIds[] = $cartItem->productId;
         }
 
@@ -139,12 +119,9 @@ class CartController extends Controller
     public function actionSuccess()
     {
         $order = yii::$app->session->getFlash('order', null);
-        if (is_null($order))
-        {
+        if (is_null($order)) {
             throw new yii\web\NotFoundHttpException;
-        }
-        else
-        {
+        } else {
             $orderInfo = unserialize($order);
         }
 
@@ -178,25 +155,18 @@ class CartController extends Controller
 
     public function actionChangequantity()
     {
-        if (yii::$app->request->isPost && yii::$app->request->post('item') !== null)
-        {
+        if (yii::$app->request->isPost && yii::$app->request->post('item') !== null) {
             $items = yii::$app->request->post('item');
-            if (is_array($items))
-            {
-                foreach ($items as $item)
-                {
+            if (is_array($items)) {
+                foreach ($items as $item) {
                     $cartItem = yii::$app->cart->getItemByProductId($item['product']);
-                    if ( ! is_null($cartItem))
-                    {
-                        if (is_array($item['size']))
-                        {
-                            foreach ($item['size'] as $key => $quantity)
-                            {
+                    if ( !is_null($cartItem)) {
+                        if (is_array($item['size'])) {
+                            foreach ($item['size'] as $key => $quantity) {
                                 list($sizeId, $sizeCode) = explode('_', $key, 2);
                                 $cartItemSize = $cartItem->getSizeByCode($sizeCode);
-                                if ( !is_null($cartItemSize) && $cartItemSize->quantity != $quantity)
-                                {
-                                    $cartItemSize->quantity = (int) $quantity;
+                                if ( !is_null($cartItemSize) && $cartItemSize->quantity != $quantity) {
+                                    $cartItemSize->quantity = (int)$quantity;
                                 }
                             }
                         }

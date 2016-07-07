@@ -49,7 +49,7 @@ class ContactsItem extends \yii\db\ActiveRecord
             [
                 ['value'],
                 'email',
-                'when' => function($model){
+                'when' => function ($model) {
                     return $model->type == ContactsItem::TYPE_EMAIL;
                 },
                 'whenClient' => "function (attribute, value) {
@@ -61,7 +61,7 @@ class ContactsItem extends \yii\db\ActiveRecord
                 'match',
                 'pattern' => '/^((8|\+7|\+[0-9]{1,3})[\- ]?)?(\(?\d{2,5}\)?[\- ]?)?[\d\- ]{6,10}$/',
                 'message' => Yii::t('app', '{attribute} is not a valid phone number.', ['attribute' => $this->getAttributeLabel('value')]),
-                'when' => function($model){
+                'when' => function ($model) {
                     return $model->type == ContactsItem::TYPE_PHONE || $model->type == ContactsItem::TYPE_FAX;
                 },
                 'whenClient' => "function (attribute, value) {
@@ -100,30 +100,24 @@ class ContactsItem extends \yii\db\ActiveRecord
 
         $trans = $this->db->beginTransaction();
 
-        try
-        {
-            if ($newPosition > $oldPosition)
-            {
+        try {
+            if ($newPosition > $oldPosition) {
                 // new position greater than old position,
                 // so all positions from old position + 1 up to and including new position should decrement
                 $this->updateAllCounters(['weight' => -1], ['between', 'weight', $oldPosition + 1, $newPosition]);
-            }
-            else
-            {
+            } else {
                 // new position smaller than or equal to old position,
                 // so all positions from new position up to and including old position - 1 should increment
                 $this->updateAllCounters(['weight' => 1], ['between', 'weight', $newPosition, $oldPosition - 1]);
             }
 
-            if ($save)
-            {
+            if ($save) {
                 $this->weight = $newPosition;
                 $this->save(false, ['weight']);
             }
             $trans->commit();
         }
-        catch (\Exception $e)
-        {
+        catch (\Exception $e) {
             $trans->rollBack();
         }
     }

@@ -13,15 +13,11 @@ class UserRoleRule extends Rule
 
     public function execute($user, $item, $params)
     {
-        if ( ! Yii::$app->user->isGuest)
-        {
+        if ( !Yii::$app->user->isGuest) {
             $role = Yii::$app->user->identity->role;
-            if ($item->name === User::getRoleStringId(User::ROLE_ADMIN))
-            {
+            if ($item->name === User::getRoleStringId(User::ROLE_ADMIN)) {
                 return $role == User::ROLE_ADMIN;
-            }
-            elseif ($item->name === User::getRoleStringId(User::ROLE_MODERATOR))
-            {
+            } elseif ($item->name === User::getRoleStringId(User::ROLE_MODERATOR)) {
                 //moderator является потомком admin, который получает его права
                 return $role == User::ROLE_ADMIN || $role == User::ROLE_MODERATOR;
             }

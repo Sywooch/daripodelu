@@ -73,8 +73,7 @@ class Page extends \common\components\ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_date', 'last_update_date'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['last_update_date'],
                 ],
-                'value' => function ()
-                {
+                'value' => function () {
                     $dateTime = new \DateTime(null, new \DateTimeZone(Yii::$app->formatter->timeZone));
                     $timeOffset = $dateTime->getOffset();
                     $timeStamp = Yii::$app->formatter->asTimestamp(time());

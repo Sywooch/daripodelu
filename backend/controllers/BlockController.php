@@ -46,8 +46,7 @@ class BlockController extends Controller
     public function actionIndex()
     {
         $positions = array_merge(yii::$app->params['positions'], [Block::NO_POS => 'Нет позиции']);
-        foreach ($positions as $code => $name)
-        {
+        foreach ($positions as $code => $name) {
             $dataProviders[$code] = new ActiveDataProvider([
                 'query' => Block::find()->where(['position' => $code]),
                 'sort' => [
@@ -84,32 +83,23 @@ class BlockController extends Controller
         $model->attachMenuTree(new MenuTree());
         $model->addPositions(yii::$app->params['positions']);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $maxWeight = $model->getMaxWeightForPosition($model->position);
             $model->weight = $maxWeight + 1;
-            if ($model->save())
-            {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The block added successfully.'));
 
-                if (isset($_POST['saveBlock']))
-                {
+                if (isset($_POST['saveBlock'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -128,30 +118,21 @@ class BlockController extends Controller
         $model->attachMenuTree(new MenuTree());
         $model->addPositions(yii::$app->params['positions']);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The block added successfully.'));
 
-                if (isset($_POST['saveBlock']))
-                {
+                if (isset($_POST['saveBlock'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -177,16 +158,12 @@ class BlockController extends Controller
      */
     public function actionDeletescope()
     {
-        if (isset($_POST['ids']))
-        {
+        if (isset($_POST['ids'])) {
             $keys = Yii::$app->request->post('ids');
             $rslt = Block::deleteAll(['id' => $keys]);
-            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-            {
+            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax) {
                 echo Json::encode(['status' => 'success', 'rslt' => $rslt]);
-            }
-            else
-            {
+            } else {
                 return $this->redirect(isset($_POST['returnURL']) ? Yii::$app->request->post('returnURL') : ['index']);
             }
         }
@@ -196,13 +173,10 @@ class BlockController extends Controller
     {
         $counter = 0;
         $status = 'no_data_found';
-        if (isset($_POST['sortData']))
-        {
+        if (isset($_POST['sortData'])) {
             $sortData = Yii::$app->request->post('sortData');
-            if (is_array($sortData) && count($sortData) > 0)
-            {
-                foreach ($sortData as $index => $id)
-                {
+            if (is_array($sortData) && count($sortData) > 0) {
+                foreach ($sortData as $index => $id) {
                     $counter += (Block::updateAll(['weight' => $index], ['id' => intval($id)])) ? 1 : 0;
                 }
             }
@@ -222,12 +196,9 @@ class BlockController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Block::findOne($id)) !== null)
-        {
+        if (($model = Block::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

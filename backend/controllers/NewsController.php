@@ -54,23 +54,17 @@ class NewsController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $seoInfo = SEOInformation::findModel('news', 'index');
-        if (is_null($seoInfo))
-        {
+        if (is_null($seoInfo)) {
             $seoInfo = new SEOInformation();
             $seoInfo->controller_id = 'news';
             $seoInfo->action_id = 'index';
         }
 
-        if (isset($_POST['saveSEO']))
-        {
-            if ($seoInfo->load(Yii::$app->request->post()))
-            {
-                if ($seoInfo->save())
-                {
+        if (isset($_POST['saveSEO'])) {
+            if ($seoInfo->load(Yii::$app->request->post())) {
+                if ($seoInfo->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
-                }
-                else
-                {
+                } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                 }
 
@@ -111,38 +105,28 @@ class NewsController extends Controller
             'itemIdAttribute' => 'id',
         ]);
 
-        if ($model->load(Yii::$app->request->post()) && isset($_POST['MenuTree']['alias']))
-        {
-            if ($model->save())
-            {
+        if ($model->load(Yii::$app->request->post()) && isset($_POST['MenuTree']['alias'])) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> The news added successfully.'));
 
                 $model->alias = $_POST['MenuTree']['alias'];
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
 
-                if ( !$model->saveAlias())
-                {
+                if ( !$model->saveAlias()) {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }
 
-                if (isset($_POST['saveNews']))
-                {
+                if (isset($_POST['saveNews'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $model->published_date = Yii::$app->formatter->asDatetime(time());
 
             return $this->render('create', [
@@ -167,53 +151,37 @@ class NewsController extends Controller
             'itemIdAttribute' => 'id',
         ]);
 
-        if ((Yii::$app->request->isAjax || Yii::$app->request->isPjax) && isset($_FILES['model_images']))
-        {
+        if ((Yii::$app->request->isAjax || Yii::$app->request->isPjax) && isset($_FILES['model_images'])) {
             $images = UploadedFile::getInstancesByName('model_images');
-            foreach ($images as $image)
-            {
-                if ($model->getBehavior('photo')->saveImage($image))
-                {
+            foreach ($images as $image) {
+                if ($model->getBehavior('photo')->saveImage($image)) {
                     echo Json::encode(['status' => 1, 'message' => Yii::t('app', 'upload_success')]);
-                }
-                else
-                {
+                } else {
                     echo '';
                 }
             }
-        }
-        elseif ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        } elseif ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
                 $model->alias = $_POST['MenuTree']['alias'];
                 $model->parentMenuItemtId = $_POST['MenuTree']['parent_id'];
 
-                if ( !$model->saveAlias())
-                {
+                if ( !$model->saveAlias()) {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the alias of news.'));
                 }
 
-                if (isset($_POST['saveNews']))
-                {
+                if (isset($_POST['saveNews'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $model->last_update_date = Yii::$app->formatter->asDatetime($model->last_update_date);
             $model->created_date = Yii::$app->formatter->asDatetime($model->created_date);
             $model->published_date = Yii::$app->formatter->asDatetime($model->published_date);
@@ -250,16 +218,13 @@ class NewsController extends Controller
      */
     public function actionDeletescope()
     {
-        if (isset($_POST['ids']))
-        {
+        if (isset($_POST['ids'])) {
             $keys = Yii::$app->request->post('ids');
             $newsModels = News::findAll(['id' => $keys]);
             $rslt = News::deleteAll(['id' => $keys]);
 
-            if ($rslt > 0)
-            {
-                foreach ($newsModels as $newsModel)
-                {
+            if ($rslt > 0) {
+                foreach ($newsModels as $newsModel) {
                     Image::deleteAllFilesOfOwner(
                         $newsModel->getBehavior('photo')->model,
                         $newsModel->id,
@@ -275,12 +240,9 @@ class NewsController extends Controller
                 }
             }
 
-            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax)
-            {
+            if (Yii::$app->request->isAjax || Yii::$app->request->isPjax) {
                 echo helpers\Json::encode(['status' => 'success', 'rslt' => $rslt]);
-            }
-            else
-            {
+            } else {
                 return $this->redirect(isset($_POST['returnURL']) ? Yii::$app->request->post('returnURL') : ['index']);
             }
         }
@@ -295,12 +257,9 @@ class NewsController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = News::findOne($id)) !== null)
-        {
+        if (($model = News::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

@@ -47,18 +47,15 @@ class OrderController extends Controller
      */
     public function actionIndex()
     {
-        if ( !Yii::$app->user->can(OrderPermissions::INDEX))
-        {
+        if ( !Yii::$app->user->can(OrderPermissions::INDEX)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        if (Yii::$app->request->post('hasEditable'))
-        {
-            if ( !Yii::$app->user->can(OrderPermissions::UPDATE))
-            {
+        if (Yii::$app->request->post('hasEditable')) {
+            if ( !Yii::$app->user->can(OrderPermissions::UPDATE)) {
                 throw new ForbiddenHttpException('Access denied');
             }
 
@@ -70,12 +67,10 @@ class OrderController extends Controller
             $posted = current($_POST['Order']);
             $post = ['Order' => $posted];
 
-            if ($model->load($post))
-            {
+            if ($model->load($post)) {
                 $model->save();
                 $output = '';
-                if (isset($posted['status']))
-                {
+                if (isset($posted['status'])) {
                     $output = Order::getStatusName($model->status);
                 }
 
@@ -102,47 +97,35 @@ class OrderController extends Controller
      */
     public function actionUpdate($id)
     {
-        if ( !Yii::$app->user->can(OrderPermissions::UPDATE))
-        {
+        if ( !Yii::$app->user->can(OrderPermissions::UPDATE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->save())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
 
-                if (isset($_POST['saveOrder']))
-                {
+                if (isset($_POST['saveOrder'])) {
                     return $this->redirect(['index']);
-                }
-                else
-                {
+                } else {
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
-            }
-            else
-            {
+            } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
 
                 return $this->redirect(['index']);
             }
-        }
-        else
-        {
+        } else {
             $files = [];
 
-            if ( !is_null($model))
-            {
+            if ( !is_null($model)) {
                 $path = $model->getDirPath();
                 $urlToDir = $model->getDirUrl();
                 $files = glob($path . '/' . $model->id . '_*.*');
                 $filesCount = count($files);
-                for ($i = 0; $i < $filesCount; $i++)
-                {
+                for ($i = 0; $i < $filesCount; $i++) {
                     $files[$i] = $urlToDir . '/' . basename($files[$i]);
                 }
             }
@@ -164,23 +147,19 @@ class OrderController extends Controller
      */
     public function actionDelete($id)
     {
-        if ( !Yii::$app->user->can(OrderPermissions::DELETE))
-        {
+        if ( !Yii::$app->user->can(OrderPermissions::DELETE)) {
             throw new ForbiddenHttpException('Access denied');
         }
 
         $model = Order::find()->where(['id' => (int)$id])->andWhere(['or', ['status' => Order::STATUS_CANCELED], ['status' => Order::STATUS_ARCHIVE]])->one();
 
-        if ( !is_null($model))
-        {
+        if ( !is_null($model)) {
             $path = $model->getDirPath();
             $modelId = $model->id;
-            if ($model->delete())
-            {
+            if ($model->delete()) {
                 $files = glob($path . '/' . $modelId . '_*.*');
                 $filesCount = count($files);
-                for ($i = 0; $i < $filesCount; $i++)
-                {
+                for ($i = 0; $i < $filesCount; $i++) {
                     @unlink($files[$i]);
                 }
             }
@@ -198,12 +177,9 @@ class OrderController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Order::findOne($id)) !== null)
-        {
+        if (($model = Order::findOne($id)) !== null) {
             return $model;
-        }
-        else
-        {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

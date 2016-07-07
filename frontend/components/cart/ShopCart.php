@@ -32,13 +32,11 @@ class ShopCart extends yii\base\Component
     public function init()
     {
         $cookies = yii::$app->request->cookies;
-        if ($cookies->has('cart'))
-        {
-            $id = (int) $cookies->getValue('cart');
+        if ($cookies->has('cart')) {
+            $id = (int)$cookies->getValue('cart');
 
             $this->cartModel = Cart::findOne($id);
-            if ( ! is_null($this->cartModel))
-            {
+            if ( !is_null($this->cartModel)) {
                 $this->id = $this->cartModel->id;
                 $this->fillCartObject(unserialize($this->cartModel->data));
                 $this->cartModel->touch('last_use_date');
@@ -47,15 +45,11 @@ class ShopCart extends yii\base\Component
                     'value' => $this->id,
                     'expire' => time() + $this->validityPeriod,
                 ]));
-            }
-            else
-            {
+            } else {
                 yii::$app->response->cookies->remove('cart');
                 $this->cartModel = new Cart();
             }
-        }
-        else
-        {
+        } else {
             $this->cartModel = new Cart();
         }
 
@@ -71,37 +65,28 @@ class ShopCart extends yii\base\Component
     public function add(ShopCartItem $cartItem)
     {
         $index = null;
-        foreach ($this->items as $key => $item)
-        {
-            if ($item->productId == $cartItem->productId)
-            {
+        foreach ($this->items as $key => $item) {
+            if ($item->productId == $cartItem->productId) {
                 $index = $key;
                 break;
             }
         };
 
-        if (is_null($index))
-        {
+        if (is_null($index)) {
             $this->items[] = $cartItem;
-        }
-        else
-        {
+        } else {
             $itemsSizesCount = count($this->items[$index]->size);
             $cartItemSizesCount = count($cartItem->size);
-            for ($i = 0; $i < $cartItemSizesCount; $i++)
-            {
+            for ($i = 0; $i < $cartItemSizesCount; $i++) {
                 $exist = false;
-                for ($j = 0; $j < $itemsSizesCount; $j++)
-                {
-                    if ($this->items[$index]->size[$j]->sizeCode == $cartItem->size[$i]->sizeCode)
-                    {
+                for ($j = 0; $j < $itemsSizesCount; $j++) {
+                    if ($this->items[$index]->size[$j]->sizeCode == $cartItem->size[$i]->sizeCode) {
                         $this->items[$index]->size[$j]->setQuantity($this->items[$index]->size[$j]->quantity + $cartItem->size[$i]->quantity);
                         $exist = true;
                     }
                 }
 
-                if ( ! $exist)
-                {
+                if ( !$exist) {
                     $this->items[$index]->setSize($cartItem->size[$i]);
                 }
             }
@@ -122,20 +107,16 @@ class ShopCart extends yii\base\Component
     public function removeSize($productId, $sizeCode, $saveChanges = true)
     {
         $itemsCount = count($this->items);
-        for ($i = 0; $i < $itemsCount; $i++)
-        {
-            if ($this->items[$i]->productId == $productId)
-            {
+        for ($i = 0; $i < $itemsCount; $i++) {
+            if ($this->items[$i]->productId == $productId) {
                 $this->items[$i]->removeSize($sizeCode);
-                if (count($this->items[$i]->size) == 0)
-                {
+                if (count($this->items[$i]->size) == 0) {
                     $this->removeItem($productId, false);
                 }
             }
         }
 
-        if ($saveChanges === true)
-        {
+        if ($saveChanges === true) {
             $this->saveChanges();
         }
     }
@@ -151,16 +132,13 @@ class ShopCart extends yii\base\Component
     public function removeItem($productId, $saveChanges = true)
     {
         $itemsCount = count($this->items);
-        for ($i = 0; $i < $itemsCount; $i++)
-        {
-            if ($this->items[$i]->productId == $productId)
-            {
+        for ($i = 0; $i < $itemsCount; $i++) {
+            if ($this->items[$i]->productId == $productId) {
                 unset($this->items[$i]);
             }
         }
 
-        if ($saveChanges === true)
-        {
+        if ($saveChanges === true) {
             $this->saveChanges();
         }
     }
@@ -173,8 +151,7 @@ class ShopCart extends yii\base\Component
     public function getTotalPrice()
     {
         $totalPrice = 0;
-        foreach ($this->items as $item)
-        {
+        foreach ($this->items as $item) {
             $totalPrice += $item->getTotalPrice();
         }
 
@@ -189,8 +166,7 @@ class ShopCart extends yii\base\Component
     public function getProductsCount()
     {
         $productCount = 0;
-        foreach ($this->items as $item)
-        {
+        foreach ($this->items as $item) {
             $productCount += $item->getProductsCount();
         }
 
@@ -235,10 +211,8 @@ class ShopCart extends yii\base\Component
     {
         $result = null;
         $cartItemsCount = count($this->items);
-        for ($i = 0; $i < $cartItemsCount; $i++)
-        {
-            if ($this->items[$i]->productId == $productId)
-            {
+        for ($i = 0; $i < $cartItemsCount; $i++) {
+            if ($this->items[$i]->productId == $productId) {
                 $result = $this->items[$i];
             }
         }
@@ -254,14 +228,12 @@ class ShopCart extends yii\base\Component
      */
     public function saveChanges($validate = true)
     {
-        if ($validate)
-        {
+        if ($validate) {
             $this->validate();
         }
 
         $this->cartModel->data = serialize($this->toArray());
-        if ($this->cartModel->save())
-        {
+        if ($this->cartModel->save()) {
             $this->id = $this->cartModel->id;
             yii::$app->response->cookies->add(new yii\web\Cookie([
                 'name' => 'cart',
@@ -272,9 +244,7 @@ class ShopCart extends yii\base\Component
             $this->fillCartObject(unserialize($this->cartModel->data));
 
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -289,8 +259,7 @@ class ShopCart extends yii\base\Component
     public function clear()
     {
         $result = $this->cartModel->delete();
-        if ($result)
-        {
+        if ($result) {
             yii::$app->response->cookies->remove('cart');
             $this->removeItems();
         }
@@ -306,19 +275,15 @@ class ShopCart extends yii\base\Component
     protected function validate()
     {
         $itemsCount = count($this->items);
-        for ($i = 0; $i < $itemsCount; $i++)
-        {
+        for ($i = 0; $i < $itemsCount; $i++) {
             $sizeCount = count($this->items[$i]->size);
-            for ($j = 0; $j < $sizeCount; $j++)
-            {
-                if ($this->items[$i]->size[$j]->quantity == 0)
-                {
+            for ($j = 0; $j < $sizeCount; $j++) {
+                if ($this->items[$i]->size[$j]->quantity == 0) {
                     $this->items[$i]->removeSize($this->items[$i]->size[$j]->sizeCode);
                 }
             }
 
-            if (count($this->items[$i]->size) == 0)
-            {
+            if (count($this->items[$i]->size) == 0) {
                 $this->removeItem($this->items[$i]->productId, false);
             }
         }
@@ -332,12 +297,10 @@ class ShopCart extends yii\base\Component
     protected function toArray()
     {
         $cart = [];
-        foreach ($this->items as $item)
-        {
+        foreach ($this->items as $item) {
             $cartItem = [];
             $cartItem['productId'] = $item->productId;
-            foreach ($item->size as $size)
-            {
+            foreach ($item->size as $size) {
                 $cartItem['size'][] = [
                     'sizeId' => $size->sizeId,
                     'sizeCode' => $size->sizeCode,
@@ -357,19 +320,16 @@ class ShopCart extends yii\base\Component
      */
     protected function fillCartObject($cartAsArray)
     {
-        if ( ! is_array($cartAsArray))
-        {
+        if ( !is_array($cartAsArray)) {
             throw new InvalidParamException('Wrong parameter $cartAsArray of method ' . __METHOD__ . ' of class ' . __CLASS__ . '. $cartAsArray must be an array.');
         }
 
         $this->items = [];
         $productIds = [];
-        foreach ($cartAsArray as $item)
-        {
+        foreach ($cartAsArray as $item) {
             $cartItem = new ShopCartItem();
             $cartItem->productId = $item['productId'];
-            foreach ($item['size'] as $sizeItem)
-            {
+            foreach ($item['size'] as $sizeItem) {
                 $cartItem->setSize(new ShopCartItemSize($sizeItem['sizeId'], $sizeItem['sizeCode'], $sizeItem['quantity']));
             }
             $productIds[] = $cartItem->productId;
@@ -380,13 +340,10 @@ class ShopCart extends yii\base\Component
         $products = Product::find()->where(['id' => $productIds])->all();
 
         $cartItemsCount = $this->getItemsCount();
-        foreach ($products as $product)
-        {
-            for ($i = 0; $i < $cartItemsCount; $i++)
-            {
-                if ($this->items[$i]->productId == $product->id)
-                {
-                    $this->items[$i]->price = (float) $product->enduserprice;
+        foreach ($products as $product) {
+            for ($i = 0; $i < $cartItemsCount; $i++) {
+                if ($this->items[$i]->productId == $product->id) {
+                    $this->items[$i]->price = (float)$product->enduserprice;
                 }
             }
         }
@@ -401,10 +358,8 @@ class ShopCart extends yii\base\Component
     protected function findItemByProductId($productId)
     {
         $cartItem = null;
-        foreach ($this->items as $item)
-        {
-            if ($item->productId == $productId)
-            {
+        foreach ($this->items as $item) {
+            if ($item->productId == $productId) {
                 $cartItem = $item;
                 break;
             }

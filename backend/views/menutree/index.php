@@ -21,9 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
-    if( Yii::$app->session->hasFlash('error') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('error')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-danger'
             ],
@@ -33,9 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php
-    if( Yii::$app->session->hasFlash('success') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('success')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-success'
             ],
@@ -47,6 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('app', 'Add'), ['create'], ['class' => 'btn btn-success pull-right']) ?>
     </p>
+
     <div class="clearfix">&nbsp;</div>
 
     <?php
@@ -58,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'name',
                 'format' => 'raw',
-                'value' => function($item) {
+                'value' => function ($item) {
                     return Html::tag('span', StringHelper::truncate($item->name, 100), ['title' => $item->name]);
                 },
             ],
@@ -67,33 +66,33 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'show_in_menu',
                 'format' => 'raw',
                 'filter' => MenuTree::getShowMenuStatuses(),
-                'value' => function($item) {
+                'value' => function ($item) {
                     return ($item->show_in_menu === MenuTree::SHOW_IN_MENU) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span>';
                 },
-                'contentOptions' => ['style'=>'width: 190px; text-align: center;'],
+                'contentOptions' => ['style' => 'width: 190px; text-align: center;'],
             ],
             [
                 'attribute' => 'status',
                 'format' => 'raw',
                 'filter' => MenuTree::getStatusOptions(),
-                'value' => function($item) {
+                'value' => function ($item) {
                     return ($item->status === MenuTree::STATUS_ACTIVE) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span>';
                 },
-                'contentOptions' => ['style'=>'width: 190px; text-align: center;'],
+                'contentOptions' => ['style' => 'width: 190px; text-align: center;'],
             ],
             [
                 'class' => ActionColumn::className(),
                 'template' => '{update} {delete}',
                 'buttons' => [
-                    'update' => function($url, $model, $key) {
-                        return ($model->id != 1)? Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                    'update' => function ($url, $model, $key) {
+                        return ($model->id != 1) ? Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
                             'title' => Yii::t('yii', 'Update'),
                             'aria-label' => Yii::t('yii', 'Update'),
                             'data-pjax' => '0',
-                        ]): '';
+                        ]) : '';
                     },
-                    'delete' => function($url, $model, $key) {
-                        return ($model->id != 1)? Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                    'delete' => function ($url, $model, $key) {
+                        return ($model->id != 1) ? Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                             'title' => Yii::t('yii', 'Delete'),
                             'aria-label' => Yii::t('yii', 'Delete'),
                             'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
@@ -102,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]) : '';
                     },
                 ],
-                'contentOptions' => ['style'=>'width: 50px'],
+                'contentOptions' => ['style' => 'width: 50px'],
             ],
         ],
         'tableOptions' => [

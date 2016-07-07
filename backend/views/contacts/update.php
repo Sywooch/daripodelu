@@ -18,9 +18,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update Contact');
     <?php
     $this->title = $this->title . ' :: ' . Yii::t('app', 'Contacts') . ' :: ' . Yii::$app->config->siteName;
 
-    if( Yii::$app->session->hasFlash('error') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('error')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-danger'
             ],
@@ -30,9 +29,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update Contact');
     ?>
 
     <?php
-    if( Yii::$app->session->hasFlash('success') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('success')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-success'
             ],

@@ -9,7 +9,7 @@ use mihaildev\ckeditor\CKEditor;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<?= $form->field($model, 'value')->widget(CKEditor::className(),[
+<?= $form->field($model, 'value')->widget(CKEditor::className(), [
     'editorOptions' => [
         'height' => 100,
         'toolbarGroups' => [

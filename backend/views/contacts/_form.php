@@ -13,97 +13,97 @@ use common\models\ContactsItem;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="contacts-item-form">
+    <div class="contacts-item-form">
 
-    <?php $form = ActiveForm::begin(); ?>
-    <div role="tabpanel">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
-            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройка видимости</a></li>
-        </ul>
+        <?php $form = ActiveForm::begin(); ?>
+        <div role="tabpanel">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab"
+                                                          data-toggle="tab">Основное</a></li>
+                <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Настройка
+                        видимости</a></li>
+            </ul>
 
-        <div class="tab-content cms">
-            <div role="tabpanel" id="main" class="tab-pane active">
+            <div class="tab-content cms">
+                <div role="tabpanel" id="main" class="tab-pane active">
 
-                <?= $form->field($model, 'type')
-                    ->dropDownList(['' => '---'] + ContactsItem::getTypes(), ['id' => 'contactTypeFld', 'style' => 'max-width: 200px;'])
-                    ->hint(Yii::t('app', '<strong>Note:</strong>') . ' ' . Yii::t('app', 'The type of information that may be contained in the field "Value".'));
-                ?>
+                    <?= $form->field($model, 'type')
+                        ->dropDownList(['' => '---'] + ContactsItem::getTypes(), ['id' => 'contactTypeFld', 'style' => 'max-width: 200px;'])
+                        ->hint(Yii::t('app', '<strong>Note:</strong>') . ' ' . Yii::t('app', 'The type of information that may be contained in the field "Value".'));
+                    ?>
 
-                <?= $form->field($model, 'name')->textInput(['style' => 'max-width: 600px;', 'maxlength' => true])->hint(
-                    Yii::t('app', '<strong>Example:</strong>') . ' Адрес, Телефон, Факс, Эл. почта и т.д.'
+                    <?= $form->field($model, 'name')->textInput(['style' => 'max-width: 600px;', 'maxlength' => true])->hint(
+                        Yii::t('app', '<strong>Example:</strong>') . ' Адрес, Телефон, Факс, Эл. почта и т.д.'
+                    ); ?>
+
+                    <?php if ( !$model->isNewRecord || $model->type != ''): ?>
+                        <div id="fieldContainer">
+                            <?php
+                            switch ($model->type) {
+                                case ContactsItem::TYPE_FAX:
+                                case ContactsItem::TYPE_PHONE:
+                                    $template = '_phoneField';
+                                    break;
+
+                                case ContactsItem::TYPE_EMAIL:
+                                    $template = '_emailField';
+                                    break;
+
+                                case ContactsItem::TYPE_ADDRESS:
+                                    $template = '_textArea';
+                                    break;
+
+                                case ContactsItem::TYPE_OTHER:
+                                    $template = '_wysiwygEditor';
+                                    break;
+
+                                default:
+                                    $template = '_textField';
+                            }
+
+                            echo $this->renderAjax($template, ['model' => $model, 'form' => $form,])
+                            ?>
+                        </div>
+                    <?php else: ?>
+                        <div id="fieldContainer"></div>
+                    <?php endif ?>
+                </div>
+                <div role="tabpanel" id="settings" class="tab-pane">
+                    <?php
+                    $contactItemsMap = count($contactItems) > 0 ? ArrayHelper::map($contactItems, 'weight', 'name') : [];
+                    ?>
+                    <?= $form->field($model, 'weight')->dropDownList(ArrayHelper::merge(
+                        [0 => '--- ' . Yii::t('app', 'At the beginning') . ' ---'],
+                        $contactItemsMap
+                    ), ['style' => 'max-width: 200px;'])->label('Положение после');
+                    ?>
+
+                    <?php
+                    if ($model->isNewRecord) {
+                        $model->status = ContactsItem::STATUS_ACTIVE;
+                    }
+                    ?>
+                    <?= $form->field($model, 'status')
+                        ->dropDownList(ContactsItem::getStatusOptions(), ['style' => 'max-width: 200px;'])
+                        ->hint(Yii::t('app', '<strong>Note:</strong>') . ' ' . Yii::t('app', 'Only contact items with status "Published" is displayed on the site.'));
+                    ?>
+                </div>
+            </div>
+            <div style="padding-bottom: 5px;">&nbsp;</div>
+
+            <div class="form-group btn-ctrl">
+                <?= Html::submitButton(
+                    $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
+                    ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveContact']
                 ); ?>
-
-                <?php if (!$model->isNewRecord || $model->type != ''): ?>
-                    <div id="fieldContainer">
-                        <?php
-                        switch ($model->type)
-                        {
-                            case ContactsItem::TYPE_FAX:
-                            case ContactsItem::TYPE_PHONE:
-                                $template = '_phoneField';
-                                break;
-
-                            case ContactsItem::TYPE_EMAIL:
-                                $template = '_emailField';
-                                break;
-
-                            case ContactsItem::TYPE_ADDRESS:
-                                $template = '_textArea';
-                                break;
-
-                            case ContactsItem::TYPE_OTHER:
-                                $template = '_wysiwygEditor';
-                                break;
-
-                            default:
-                                $template = '_textField';
-                        }
-
-                        echo $this->renderAjax($template, ['model' => $model, 'form' => $form,])
-                        ?>
-                    </div>
-                <?php else: ?>
-                    <div id="fieldContainer"></div>
-                <?php endif ?>
-            </div>
-            <div role="tabpanel" id="settings" class="tab-pane">
-                <?php
-                $contactItemsMap = count($contactItems) > 0 ? ArrayHelper::map($contactItems, 'weight', 'name') : [];
-                ?>
-                <?= $form->field($model, 'weight')->dropDownList(ArrayHelper::merge(
-                    [0 => '--- ' . Yii::t('app', 'At the beginning') . ' ---'],
-                    $contactItemsMap
-                ), ['style' => 'max-width: 200px;'])->label('Положение после');
-                ?>
-
-                <?php
-                if ($model->isNewRecord)
-                {
-                    $model->status = ContactsItem::STATUS_ACTIVE;
-                }
-                ?>
-                <?= $form->field($model, 'status')
-                    ->dropDownList(ContactsItem::getStatusOptions(), ['style' => 'max-width: 200px;'])
-                    ->hint(Yii::t('app', '<strong>Note:</strong>') . ' ' . Yii::t('app', 'Only contact items with status "Published" is displayed on the site.'));
-                ?>
+                <?= Html::submitButton(
+                    Yii::t('app', 'Apply'),
+                    ['class' => 'btn btn-default', 'name' => 'applyContact']
+                ); ?>
             </div>
         </div>
-        <div style="padding-bottom: 5px;">&nbsp;</div>
-
-        <div class="form-group btn-ctrl">
-            <?= Html::submitButton(
-                $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
-                ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'name' => 'saveContact']
-            ); ?>
-            <?= Html::submitButton(
-                Yii::t('app', 'Apply'),
-                ['class' => 'btn btn-default', 'name' => 'applyContact']
-            ); ?>
-        </div>
+        <?php ActiveForm::end(); ?>
     </div>
-    <?php ActiveForm::end(); ?>
-</div>
 <?php $this->registerJs('
     $("#contactTypeFld").on("change", function(){
         var fieldType = $(this).val();

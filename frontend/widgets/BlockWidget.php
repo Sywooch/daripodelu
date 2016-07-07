@@ -33,8 +33,7 @@ class BlockWidget extends Widget
 
     public function init()
     {
-        if (is_null(static::$blocks))
-        {
+        if (is_null(static::$blocks)) {
             static::$blocks = Block::find()->orderBy(['position' => SORT_ASC, 'weight' => SORT_ASC])->all();
         }
     }
@@ -43,11 +42,9 @@ class BlockWidget extends Widget
     {
         $path = '/' . yii::$app->request->pathInfo;
         $blocks = [];
-        foreach (static::$blocks as $block)
-        {
+        foreach (static::$blocks as $block) {
             /* @var $block \backend\models\Block */
-            if ($block->position == $this->position && ($block->show_all_pages == 1 || $this->inPathList($path, $block)))
-            {
+            if ($block->position == $this->position && ($block->show_all_pages == 1 || $this->inPathList($path, $block))) {
                 $blocks[] = $block;
             }
         }
@@ -91,8 +88,7 @@ class BlockWidget extends Widget
     {
         $result = false;
         $allowPath = explode("\r\n", $block->show_on_pages);
-        if (is_array($allowPath))
-        {
+        if (is_array($allowPath)) {
             $result = in_array($path, $allowPath);
         }
 

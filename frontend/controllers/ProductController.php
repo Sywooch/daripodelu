@@ -20,8 +20,7 @@ class ProductController extends \yii\web\Controller
 
     public function beforeAction($action)
     {
-        if (parent::beforeAction($action))
-        {
+        if (parent::beforeAction($action)) {
             $feedbackModel = new FeedbackForm();
             $this->getView()->params['feedbackModel'] = $feedbackModel;
 
@@ -38,33 +37,27 @@ class ProductController extends \yii\web\Controller
             ->andWhere(['id' => $id])->one();
         /* @var $model Product */
 
-        if ($model === null)
-        {
+        if ($model === null) {
             throw new NotFoundHttpException();
         }
 
         $printCodes = [];
-        foreach ($model->productPrints as $productPrint)
-        {
+        foreach ($model->productPrints as $productPrint) {
             $printCodes[] = $productPrint->print_id;
         }
 
         $prints = PrintKind::find()->with('printLink')->andWhere(['name' => $printCodes])->all();
 
-        if (yii::$app->request->isAjax)
-        {
+        if (yii::$app->request->isAjax) {
             echo $this->renderAjax('_item', ['model' => $model]);
-        }
-        else
-        {
+        } else {
             $this->heading = $model->name;
             $this->metaTitle = $this->heading . ' | ' . $model->catalogue->name . ' | ' . Yii::$app->config->siteName;
             $this->metaDescription = Yii::$app->config->siteMetaDescript;
             $this->metaKeywords = Yii::$app->config->siteMetaKeywords;
 
             $seoInfo = SEOInformation::findModel('product', 'view', $model->id);
-            if ( !is_null($seoInfo))
-            {
+            if ( !is_null($seoInfo)) {
                 $this->heading = ($seoInfo->heading == '') ? $this->heading : $seoInfo->heading;
                 $this->metaTitle = ($seoInfo->meta_title == '') ? $this->metaTitle : $seoInfo->meta_title;
                 $this->metaDescription = ($seoInfo->meta_description == '') ? $this->metaDescription : $seoInfo->meta_description;

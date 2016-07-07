@@ -18,14 +18,13 @@ use kartik\editable\Editable;
 $this->title = Yii::t('app', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
 $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
 
-if( Yii::$app->session->hasFlash('error') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-danger'
         ],
@@ -35,9 +34,8 @@ if( Yii::$app->session->hasFlash('error') )
 ?>
 
 <?php
-if( Yii::$app->session->hasFlash('success') )
-{
-    echo Alert::widget ([
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
         'options' => [
             'class' => 'alert-success'
         ],
@@ -45,7 +43,7 @@ if( Yii::$app->session->hasFlash('success') )
     ]);
 }
 ?>
-<?= Button::widget ( [
+<?= Button::widget([
     'label' => '<i class="glyphicon glyphicon-plus"></i> ' . Yii::t('app', 'Create'),
     'encodeLabel' => false,
     'options' => [
@@ -54,13 +52,13 @@ if( Yii::$app->session->hasFlash('success') )
         'style' => 'margin:5px'
     ],
     'tagName' => 'a',
-] ); ?>
+]); ?>
     <div class="clearfix">&nbsp;</div>
 <?= GridView::widget([
     'pjax' => true,
     'pjaxSettings' => [
-        'neverTimeout'=>true,
-        'options'=>['id'=>'usersGridView'],
+        'neverTimeout' => true,
+        'options' => ['id' => 'usersGridView'],
     ],
     'options' => [
         'id' => 'usersGridView'
@@ -72,7 +70,7 @@ if( Yii::$app->session->hasFlash('success') )
         [
             'attribute' => 'email',
             'format' => 'email',
-            'contentOptions' => ['style'=>'width: 250px'],
+            'contentOptions' => ['style' => 'width: 250px'],
         ],
         [
             'attribute' => 'last_name',
@@ -83,10 +81,10 @@ if( Yii::$app->session->hasFlash('success') )
 //                'contentOptions' => ['style'=>'width: 250px'],
         ],
         [
-            'class'=>'kartik\grid\EditableColumn',
+            'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'role',
-            'editableOptions'=>[
-                'inputType'=> Editable::INPUT_DROPDOWN_LIST,
+            'editableOptions' => [
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'data' => User::getRoles(),
                 'submitButton' => [
                     'class' => 'btn btn-sm btn-primary',
@@ -95,14 +93,16 @@ if( Yii::$app->session->hasFlash('success') )
             ],
             'refreshGrid' => true,
             'filter' => User::getRoles(),
-            'value' => function($model){ return $model->roleName; },
-            'contentOptions' => ['style'=>'width: 150px'],
+            'value' => function ($model) {
+                return $model->roleName;
+            },
+            'contentOptions' => ['style' => 'width: 150px'],
         ],
         [
-            'class'=>'kartik\grid\EditableColumn',
+            'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'status',
-            'editableOptions'=>[
-                'inputType'=> Editable::INPUT_DROPDOWN_LIST,
+            'editableOptions' => [
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'data' => User::getStatuses(),
                 'submitButton' => [
                     'class' => 'btn btn-sm btn-primary',
@@ -111,8 +111,10 @@ if( Yii::$app->session->hasFlash('success') )
             ],
             'refreshGrid' => true,
             'filter' => User::getStatuses(),
-            'value' => function($model){ return $model->statusName; },
-            'contentOptions' => ['style'=>'width: 150px'],
+            'value' => function ($model) {
+                return $model->statusName;
+            },
+            'contentOptions' => ['style' => 'width: 150px'],
         ],
         // 'role',
         // 'created_at',
@@ -121,7 +123,7 @@ if( Yii::$app->session->hasFlash('success') )
         [
             'class' => ActionColumn::className(),
             'template' => Yii::$app->user->can(UserPermissions::DELETE) ? '{update} {delete}' : '{update}',
-            'contentOptions' => ['style'=>'width: 50px'],
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
     ],
 ]); ?>

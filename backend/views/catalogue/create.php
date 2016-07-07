@@ -10,19 +10,16 @@ use yii\bootstrap\Alert;
 
 $parents = [];
 $breadcrumb = [];
-if (isset($category) and $category instanceof backend\models\Catalogue)
-{
+if (isset($category) and $category instanceof backend\models\Catalogue) {
     $parents = $category->parents();
 }
 
 $this->title = Yii::t('app', 'Create category');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Catalogue'), 'url' => ['index']];
-for ($i = 0; $i < count($parents) - 1; $i++)
-{
+for ($i = 0; $i < count($parents) - 1; $i++) {
     $this->params['breadcrumbs'][] = ['label' => $parents[$i]->name, 'url' => ['category', 'id' => $parents[$i]->id]];
 }
-if (count($parents) > 0)
-{
+if (count($parents) > 0) {
     $this->params['breadcrumbs'][] = ['label' => $category->name, 'url' => ['category', 'id' => $category->id]];
 }
 $this->params['breadcrumbs'][] = $this->title;
@@ -34,9 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $this->title = $this->title . ' :: ' . Yii::$app->config->siteName;
 
-    if( Yii::$app->session->hasFlash('error') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('error')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-danger'
             ],
@@ -46,9 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php
-    if( Yii::$app->session->hasFlash('success') )
-    {
-        echo Alert::widget ([
+    if (Yii::$app->session->hasFlash('success')) {
+        echo Alert::widget([
             'options' => [
                 'class' => 'alert-success'
             ],

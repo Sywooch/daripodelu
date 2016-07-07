@@ -108,8 +108,7 @@ class SettingsForm extends Model
     {
         $rslt = false;
         $model = Settings::findOne(['param' => $key]);
-        if ($model)
-        {
+        if ($model) {
             $model->value = $value;
             $rslt = $model->save();
         }
@@ -120,8 +119,7 @@ class SettingsForm extends Model
     public function save()
     {
         $rslt = true;
-        foreach ($this->conformityVars as $param => $var)
-        {
+        foreach ($this->conformityVars as $param => $var) {
             $rslt = $rslt && $this->set($var, $this->{$param});
         }
 

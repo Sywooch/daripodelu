@@ -36,8 +36,7 @@ class InputAliasWidget extends InputWidget
 
         Html::addCssClass($this->containerOptions, 'input-group col-md-8');
         Html::addCssClass($this->options, 'form-control');
-        if ($this->size !== null)
-        {
+        if ($this->size !== null) {
             $size = 'input-' . $this->size;
             Html::addCssClass($this->options, $size);
             Html::addCssClass($this->containerOptions, $size);
@@ -55,8 +54,7 @@ class InputAliasWidget extends InputWidget
         $pickerAddon = Html::tag('button', $pickIcon . Yii::t('app', 'Create'), ['class' => 'btn btn-default', 'id' => 'alias-generate', 'type' => 'button']);
         $inputGroupBtn = Html::tag('div', $pickerAddon, ['class' => 'input-group-btn']);
 
-        if (strpos($this->template, '{button}') !== false)
-        {
+        if (strpos($this->template, '{button}') !== false) {
             $input = Html::tag(
                 'div',
                 strtr($this->template, ['{input}' => $input, '{button}' => $inputGroupBtn]),

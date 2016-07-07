@@ -93,14 +93,10 @@ class ImagesBehavior extends Behavior
      */
     public function setMaxWidth($maxWidth)
     {
-        if ( !is_integer($maxWidth))
-        {
+        if ( !is_integer($maxWidth)) {
             throw new yii\base\InvalidArgumentException('Max width must be integer');
-        }
-        else
-        {
-            if ($maxWidth <= 0)
-            {
+        } else {
+            if ($maxWidth <= 0) {
                 throw new yii\base\InvalidArgumentException('Max width must be greater than 0');
             }
         }
@@ -121,14 +117,10 @@ class ImagesBehavior extends Behavior
      */
     public function setMaxHeight($maxHeight)
     {
-        if ( !is_integer($maxHeight))
-        {
+        if ( !is_integer($maxHeight)) {
             throw new yii\base\InvalidArgumentException('Max height must be integer');
-        }
-        else
-        {
-            if ($maxHeight <= 0)
-            {
+        } else {
+            if ($maxHeight <= 0) {
                 throw new yii\base\InvalidArgumentException('Max height must be greater than 0');
             }
         }
@@ -161,8 +153,7 @@ class ImagesBehavior extends Behavior
         $model->maxWidth = $this->maxWidth;
         $model->maxHeight = $this->maxHeight;
 
-        if ($model->file && $model->validate())
-        {
+        if ($model->file && $model->validate()) {
             $rslt = $model->save() ? $model : false;
         }
 
@@ -172,8 +163,7 @@ class ImagesBehavior extends Behavior
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_DELETE => function ($event)
-            {
+            ActiveRecord::EVENT_AFTER_DELETE => function ($event) {
                 Image::deleteAllFilesOfOwner($this->model, $this->owner->{$this->ownerIdAttribute}, $this->getCtgId());
 
                 $imageModel = new Image();

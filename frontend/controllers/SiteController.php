@@ -52,8 +52,7 @@ class SiteController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'error')
-        {
+        if ($action->id == 'error') {
             $this->layout = 'main-2.php';
         }
 
@@ -97,6 +96,7 @@ class SiteController extends Controller
 
         $this->layout = 'index';
         $this->getView()->params['feedbackModel'] = $feedbackModel;
+
         return $this->render('index');
     }
 
@@ -104,8 +104,7 @@ class SiteController extends Controller
     {
         $model = new FeedbackForm();
 
-        if ($model->load(yii::$app->request->post()) && $model->validate())
-        {
+        if ($model->load(yii::$app->request->post()) && $model->validate()) {
             $model->sendEmail(yii::$app->config->siteEmail);
             yii::$app->session->setFlash('msg_send_mail_success');
         }
@@ -120,7 +119,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
+        if ( !\Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
@@ -201,7 +200,8 @@ class SiteController extends Controller
     {
         try {
             $model = new ResetPasswordForm($token);
-        } catch (InvalidParamException $e) {
+        }
+        catch (InvalidParamException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 

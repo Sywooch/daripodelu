@@ -18,7 +18,8 @@ use kartik\select2\Select2;
     <?php $form = ActiveForm::begin(); ?>
     <div role="tabpanel">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a></li>
+            <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">Основное</a>
+            </li>
         </ul>
 
         <div class="tab-content cms">
@@ -35,22 +36,22 @@ use kartik\select2\Select2;
                     ],
                 ]); ?>
 
-                <?php//= $form->field($model, 'code')->textInput(['maxlength' => 100, 'style' => 'max-width: 200px;']) ?>
+                <?php //= $form->field($model, 'code')->textInput(['maxlength' => 100, 'style' => 'max-width: 200px;']) ?>
 
                 <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'style' => 'max-width: 600px;']) ?>
 
                 <?= $form->field($model, 'size_code')->textInput(['maxlength' => 255, 'style' => 'max-width: 200px;']) ?>
 
-                <?php//= $form->field($model, 'weight')->textInput(['style' => 'max-width: 200px;'])->label($model->getAttributeLabel('weight') . ', г') ?>
+                <?php //= $form->field($model, 'weight')->textInput(['style' => 'max-width: 200px;'])->label($model->getAttributeLabel('weight') . ', г') ?>
 
-                <?php/*= $form->field($model, 'price')->widget(MaskedInput::className(),[
+                <?php /*= $form->field($model, 'price')->widget(MaskedInput::className(),[
                     'mask' => '9{1,12}.99',
                     'options' => ['class' => 'form-control', 'style' => 'max-width: 200px;'],
                 ])*/ ?>
 
-                <?php//= $form->field($model, 'price_currency')->textInput(['maxlength' => 20, 'style' => 'max-width: 200px;']) ?>
+                <?php //= $form->field($model, 'price_currency')->textInput(['maxlength' => 20, 'style' => 'max-width: 200px;']) ?>
 
-                <?php//= $form->field($model, 'price_name')->textInput(['maxlength' => 40, 'style' => 'max-width: 200px;']) ?>
+                <?php //= $form->field($model, 'price_name')->textInput(['maxlength' => 40, 'style' => 'max-width: 200px;']) ?>
 
                 <?= $form->field($model, 'amount')->textInput(['style' => 'max-width: 200px;']) ?>
 
@@ -60,7 +61,7 @@ use kartik\select2\Select2;
 
                 <?= $form->field($model, 'inwayfree')->textInput(['style' => 'max-width: 200px;']) ?>
 
-                <?php/*= $form->field($model, 'enduserprice')->widget(MaskedInput::className(),[
+                <?php /*= $form->field($model, 'enduserprice')->widget(MaskedInput::className(),[
                     'mask' => '9{1,12}.99',
                     'options' => ['class' => 'form-control', 'style' => 'max-width: 200px;'],
                 ])*/ ?>

@@ -38,7 +38,7 @@ class ShopCartItem extends Object
      */
     public function setProductId($productId)
     {
-        $this->productId = (int) $productId;
+        $this->productId = (int)$productId;
     }
 
     /**
@@ -59,10 +59,8 @@ class ShopCartItem extends Object
     {
         $result = null;
         $sizeCount = count($this->size);
-        for ($i = 0; $i < $sizeCount; $i++)
-        {
-            if ($this->size[$i]->sizeCode == $sizeCode)
-            {
+        for ($i = 0; $i < $sizeCount; $i++) {
+            if ($this->size[$i]->sizeCode == $sizeCode) {
                 $result = $this->size[$i];
                 break;
             }
@@ -76,26 +74,20 @@ class ShopCartItem extends Object
      */
     public function setSize(ShopCartItemSize $size)
     {
-        if ($size->sizeCode === ShopCartItemSize::DEAFAULT_SIZE)
-        {
+        if ($size->sizeCode === ShopCartItemSize::DEAFAULT_SIZE) {
             $this->size = [];
             $this->size[] = $size;
-        }
-        else
-        {
+        } else {
             $sizeCount = count($this->size);
-            for ($i = 0; $i < $sizeCount; $i++)
-            {
-                if ($this->size[$i]->sizeCode == $size->sizeCode)
-                {
+            for ($i = 0; $i < $sizeCount; $i++) {
+                if ($this->size[$i]->sizeCode == $size->sizeCode) {
                     $this->size[$i]->quantity += $size->quantity;
                     $size = null;
                     break;
                 }
             }
 
-            if ( ! is_null($size))
-            {
+            if ( !is_null($size)) {
                 $this->size[] = $size;
             }
         }
@@ -111,10 +103,8 @@ class ShopCartItem extends Object
     public function removeSize($sizeCode)
     {
         $sizeCount = count($this->size);
-        for ($i = 0; $i < $sizeCount; $i++)
-        {
-            if ($this->size[$i]->sizeCode == $sizeCode)
-            {
+        for ($i = 0; $i < $sizeCount; $i++) {
+            if ($this->size[$i]->sizeCode == $sizeCode) {
                 unset($this->size[$i]);
             }
         }
@@ -133,7 +123,7 @@ class ShopCartItem extends Object
      */
     public function setPrice($price)
     {
-        $this->price = (float) $price;
+        $this->price = (float)$price;
     }
 
     /**
@@ -144,8 +134,7 @@ class ShopCartItem extends Object
     public function getProductsCount()
     {
         $productCount = 0;
-        foreach($this->size as $size)
-        {
+        foreach ($this->size as $size) {
             $productCount += $size->quantity;
         }
 
