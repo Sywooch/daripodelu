@@ -47,20 +47,14 @@ if (Yii::$app->session->hasFlash('success')) {
 
 <div role="tabpanel">
     <ul class="nav nav-tabs">
-        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>><a href="#main"
-                                                                                             aria-controls="main"
-                                                                                             role="tab"
-                                                                                             data-toggle="tab">Основное</a>
+        <li role="presentation"<?php if ($tabIndex === 0) : ?> class="active"<? endif; ?>>
+            <a href="#main" aria-controls="main" role="tab" data-toggle="tab">Контактная информация</a>
         </li>
-        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>><a href="#map"
-                                                                                             aria-controls="map"
-                                                                                             role="tab"
-                                                                                             data-toggle="tab">Карта</a>
+        <li role="presentation"<?php if ($tabIndex === 1) : ?> class="active"<? endif; ?>>
+            <a href="#map" aria-controls="map" role="tab" data-toggle="tab">Карта</a>
         </li>
-        <li role="presentation"<?php if ($tabIndex === 2) : ?> class="active"<? endif; ?>><a href="#settings"
-                                                                                             aria-controls="settings"
-                                                                                             role="tab"
-                                                                                             data-toggle="tab">Настройки</a>
+        <li role="presentation"<?php if ($tabIndex === 2) : ?> class="active"<? endif; ?>>
+            <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">SEO</a>
         </li>
     </ul>
     <div class="tab-content cms">
@@ -176,7 +170,9 @@ if (Yii::$app->session->hasFlash('success')) {
             <?php //Pjax::end(); ?>
         </div>
         <div role="tabpanel" id="map" class="tab-pane<?php if ($tabIndex === 1): ?> active<? endif; ?>">
-            <?= $this->render('_map'); ?>
+            <?= $this->render('_map', [
+                'mapModel' => $mapModel,
+            ]); ?>
         </div>
         <div role="tabpanel" id="settings" class="tab-pane<?php if ($tabIndex === 2): ?> active<? endif; ?>">
             <?php $form = ActiveForm::begin(); ?>

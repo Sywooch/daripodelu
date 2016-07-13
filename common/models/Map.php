@@ -66,6 +66,9 @@ class Map extends \yii\db\ActiveRecord
      */
     const TYPE_GOOGLE_TERRAIN = 'TERRAIN';
 
+    const CONTROL_OFF = 0;
+    const CONTROL_ON = 1;
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
@@ -89,7 +92,20 @@ class Map extends \yii\db\ActiveRecord
             [['vendor'], 'string', 'max' => 30],
             [['name', 'point_label'], 'string', 'max' => 255],
             [['module_id', 'controller_id', 'action_id', 'type'], 'string', 'max' => 40],
-            [['module_id', 'controller_id', 'action_id', 'ctg_id', 'item_id'], 'unique', 'targetAttribute' => ['module_id', 'controller_id', 'action_id', 'ctg_id', 'item_id'], 'message' => 'The combination of Модуль, Контроллер, Действие, Категория and Элемент has already been taken.'],
+            [['zoom',], 'default', 'value' => 10],
+            [
+                ['geolocation_control', 'search_control', 'route_editor', 'traffic_control', 'fullscreen_control'],
+                'default',
+                'value' => 0
+            ],
+            [['type_selector', 'zoom_control', 'ruler_control', 'status'], 'default', 'value' => 1],
+            [['module_id', 'ctg_id', 'item_id', 'point_label'], 'default', 'value' => null],
+            [
+                ['module_id', 'controller_id', 'action_id', 'ctg_id', 'item_id'],
+                'unique',
+                'targetAttribute' => ['module_id', 'controller_id', 'action_id', 'ctg_id', 'item_id'],
+                'message' => 'The combination of Модуль, Контроллер, Действие, Категория and Элемент has already been taken.'
+            ],
         ];
     }
 
@@ -114,14 +130,14 @@ class Map extends \yii\db\ActiveRecord
             'point_label' => Yii::t('app', 'Текст метки'),
             'zoom' => Yii::t('app', 'Масштаб'),
             'type' => Yii::t('app', 'Тип карты'),
-            'geolocation_control' => Yii::t('app', 'Кнопка \"Геолокация\"'),
+            'geolocation_control' => Yii::t('app', 'Кнопка "Геолокация"'),
             'search_control' => Yii::t('app', 'Поисковая строка'),
-            'route_editor' => Yii::t('app', 'Кнопка \"Построение маршрута\"'),
-            'traffic_control' => Yii::t('app', 'Кнопка \"Пробки\"'),
-            'type_selector' => Yii::t('app', 'Кнопка \"Выбор типа карты\"'),
-            'fullscreen_control' => Yii::t('app', 'Кнопка \"Полноэкранный режим\"'),
-            'zoom_control' => Yii::t('app', 'Элемент управления \"Изменение масштаба\"'),
-            'ruler_control' => Yii::t('app', 'Элемент управления \"Измерерние расстояния\"'),
+            'route_editor' => Yii::t('app', 'Кнопка "Построение маршрута"'),
+            'traffic_control' => Yii::t('app', 'Кнопка "Пробки"'),
+            'type_selector' => Yii::t('app', 'Кнопка "Выбор типа карты"'),
+            'fullscreen_control' => Yii::t('app', 'Кнопка "Полноэкранный режим"'),
+            'zoom_control' => Yii::t('app', 'Элемент управления "Изменение масштаба"'),
+            'ruler_control' => Yii::t('app', 'Элемент управления "Измерерние расстояния"'),
             'status' => Yii::t('app', 'Статус'),
         ];
     }
@@ -219,5 +235,18 @@ class Map extends \yii\db\ActiveRecord
         }
 
         return $vendors[$index];
+    }
+
+    /**
+     * @param string $controller название контроллера
+     * @param string $action название действия
+     * @param integer $itemId ID элемента. По умолчанию null
+     * @param integer $ctgId ID категории. По умолчанию null
+     * @param string $module название модуля. По умолчанию null
+     * @return null|Map
+     */
+    public static function findModel($controller, $action, $itemId = null, $ctgId = null, $module = null)
+    {
+        return static::find()->where(['module_id' => $module, 'controller_id' => $controller, 'action_id' => $action, 'item_id' => $itemId, 'ctg_id' => $ctgId])->one();
     }
 }

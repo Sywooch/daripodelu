@@ -124,12 +124,14 @@ class Api extends Component
                     foreach ($object->getEvents() as $event => $handle)
                     {
                         $event = Json::encode($event);
-                        $handle = $handle;
+                        $handle = Json::encode($handle);
                         $events .= ".add($event, $handle)";
                     }
                     $js .= "$events;\n";
                 }
             }
+
+
         }
         else
         {
@@ -226,14 +228,29 @@ class Api extends Component
                         {
                             $_object = $this->generateObject($object);
 
+                            $_singleObject = null;
+
                             // use Clusterer
                             if ($map->use_clusterer && $object instanceof objects\Placemark)
                             {
                                 $clusterer .= "points[$i] = $_object;\n";
+                                foreach ($object->getEvents() as $event => $handle) {
+                                    $event = Json::encode($event);
+                                    $handle = Json::encode($handle);
+
+                                    $clusterer .= "\npoints[$i].events.add($event, $handle);\n";
+                                }
                             }
                             else
                             {
-                                $objects .= ".add($_object)\n";
+                                $_singleObject = "var myPlacemark = $_object";
+                                foreach ($object->getEvents() as $event => $handle) {
+                                    $event = Json::encode($event);
+                                    $handle = Json::encode($handle);
+
+                                    $_singleObject .= "\nmyPlacemark.events.add($event, $handle);\n";
+                                }
+                                $objects .= ".add(myPlacemark)\n";
                             }
                         }
                         elseif (is_string($object))
@@ -266,6 +283,9 @@ class Api extends Component
                     }
 
                     $objects .= ".add(clusterer)";
+                }
+                elseif ($_singleObject){
+                    $js .= $_singleObject;
                 }
 
                 if ( !empty($objects))

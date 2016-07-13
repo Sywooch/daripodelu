@@ -146,5 +146,6 @@ return [
     'Only contact items with status "Published" is displayed on the site.' => 'Только контакты со статусом "Опубликовано" отображаются на сайте.',
     'The type of information that may be contained in the field "Value".' => 'Тип информации, которая может содержаться в поле "Значение".',
     '{attribute} is not a valid phone number.' => 'Значение "{attribute}" не является правильным номером телефона.',
+    'Only map with status "Published" is displayed on the site.' => 'Только карта со статусом "Опубликовано" отображается на сайте.',
     '' => '',
 ];

@@ -12,6 +12,7 @@ use yii\web\ForbiddenHttpException;
 use backend\models\ContactsItemSearch;
 use common\components\rbac\ContactsPermissions;
 use common\models\ContactsItem;
+use backend\models\Map as MapModel;
 use common\models\SEOInformation;
 
 /**
@@ -104,10 +105,24 @@ class ContactsController extends Controller
             }
         }
 
+        $mapModel = MapModel::findModel('contacts', 'index');
+        if (is_null($mapModel)) {
+            $mapModel = new MapModel();
+            $mapModel->vendor = MapModel::VENDOR_YANDEX;
+            $mapModel->controller_id = 'contacts';
+            $mapModel->action_id = 'index';
+            $mapModel->type = MapModel::TYPE_YANDEX_MAP;
+            $mapModel->zoom_control = MapModel::CONTROL_ON;
+            $mapModel->type_selector = MapModel::CONTROL_ON;
+            $mapModel->ruler_control = MapModel::CONTROL_ON;
+            $mapModel->status = MapModel::STATUS_ACTIVE;
+        }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'seoInfo' => $seoInfo,
+            'mapModel' => $mapModel,
             'tabIndex' => $tabIndex,
         ]);
     }
