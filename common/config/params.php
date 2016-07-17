@@ -6,18 +6,18 @@ return [
     'baseUploadURL' => '/uploads',
     'cacheNavExpire' => 4 * 3600,  //The number of seconds in which the cache of navigation menu will expire. 0 means never expire.
     'cartCookieValidityPeriod' => 91 * 24 * 60 * 60,
-    'gate' => [
+    /*'gate' => [
         'product' => 'http://ratmir3025.tmweb.ru/downloads/current/product.xml',
         'tree' => 'http://ratmir3025.tmweb.ru/downloads/current/tree.xml',
         'stock' => 'http://ratmir3025.tmweb.ru/downloads/current/stock.xml',
         'filters' => 'http://ratmir3025.tmweb.ru/downloads/current/filters.xml',
-    ],
-    /*'gate' => [
+    ],*/
+    'gate' => [
         'product' => 'http://api2.gifts.ru/export/v2/catalogue/product.xml',
         'tree' => 'http://api2.gifts.ru/export/v2/catalogue/tree.xml',
         'stock' => 'http://api2.gifts.ru/export/v2/catalogue/stock.xml',
         'filters' => 'http://api2.gifts.ru/export/v2/catalogue/filters.xml',
-    ],*/
+    ],
     'positions' => [
         'footer' => 'Подвал страницы',
         'left' => 'Слева',

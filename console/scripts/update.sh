@@ -31,7 +31,17 @@ php -c ~/etc/php.ini $ROOT_PATH/yii tools/create-db-backup
 # == загрузка xml-файлов, их парсинг и запись данных во временные таблицы ==============================================
 
 # загрузка xml-файлов с сайта gifs.ru
-php -c ~/etc/php.ini $ROOT_PATH/yii load/downloadxml
+# php -c ~/etc/php.ini $ROOT_PATH/yii load/downloadxml
+
+wait="0.5s"
+
+wget --user=$login --password=$pass -w $wait -P $src_folder api2.gifts.ru/export/v2/catalogue/tree.xml
+sleep 0.5
+wget --user=$login --password=$pass -w $wait -P $src_folder api2.gifts.ru/export/v2/catalogue/filters.xml
+sleep 0.5
+wget --user=$login --password=$pass -w $wait -P $src_folder api2.gifts.ru/export/v2/catalogue/product.xml
+sleep 0.5
+wget --user=$login --password=$pass -w $wait -P $src_folder api2.gifts.ru/export/v2/catalogue/stock.xml
 
 # очистка временных таблиц БД
 php -c ~/etc/php.ini $ROOT_PATH/yii load/droptables
