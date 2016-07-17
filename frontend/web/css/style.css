@@ -425,6 +425,7 @@ ul.shop-cart li a,
 .articles-item time,
 .article-date,
 .articles-item a:hover .title .underscore,
+.contacts-item .contacts-item_title,
 h1,
 .h1,
 h2,
@@ -454,6 +455,7 @@ h6,
 .ctg-list a,
 .products-list .product-item a.name span,
 .products-list .product-item .info,
+.contacts-item .contacts-item_value .phone,
 ul.secondary-nav-menu li a {
     color: #222;
 }
@@ -614,6 +616,7 @@ ul.pagination a,
 .constructor-links-box a.item,
 .product .color-name,
 .total-box,
+.contacts-item .contacts-item_value .email,
 table.shop-cart {
     color: #000;
 }
@@ -713,6 +716,7 @@ table.shop-cart tfoot tr {
 .products-list .product-item a.name span,
 .additional-links-box a span,
 .articles-inf-block .more span,
+.contacts-item .contacts-item_value .email span,
 .articles-item .title .underscore {
     background-image: linear-gradient(#ff80ab, #ff80ab);
     background-position: 0 99%;
@@ -2299,6 +2303,26 @@ table.shop-cart tr td.delimiter {
 .contacts-box .schedule {
     font-size: 16px;
     margin-top: 9px;
+}
+
+.contacts-item {
+    margin-bottom: 20px;
+}
+
+.contacts-item .contacts-item_title {
+    line-height: 140%;
+}
+
+.contacts-item .contacts-item_value {
+    line-height: 140%;
+}
+
+.contacts-item .contacts-item_value .email {
+    text-decoration: none;
+}
+
+.contacts-item .contacts-item_value .phone {
+    text-decoration: none;
 }
 
 .feedback-form-box {

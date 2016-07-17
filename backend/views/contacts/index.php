@@ -175,7 +175,7 @@ if (Yii::$app->session->hasFlash('success')) {
             ]); ?>
         </div>
         <div role="tabpanel" id="settings" class="tab-pane<?php if ($tabIndex === 2): ?> active<? endif; ?>">
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin(['action' => Url::to(['index', 'tabIndex' => 2])]); ?>
 
             <?= $form->field($seoInfo, 'heading')->textInput(['maxlength' => 255, 'style' => 'max-width: 500px;']) ?>
 

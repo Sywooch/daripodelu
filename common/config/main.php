@@ -133,6 +133,11 @@ return [
                     'suffix' => '.html',
                 ],
                 [
+                    'pattern' => '<controller:\w+>',
+                    'route' => '<controller>/index',
+                    'suffix' => '.html',
+                ],
+                [
                     'class' => 'common\components\CmsUrlRule',
                     'suffix' => '.html',
                 ],

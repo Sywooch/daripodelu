@@ -37,7 +37,7 @@ use frontend\widgets\BlockWidget;
                                 <a href="<?= Url::to(['news/index']); ?>">Новости</a>
                             </li>
                             <li>
-                                <a href="<?= Url::to(['contact/index']); ?>">Контакты</a>
+                                <a href="<?= Url::to(['contacts/index']); ?>">Контакты</a>
                             </li>
                         </ul>
                     </nav>

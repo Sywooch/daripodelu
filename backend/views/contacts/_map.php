@@ -13,14 +13,16 @@ use backend\models\Map;
 /* @var $this yii\web\View */
 /* @var $mapModel backend\models\Map */
 
-$centerCoords = [
-    'lat' => 55.7372,
-    'lng' => 37.6066,
-];
-$zoom = 10;
+if ($mapModel->isNewRecord) {
+    $mapModel->center_lat = 55.7372;
+    $mapModel->center_lng = 37.6066;
+    $mapModel->point_lat = 55.7372;
+    $mapModel->point_lng = 37.6066;
+    $mapModel->zoom = 10;
+}
 
 $placemark = new YandexPlacemark(
-    [$centerCoords['lat'], $centerCoords['lng']],
+    [$mapModel->point_lat, $mapModel->point_lng],
     [],
     [
         'events' => [
@@ -39,8 +41,8 @@ $placemark = new YandexPlacemark(
 $map = new YandexMap(
     'yandex_map',
     [
-        'center' => [$centerCoords['lat'], $centerCoords['lng']],
-        'zoom' => $zoom,
+        'center' => [$mapModel->center_lat, $mapModel->center_lng],
+        'zoom' => $mapModel->zoom,
         'type' => $mapModel->type,
         'controls' => ['zoomControl', 'searchControl', 'typeSelector',  'fullscreenControl', 'geolocationControl'],
     ],
@@ -85,19 +87,19 @@ $map = new YandexMap(
     'map' => $map,
 ]); ?>
 
-<?php $mapForm = ActiveForm::begin(); ?>
+<?php $mapForm = ActiveForm::begin(['action' => Url::to(['index', 'tabIndex' => 1])]); ?>
 
-    <?= $mapForm->field($mapModel, 'center_lat')->hiddenInput(['id' => 'centerLatField', 'value' => $centerCoords['lat']])->label(false); ?>
+    <?= $mapForm->field($mapModel, 'center_lat')->hiddenInput(['id' => 'centerLatField',])->label(false); ?>
 
-    <?= $mapForm->field($mapModel, 'center_lng')->hiddenInput(['id' => 'centerLngField', 'value' => $centerCoords['lng']])->label(false); ?>
+    <?= $mapForm->field($mapModel, 'center_lng')->hiddenInput(['id' => 'centerLngField',])->label(false); ?>
 
-    <?= $mapForm->field($mapModel, 'point_lat')->hiddenInput(['id' => 'pointLatField', 'value' => $centerCoords['lat']])->label(false); ?>
+    <?= $mapForm->field($mapModel, 'point_lat')->hiddenInput(['id' => 'pointLatField',])->label(false); ?>
 
-    <?= $mapForm->field($mapModel, 'point_lng')->hiddenInput(['id' => 'pointLngField', 'value' => $centerCoords['lat']])->label(false); ?>
+    <?= $mapForm->field($mapModel, 'point_lng')->hiddenInput(['id' => 'pointLngField',])->label(false); ?>
 
-    <?= $mapForm->field($mapModel, 'zoom')->hiddenInput(['id' => 'zoomField', 'value' => $zoom])->label(false); ?>
+    <?= $mapForm->field($mapModel, 'zoom')->hiddenInput(['id' => 'zoomField',])->label(false); ?>
 
-    <?= $mapForm->field($mapModel, 'type')->hiddenInput(['id' => 'typeField', 'value' => $mapModel->type])->label(false); ?>
+    <?= $mapForm->field($mapModel, 'type')->hiddenInput(['id' => 'typeField',])->label(false); ?>
 
     <div class="panel panel-default">
         <div class="panel-heading">Элементы управления картой</div>

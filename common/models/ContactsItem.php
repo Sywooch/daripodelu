@@ -68,6 +68,7 @@ class ContactsItem extends \yii\db\ActiveRecord
                     return $('#contactTypeFld').val() == '" . ContactsItem::TYPE_PHONE . "' || $('#contactTypeFld').val() == '" . ContactsItem::TYPE_FAX . "';
                 }",
             ],
+            [['name', 'value', 'note',], 'trim', 'skipOnEmpty' => true],
         ];
     }
 

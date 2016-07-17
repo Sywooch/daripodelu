@@ -49,7 +49,7 @@ class ContactsController extends Controller
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex($tabIndex = 0)
     {
         if ( !Yii::$app->user->can(ContactsPermissions::INDEX)) {
             throw new ForbiddenHttpException('Access denied');
@@ -82,7 +82,7 @@ class ContactsController extends Controller
             return;
         }
 
-        $tabIndex = 0;
+        $tabIndex = (int) $tabIndex;
         $searchModel = new ContactsItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -100,12 +100,12 @@ class ContactsController extends Controller
                 } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
                 }
-
-                $tabIndex = 1;
             }
+
+            return $this->redirect(['index', 'tabIndex' => 2]);
         }
 
-        $mapModel = MapModel::findModel('contacts', 'index');
+        $mapModel = MapModel::findByController('contacts', 'index');
         if (is_null($mapModel)) {
             $mapModel = new MapModel();
             $mapModel->vendor = MapModel::VENDOR_YANDEX;
@@ -116,6 +116,21 @@ class ContactsController extends Controller
             $mapModel->type_selector = MapModel::CONTROL_ON;
             $mapModel->ruler_control = MapModel::CONTROL_ON;
             $mapModel->status = MapModel::STATUS_ACTIVE;
+        }
+
+        if (isset($_POST['saveMap'])) {
+            if ($mapModel->load(Yii::$app->request->post())) {
+                if ($mapModel->isNewRecord) {
+                    $mapModel->name = 'Карта на странице "Контакты"';
+                }
+                if ($mapModel->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', '<strong>Saved!</strong> Changes saved successfully.'));
+                } else {
+                    Yii::$app->session->setFlash('error', Yii::t('app', '<strong> Error! </strong> An error occurred while saving the data.'));
+                }
+            }
+
+            return $this->redirect(['index', 'tabIndex' => 1]);
         }
 
         return $this->render('index', [

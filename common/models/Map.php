@@ -69,6 +69,15 @@ class Map extends \yii\db\ActiveRecord
     const CONTROL_OFF = 0;
     const CONTROL_ON = 1;
 
+    const CONTROL_YANDEX_GEOLOCATION = 'geolocationControl';
+    const CONTROL_YANDEX_SEARCH = 'searchControl';
+    const CONTROL_YANDEX_ROUTE = 'routeEditor';
+    const CONTROL_YANDEX_TRAFFIC = 'trafficControl';
+    const CONTROL_YANDEX_TYPE = 'typeSelector';
+    const CONTROL_YANDEX_FULLSCREEN = 'fullscreenControl';
+    const CONTROL_YANDEX_ZOOM = 'zoomControl';
+    const CONTROL_YANDEX_RULER = 'rulerControl';
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
@@ -238,14 +247,16 @@ class Map extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param string $controller название контроллера
-     * @param string $action название действия
-     * @param integer $itemId ID элемента. По умолчанию null
-     * @param integer $ctgId ID категории. По умолчанию null
-     * @param string $module название модуля. По умолчанию null
+     * Returns the map's info by controller and action
+     *
+     * @param string $controller name of controller
+     * @param string $action name of action
+     * @param integer $itemId item ID. Default null
+     * @param integer $ctgId category ID. Default null
+     * @param string $module name of module. Default null
      * @return null|Map
      */
-    public static function findModel($controller, $action, $itemId = null, $ctgId = null, $module = null)
+    public static function findByController($controller, $action, $itemId = null, $ctgId = null, $module = null)
     {
         return static::find()->where(['module_id' => $module, 'controller_id' => $controller, 'action_id' => $action, 'item_id' => $itemId, 'ctg_id' => $ctgId])->one();
     }
