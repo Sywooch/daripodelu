@@ -79,8 +79,8 @@ class UpdateController extends \yii\console\Controller
                     }
                 }
 
-                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_PRODUCT, 'Обновлены цены и/или остатки у ' . $updateProductResult . ' товаров во временной таблице.');
-                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров во временной таблице.');
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::TYPE_PRODUCT, 'Обновлены цены и/или остатки у ' . $updateProductResult . ' товаров во временной таблице.');
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров во временной таблице.');
 
 //                Yii::$app->db->createCommand('CALL gifts_update_stock()')->execute();
                 $updateProductResult = (int)Yii::$app->db->createCommand('
@@ -107,8 +107,8 @@ class UpdateController extends \yii\console\Controller
                         sp.id = spt.id and sp.code = spt.code
                 ')->execute();
 
-                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_PRODUCT, 'Обновлены цены и/или остатки у ' . $updateProductResult . ' товаров.');
-                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров.');
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::TYPE_PRODUCT, 'Обновлены цены и/или остатки у ' . $updateProductResult . ' товаров.');
+                Yii::$app->updateGiftsDBLogger->info(UpdateGiftsDBLog::ACTION_UPDATE, UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT, 'Обновлены остатки у ' . $updateSlaveProductResult . ' подчиненых товаров.');
             }
         }
         catch (SimpleXMLException $xmlE) {
@@ -116,7 +116,7 @@ class UpdateController extends \yii\console\Controller
             yii::endProfile('update_StockFileAnalyze');
             Yii::$app->updateGiftsDBLogger->error(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_STOCK,
+                UpdateGiftsDBLog::TYPE_STOCK,
                 'Ошибка во время парсирования (разбора) файла stock.xml'
             );
             echo $xmlE->getMessage() . "\n";
@@ -124,7 +124,7 @@ class UpdateController extends \yii\console\Controller
         catch (\Exception $e) {
             yii::endProfile('update_StockFilePrepare');
             yii::endProfile('update_StockFileAnalyze');
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_STOCK, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_STOCK, $e->getMessage());
             echo $e->getMessage() . "\n";
         }
     }
@@ -137,7 +137,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_CATEGORY,
+                UpdateGiftsDBLog::TYPE_CATEGORY,
                 'Начало процесса добавления новых категорий в БД.'
             );
             $newCategories = Yii::$app->db->createCommand('SELECT id FROM dpd_catalogue_tmp ct WHERE ct.id NOT IN (SELECT c.id FROM dpd_catalogue c WHERE ct.id = c.id)')->queryAll();
@@ -148,7 +148,7 @@ class UpdateController extends \yii\console\Controller
                     foreach ($newCategories as $item) {
                         Yii::$app->updateGiftsDBLogger->success(
                             UpdateGiftsDBLog::ACTION_INSERT,
-                            UpdateGiftsDBLog::ITEM_CATEGORY,
+                            UpdateGiftsDBLog::TYPE_CATEGORY,
                             'Добавлена новая категория',
                             $item['id']
                         );
@@ -159,21 +159,21 @@ class UpdateController extends \yii\console\Controller
             if (count($newCategories) == 0 || $result == 0) {
                 Yii::$app->updateGiftsDBLogger->info(
                     UpdateGiftsDBLog::ACTION_INSERT,
-                    UpdateGiftsDBLog::ITEM_CATEGORY,
+                    UpdateGiftsDBLog::TYPE_CATEGORY,
                     'Появилось ' . count($newCategories) . ' новых категорий. В БД добавлено ' . $result . ' категорий.'
                 );
             }
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_CATEGORY,
+                UpdateGiftsDBLog::TYPE_CATEGORY,
                 'Окончание процесса добавления новых категорий в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_CATEGORY, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_CATEGORY, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_CATEGORY,
+                UpdateGiftsDBLog::TYPE_CATEGORY,
                 'Окончание процесса добавления новых категорий в БД.'
             );
         }
@@ -187,7 +187,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                UpdateGiftsDBLog::TYPE_FILTER_TYPE,
                 'Начало процесса добавления новых типов фильтров в БД.'
             );
 
@@ -196,21 +196,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                UpdateGiftsDBLog::TYPE_FILTER_TYPE,
                 'Появилось ' . count($newFilterTypes) . ' новых типов фильтров. В БД добавлено ' . $result . ' типов фильтров.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                UpdateGiftsDBLog::TYPE_FILTER_TYPE,
                 'Окончание процесса добавления новых типов фильтров в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_FILTER_TYPE, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_FILTER_TYPE, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER_TYPE,
+                UpdateGiftsDBLog::TYPE_FILTER_TYPE,
                 'Окончание процесса добавления новых типов фильтров в БД.'
             );
         }
@@ -224,7 +224,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER,
+                UpdateGiftsDBLog::TYPE_FILTER,
                 'Начало процесса добавления новых фильтров в БД.'
             );
 
@@ -233,21 +233,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER,
+                UpdateGiftsDBLog::TYPE_FILTER,
                 'Появилось ' . count($newFilters) . ' новых фильтров. В БД добавлено ' . $result . ' фильтров.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER,
+                UpdateGiftsDBLog::TYPE_FILTER,
                 'Окончание процесса добавления новых фильтров в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_FILTER, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_FILTER, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_FILTER,
+                UpdateGiftsDBLog::TYPE_FILTER,
                 'Окончание процесса добавления новых фильтров в БД.'
             );
         }
@@ -261,7 +261,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRINT,
+                UpdateGiftsDBLog::TYPE_PRINT,
                 'Начало процесса добавления новых методов нанесения в БД.'
             );
 
@@ -270,21 +270,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRINT,
+                UpdateGiftsDBLog::TYPE_PRINT,
                 'Появилось ' . count($newPrints) . ' новых методов нанесения. В БД добавлено ' . $result . ' методов нанесения.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRINT,
+                UpdateGiftsDBLog::TYPE_PRINT,
                 'Окончание процесса добавления новых методов нанесения в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRINT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_PRINT, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRINT,
+                UpdateGiftsDBLog::TYPE_PRINT,
                 'Окончание процесса добавления новых методов нанесения в БД.'
             );
         }
@@ -298,7 +298,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
                 'Начало процесса добавления новых товаров в БД.'
             );
 
@@ -310,7 +310,7 @@ class UpdateController extends \yii\console\Controller
                     foreach ($newProducts as $item) {
                         Yii::$app->updateGiftsDBLogger->success(
                             UpdateGiftsDBLog::ACTION_INSERT,
-                            UpdateGiftsDBLog::ITEM_PRODUCT,
+                            UpdateGiftsDBLog::TYPE_PRODUCT,
                             'Добавлен новый товар',
                             $item['id']
                         );
@@ -320,21 +320,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
                 'Появилось ' . count($newProducts) . ' новых товаров. В БД добавлено ' . $result . ' товаров.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
                 'Окончание процесса добавления новых товаров в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_PRODUCT, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
                 'Окончание процесса добавления новых товаров в БД.'
             );
         };
@@ -348,7 +348,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT,
                 'Начало процесса добавления новых "подчиненных" товаров в БД.'
             );
 
@@ -357,21 +357,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT,
                 'Появилось ' . count($newSlaveProducts) . ' новых "подчиненных" товаров. В БД добавлено ' . $result . ' "подчиненных" товаров.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT,
                 'Окончание процесса добавления новых "подчиненных" товаров в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_SLAVE_PRODUCT,
+                UpdateGiftsDBLog::TYPE_SLAVE_PRODUCT,
                 'Окончание процесса добавления новых "подчиненных" товаров в БД.'
             );
         }
@@ -385,7 +385,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                UpdateGiftsDBLog::TYPE_PRODUCT_ATTACH,
                 'Начало процесса добавления информации о доп. файлах товаров в БД.'
             );
 
@@ -403,21 +403,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                UpdateGiftsDBLog::TYPE_PRODUCT_ATTACH,
                 'Появилось ' . count($newsAttachments) . ' новых доп. файлов товаров. В БД добавлена информаци о ' . $result . ' доп. файлов.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                UpdateGiftsDBLog::TYPE_PRODUCT_ATTACH,
                 'Окончание процесса добавления информации о доп. файлах товаров в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_PRODUCT_ATTACH, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_ATTACH,
+                UpdateGiftsDBLog::TYPE_PRODUCT_ATTACH,
                 'Окончание процесса добавления информации о доп. файлах товаров в БД.'
             );
         }
@@ -428,7 +428,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_PRINT_REL,
                 'Начало процесса добавления новых связей между товарами и методами нанесения в БД.'
             );
 
@@ -446,21 +446,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_PRINT_REL,
                 'Появилось ' . count($newPrintProductRel) . ' новых связей между товарами и методами нанесения. В БД добавлено ' . $result . ' связей.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_PRINT_REL,
                 'Окончание процесса добавления новых связей между товарами и методами нанесения в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_PRODUCT_PRINT_REL, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_PRINT_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_PRINT_REL,
                 'Окончание процесса добавления новых связей между товарами и методами нанесения в БД.'
             );
         }
@@ -471,7 +471,7 @@ class UpdateController extends \yii\console\Controller
         try {
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
                 'Начало процесса добавления новых связей между товарами и фильтрами в БД.'
             );
 
@@ -488,21 +488,21 @@ class UpdateController extends \yii\console\Controller
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
                 'Появилось ' . count($newProductFilterRel) . ' новых связей между товарами и фильтрами. В БД добавлено ' . $result . ' связей.'
             );
 
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
                 'Окончание процесса добавления новых связей между товарами и фильтрами в БД.'
             );
         }
         catch (\Exception $e) {
-            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL, $e->getMessage());
             Yii::$app->updateGiftsDBLogger->info(
                 UpdateGiftsDBLog::ACTION_INSERT,
-                UpdateGiftsDBLog::ITEM_PRODUCT_FILTER_REL,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
                 'Окончание процесса добавления новых связей между товарами и фильтрами в БД.'
             );
         }

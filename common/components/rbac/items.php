@@ -111,6 +111,21 @@ return [
     'image_change_order' => [
         'type' => 2,
     ],
+    'log_index' => [
+        'type' => 2,
+    ],
+    'log_view' => [
+        'type' => 2,
+    ],
+    'log_create' => [
+        'type' => 2,
+    ],
+    'log_update' => [
+        'type' => 2,
+    ],
+    'log_delete' => [
+        'type' => 2,
+    ],
     'menu_index' => [
         'type' => 2,
     ],
@@ -258,6 +273,8 @@ return [
             'image_delete',
             'image_set_main',
             'image_change_order',
+            'log_index',
+            'log_view',
             'news_index',
             'news_view',
             'news_create',
@@ -286,6 +303,9 @@ return [
         'children' => [
             'update',
             'delete',
+            'log_create',
+            'log_update',
+            'log_delete',
             'menu_index',
             'menu_view',
             'menu_create',

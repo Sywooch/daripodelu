@@ -147,5 +147,6 @@ return [
     'The type of information that may be contained in the field "Value".' => 'Тип информации, которая может содержаться в поле "Значение".',
     '{attribute} is not a valid phone number.' => 'Значение "{attribute}" не является правильным номером телефона.',
     'Only map with status "Published" is displayed on the site.' => 'Только карта со статусом "Опубликовано" отображается на сайте.',
+    'The Log of downloads from Gifts.ru website' => 'Журнал загрузок с сайта Gifts.ru',
     '' => '',
 ];

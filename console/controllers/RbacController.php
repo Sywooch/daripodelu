@@ -13,6 +13,7 @@ use common\components\rbac\CataloguePermissions;
 use common\components\rbac\ContactsPermissions;
 use common\components\rbac\DefaultPermissions;
 use common\components\rbac\ImagePermissions;
+use common\components\rbac\LogPermissions;
 use common\components\rbac\MenuPermissions;
 use common\components\rbac\NewsPermissions;
 use common\components\rbac\OrderPermissions;
@@ -78,6 +79,12 @@ class RbacController extends Controller
         $imageDelete = $authManager->createPermission(ImagePermissions::DELETE);
         $imageSetMain = $authManager->createPermission(ImagePermissions::SET_MAIN);
         $imageChangeOrder = $authManager->createPermission(ImagePermissions::CHANGE_ORDER);
+
+        $logIndex = $authManager->createPermission(LogPermissions::INDEX);
+        $logView = $authManager->createPermission(LogPermissions::VIEW);
+        $logCreate = $authManager->createPermission(LogPermissions::CREATE);
+        $logUpdate = $authManager->createPermission(LogPermissions::UPDATE);
+        $logDelete = $authManager->createPermission(LogPermissions::DELETE);
 
         $menuIndex = $authManager->createPermission(MenuPermissions::INDEX);
         $menuView = $authManager->createPermission(MenuPermissions::VIEW);
@@ -166,6 +173,12 @@ class RbacController extends Controller
         $authManager->add($imageDelete);
         $authManager->add($imageSetMain);
         $authManager->add($imageChangeOrder);
+
+        $authManager->add($logIndex);
+        $authManager->add($logView);
+        $authManager->add($logCreate);
+        $authManager->add($logUpdate);
+        $authManager->add($logDelete);
 
         $authManager->add($menuIndex);
         $authManager->add($menuView);
@@ -274,6 +287,9 @@ class RbacController extends Controller
         $authManager->addChild($moderator, $imageSetMain);
         $authManager->addChild($moderator, $imageChangeOrder);
 
+        $authManager->addChild($moderator, $logIndex);
+        $authManager->addChild($moderator, $logView);
+
         $authManager->addChild($moderator, $newsIndex);
         $authManager->addChild($moderator, $newsView);
         $authManager->addChild($moderator, $newsCreate);
@@ -304,6 +320,10 @@ class RbacController extends Controller
         // Admin
         $authManager->addChild($admin, $update);
         $authManager->addChild($admin, $delete);
+
+        $authManager->addChild($admin, $logCreate);
+        $authManager->addChild($admin, $logUpdate);
+        $authManager->addChild($admin, $logDelete);
 
         $authManager->addChild($admin, $menuIndex);
         $authManager->addChild($admin, $menuView);

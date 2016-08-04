@@ -6,6 +6,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use backend\models\Order;
+use common\components\rbac\LogPermissions;
 use common\components\rbac\MenuPermissions;
 use common\components\rbac\SettingsPermissions;
 use common\components\rbac\UserPermissions;
@@ -68,7 +69,13 @@ BootboxAsset::overrideSystemConfirm();
                     ['label' => 'Контакты', 'url' => ['/contacts/index']],
                 ]
             ],
-            ['label' => 'Настройки', 'url' => ['/settings/index'], 'visible' => Yii::$app->user->can(SettingsPermissions::INDEX)],
+            [
+                'label' => 'Система',
+                'items' => [
+                    ['label' => 'Журнал работы с Gifts.ru', 'url' => ['/update-gifts-log/index'], 'visible' => Yii::$app->user->can(LogPermissions::INDEX)],
+                    ['label' => 'Настройки', 'url' => ['/settings/index'], 'visible' => Yii::$app->user->can(SettingsPermissions::INDEX)],
+                ],
+            ],
             ['label' => 'Пользователи', 'url' => ['/user/index'], 'visible' => Yii::$app->user->can(UserPermissions::INDEX)],
         ]
     ]);
