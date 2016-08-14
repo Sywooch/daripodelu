@@ -283,12 +283,129 @@ class LoadController extends \yii\console\Controller
         }
     }
 
+    public function actionInsertprod()
+    {
+        try {
+            //Формирование массива категорий
+            yii::beginProfile('ProductsPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
+                throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
+            }
+
+            $treeXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')
+            );
+
+            if ($treeXML === false) {
+                throw new \Exception('File tree.xml was not processed. Products were not inserted in DB.');
+            }
+
+            $treeArr = $this->makeArrFromTree($treeXML);
+
+            $productCategoryPairs = [];
+            if (count($treeArr) > 0) {
+                foreach ($treeArr as $row) {
+                    //Формирование массива из пар 'id товара' => 'id родительской категории'
+                    if (isset($row['product']) && is_array($row['product'])) {
+                        foreach ($row['product'] as $prod) {
+                            $productCategoryPairs[$prod['product_id']] = $prod['parent_id'];
+                        }
+                    }
+                }
+            }
+
+            $stockArr = [];
+            try {
+                //Закгрузка файла stock.xml
+                yii::beginProfile('StockFilePrepare');
+                $stockXML = new \SimpleXMLElement(
+                    file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')
+                );
+                yii::endProfile('StockFilePrepare');
+
+                if ($stockXML === false) {
+                    throw new \Exception('File stock.xml was not processed.');
+                }
+
+                //Формирование массива с количеством товаров и их ценами
+                yii::beginProfile('StockFileAnalyze');
+                $stockArr = $this->makeArrFromStockTree($stockXML);
+                yii::endProfile('StockFileAnalyze');
+            }
+            catch (Exception $e) {
+                yii::endProfile('StockFilePrepare');
+                yii::endProfile('StockFileAnalyze');
+                echo $e->getMessage() . "\n";
+            }
+
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found.');
+            }
+//----------------------------------------------------------------------------------------------------------------------
+
+            $valuesArr = [];
+
+//----------------------------------------------------------------------------------------------------------------------
+            //Запись информации о товарах в БД
+            if (count($valuesArr) > 0) {
+                yii::beginProfile('ProductsInsertIntoDB');
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($valuesArr);
+                do {
+                    $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product_tmp}}',
+                        [
+                            'id',
+                            'catalogue_id',
+                            'group_id',
+                            'code',
+                            'name',
+                            'product_size',
+                            'matherial',
+                            'small_image',
+                            'big_image',
+                            'super_big_image',
+                            'content',
+                            'status_id',
+                            'status_caption',
+                            'brand',
+                            'weight',
+                            'pack_amount',
+                            'pack_weigh',
+                            'pack_volume',
+                            'pack_sizex',
+                            'pack_sizey',
+                            'pack_sizez',
+                            'amount',
+                            'free',
+                            'inwayamount',
+                            'inwayfree',
+                            'enduserprice',
+                            'user_row'
+                        ],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+                yii::endProfile('ProductsInsertIntoDB');
+            }
+        }
+        catch (\Exception $e) {
+            yii::endProfile('ProductsPrepare');
+            yii::endProfile('ProductsInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+    }
+
     /**
      * Запись товаров в БД
      *
      * @throws \Exception
      */
-    public function actionInsertprod()
+    public function actionInsertprodOld()
     {
         try {
             //Формирование массива категорий
