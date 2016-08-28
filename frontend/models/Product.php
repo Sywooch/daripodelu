@@ -10,7 +10,6 @@ use backend\behaviors\ImagesBehavior;
  * This is the model class for table "{{%product}}".
  *
  * @property integer $id
- * @property integer $catalogue_id
  * @property integer $group_id
  * @property string $code
  * @property string $name
@@ -68,8 +67,8 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'catalogue_id', 'name', 'product_size', 'matherial', 'status_caption', 'brand', 'weight'], 'required'],
-            [['id', 'catalogue_id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
+            [['id', 'name', 'product_size', 'matherial', 'status_caption', 'brand', 'weight'], 'required'],
+            [['id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
             [['content'], 'string'],
             [['weight', 'pack_weigh', 'pack_volume', 'pack_sizex', 'pack_sizey', 'pack_sizez', 'enduserprice'], 'number'],
             [['code'], 'string', 'max' => 100],
@@ -86,7 +85,6 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID товара'),
-            'catalogue_id' => Yii::t('app', 'ID категории'),
             'group_id' => Yii::t('app', 'ID группы'),
             'code' => Yii::t('app', 'Артикул'),
             'name' => Yii::t('app', 'Название'),
@@ -156,14 +154,17 @@ class Product extends \yii\db\ActiveRecord
         }
 
         $productsQuery = Product::find()
+            ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
             ->andWhere(['in', 'catalogue_id', $ids])
             ->andWhere(['not', ['group_id' => null]])
             ->groupBy(['group_id']);
 
         $productsQuery = Product::find()
             ->union($productsQuery, true)
+            ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
             ->andWhere(['in', 'catalogue_id', $ids])
-            ->andWhere(['group_id' => null]);
+            ->andWhere(['group_id' => null])
+            ->groupBy(['id']);
 
         $products = Product::find()
             ->select('*')
@@ -199,7 +200,7 @@ class Product extends \yii\db\ActiveRecord
      */
     public function getCatalogue()
     {
-        return $this->hasOne(Catalogue::className(), ['id' => 'catalogue_id']);
+        return $this->hasOne(Catalogue::className(), ['id' => 'catalogue_id'])->viaTable('{{%catalogue_product}}', ['product_id' => 'id']);
     }
 
     /**

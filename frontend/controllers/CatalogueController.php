@@ -12,8 +12,10 @@ use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use common\models\SEOInformation;
 use frontend\models\Catalogue;
+use frontend\models\CatalogueProduct;
 use frontend\models\FeedbackForm;
 use frontend\models\FilterType;
+use frontend\models\Filter;
 use frontend\models\Product;
 
 class CatalogueController extends \yii\web\Controller
@@ -124,6 +126,7 @@ class CatalogueController extends \yii\web\Controller
             $productsQuery = $this->prepareFilterQuery(Product::find(), $filterParams);
             $productsQueryPart = Product::find()
                 ->from(['q' => $productsQuery])
+                ->innerJoin(CatalogueProduct::tableName(), CatalogueProduct::tableName() . '.product_id = q.id')
                 ->andWhere(['in', 'catalogue_id', $ids])
                 ->andWhere(['not', ['group_id' => null]])
                 ->groupBy(['group_id']);
@@ -131,6 +134,7 @@ class CatalogueController extends \yii\web\Controller
             $productsQuery = Product::find()
                 ->from(['q' => $productsQuery])
                 ->union($productsQueryPart, true)
+                ->innerJoin(CatalogueProduct::tableName(), CatalogueProduct::tableName() . '.product_id = q.id')
                 ->andWhere(['in', 'catalogue_id', $ids])
                 ->andWhere(['group_id' => null]);
 
@@ -142,7 +146,9 @@ class CatalogueController extends \yii\web\Controller
         }
 
         //Prepare filters for the list of products
-        $productIdsQuery = Product::find()->select(['id'])->andWhere(['catalogue_id' => $ids]);
+        $productIdsQuery = Product::find()->select(['id'])
+            ->innerJoin(CatalogueProduct::tableName(), CatalogueProduct::tableName() . '.product_id = ' . Product::tableName() . '.id')
+            ->andWhere(['catalogue_id' => $ids]);
 
         $amount = 0;
         $priceFrom = 0;
@@ -163,6 +169,8 @@ class CatalogueController extends \yii\web\Controller
             }
         }
 
+        $productsQuery = $productsQuery->groupBy(['id']);
+
         $productProvider = new ActiveDataProvider([
             'query' => $productsQuery,
             'pagination' => [
@@ -179,8 +187,24 @@ class CatalogueController extends \yii\web\Controller
         //END Get the list of products with list of group products------------------------------------------------------
 
 
-        //Get new products count
-        $newProductsCount = Product::find()->andWhere(['catalogue_id' => $ids])->andWhere(['status_id' => 0])->count();
+        //Get new products ---------------------------------------------------------------------------------------------
+        $catalogueIdsListAsString = implode(',', $ids);
+        $catalogueIdsListAsString - trim($catalogueIdsListAsString, ',');
+
+        $filterParamsForNew = (! empty($filterParams))? $filterParams . '-8.229': '8.229';
+        $newProductsQuery = $this->prepareFilterQuery(Product::find(), $filterParamsForNew);
+        $newProductsQuery = Product::find()
+            ->select('id')
+            ->from(['q' => $newProductsQuery])
+            ->innerJoin(CatalogueProduct::tableName(), CatalogueProduct::tableName() . '.product_id = q.id')
+            ->andWhere(['in', 'catalogue_id', $ids])
+            ->groupBy(['id']);
+
+        $newProductsIds = $newProductsQuery->asArray()->all();
+
+        $newProductsIds = ArrayHelper::getColumn($newProductsIds, 'id');
+
+        //END Get new products -----------------------------------------------------------------------------------------
 
 
         //Prepare filters for the list of products----------------------------------------------------------------------
@@ -208,13 +232,13 @@ class CatalogueController extends \yii\web\Controller
                 'filters' => function ($query) use ($filtersArr) {
                     $orCondition = ['or'];
                     foreach ($filtersArr as $filterType => $filterIds) {
-                        $orCondition[] = ['and', ['{{%filter}}.type_id' => $filterType], ['{{%filter}}.id' => $filterIds]];
+                        $orCondition[] = ['and', [Filter::tableName() . '.type_id' => $filterType], [Filter::tableName() . '.id' => $filterIds]];
                     }
-                    $query->andWhere($orCondition)->orderBy(['{{%filter}}.name' => SORT_ASC]);
+                    $query->andWhere($orCondition)->orderBy([Filter::tableName() . '.name' => SORT_ASC]);
                 }
             ])
-            ->andWhere(['{{%filter_type}}.id' => $productFilterTypes])
-            ->orderBy(['{{%filter_type}}.name' => SORT_ASC])
+            ->andWhere([FilterType::tableName() . '.id' => $productFilterTypes])
+            ->orderBy([FilterType::tableName() . '.name' => SORT_ASC])
             ->all();
         //END Prepare filters-------------------------------------------------------------------------------------------
 
@@ -249,7 +273,8 @@ class CatalogueController extends \yii\web\Controller
             'model' => $model,
             'categories' => $childCategories,
             'productsProvider' => $productProvider,
-            'newProductsCount' => $newProductsCount,
+            'newProductsIds' => $newProductsIds,
+            'newProductsCount' => count($newProductsIds),
             'filterTypes' => $filters,
             'amountFilter' => $amount == 0 ? '' : $amount,
             'priceFromFilter' => $priceFrom == 0 ? '' : $priceFrom,
@@ -278,15 +303,9 @@ class CatalogueController extends \yii\web\Controller
         $existQueryToProductFilter = false;
         $counter = 0;
         foreach ($filters as $filterType => $filter) {
-            if ($filterType == 8) {
-                if ($filter == 229) {
-                    $query->andWhere(['status_id' => 0]);
-                }
-            } else {
-                $existQueryToProductFilter = true;
-                $counter++;
-                $productFiltersQuery->orWhere(['and', 'type_id=' . $filterType, 'filter_id=' . $filter]);
-            }
+            $existQueryToProductFilter = true;
+            $counter++;
+            $productFiltersQuery->orWhere(['and', 'type_id=' . $filterType, 'filter_id=' . $filter]);
         }
 
         if ($existQueryToProductFilter === true) {
@@ -341,7 +360,8 @@ class CatalogueController extends \yii\web\Controller
                     'COUNT({{%product}}.id) as products_count',
                 ])
                 ->where(['parent_id' => $model->id])
-                ->leftJoin('{{%product}}', '{{%catalogue}}.id = {{%product}}.catalogue_id')
+                ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.catalogue_id = {{%catalogue}}.id')
+                ->innerJoin('{{%product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
                 ->groupBy('{{%catalogue}}.id')
                 ->orderBy(['{{%catalogue}}.id' => SORT_ASC])
                 ->all();
@@ -352,7 +372,8 @@ class CatalogueController extends \yii\web\Controller
                     'COUNT({{%product}}.id) as products_count',
                 ])
                 ->where(['parent_id' => $model->parent_id])
-                ->leftJoin('{{%product}}', '{{%catalogue}}.id = {{%product}}.catalogue_id')
+                ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.catalogue_id = {{%catalogue}}.id')
+                ->innerJoin('{{%product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
                 ->groupBy('{{%catalogue}}.id')
                 ->orderBy(['{{%catalogue}}.id' => SORT_ASC])
                 ->all();
