@@ -340,6 +340,43 @@ class UpdateController extends \yii\console\Controller
         };
     }
 
+    public function actionCategoryProductRel()
+    {
+        try {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL,
+                'Начало процесса добавления новых связей между категориями и товарами в БД.'
+            );
+
+            $newCategoryProductRel = Yii::$app->db->createCommand('SELECT * FROM dpd_catalogue_product_tmp cpt WHERE (cpt.catalogue_id, cpt.product_id) NOT IN (SELECT cp.catalogue_id, cp.product_id FROM dpd_catalogue_product cp WHERE cpt.catalogue_id = cp.catalogue_id AND cpt.product_id = cp.product_id)')->queryAll();
+            $result = Yii::$app->db->createCommand('INSERT IGNORE INTO dpd_catalogue_product
+                                                        SELECT *
+                                                        FROM dpd_catalogue_product_tmp cpt
+                                                        WHERE
+                                                            (cpt.catalogue_id, cpt.product_id) NOT IN (
+                                                                SELECT cp.catalogue_id, cp.product_id
+                                                                FROM dpd_catalogue_product cp
+                                                                WHERE cpt.catalogue_id = cp.catalogue_id AND cpt.product_id = cp.product_id
+                                                            )'
+            )->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL,
+                'Окончание процесса добавления новых связей между категориями и товарами в БД.'
+            );
+        }
+        catch (\Exception $e) {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_INSERT, UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_INSERT,
+                UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL,
+                'Окончание процесса добавления новых связей между категориями и товарами в БД.'
+            );
+        }
+    }
+
     /**
      * Adds information about new "slave goods" in DB
      */
