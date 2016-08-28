@@ -32,6 +32,7 @@ class UpdateGiftsDBLog extends \yii\db\ActiveRecord
     const ACTION_PARSING = 'parsing';
 
     const TYPE_CATEGORY = 'category';
+    const TYPE_CATEGORY_PRODUCT_REL = 'category_product_rel';
     const TYPE_PRODUCT = 'product';
     const TYPE_FILTER_TYPE = 'filter_type';
     const TYPE_FILTER = 'filter';

@@ -14,6 +14,7 @@ use frontend\widgets\BlockWidget;
 /* @var $productsProvider yii\data\ActiveDataProvider */
 /* @var $products frontend\models\Product[] */
 /* @var $filterTypes frontend\models\FilterType[] */
+/* @var $newProductsIds array */
 
 Select2Asset::register($this);
 
@@ -120,7 +121,8 @@ $products = $productsProvider->getModels();
             <div class="product-item" itemscope itemtype="http://schema.org/Product">
                 <div class="panel">
                     <div class="panel-top"></div>
-                    <?php if ($product->status_id == 0): ?><span class="marker new">Новинка</span><? endif; ?>
+                    <?php /* if ($product->status_id == 0): ?><span class="marker new">Новинка</span><? endif; */ ?>
+                    <?php if (in_array($product->id, $newProductsIds)): ?><span class="marker new">Новинка</span><? endif; ?>
                     <a class="name" href="<?= Url::to(['product/view', 'id' => $product->id]); ?>" itemprop="name" data-pjax="0">
                         <i class="product-img-border"><img class="product-img" src="<?= $product->smallImageUrl; ?>" alt="" itemprop="image"></i><span><?= Html::encode($product->name); ?></span>
                     </a>

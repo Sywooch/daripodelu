@@ -57,7 +57,8 @@ class Catalogue extends yii\db\ActiveRecord
      */
     public function getProducts()
     {
-        return $this->hasMany(Product::className(), ['catalogue_id' => 'id']);
+//        return $this->hasMany(Product::className(), ['catalogue_id' => 'id']);
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->viaTable('{{%catalogue_product}}', ['catalogue_id' => 'id']);
     }
 
     /**
@@ -65,7 +66,8 @@ class Catalogue extends yii\db\ActiveRecord
      */
     public function getMainProducts()
     {
-        return $this->hasMany(Product::className(), ['catalogue_id' => 'id'])->andWhere(['group_id' => null])->orderBy(['status_id' => SORT_ASC, 'id' => SORT_DESC]);
+//        return $this->hasMany(Product::className(), ['catalogue_id' => 'id'])->andWhere(['group_id' => null])->orderBy(['status_id' => SORT_ASC, 'id' => SORT_DESC]);
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->viaTable('{{%catalogue_product}}', ['catalogue_id' => 'id'])->andWhere(['group_id' => null])->orderBy(['status_id' => SORT_ASC, 'id' => SORT_DESC]);
     }
 
     public function getPhoto()

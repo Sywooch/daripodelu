@@ -124,6 +124,7 @@ class LoadController extends \yii\console\Controller
             yii::$app->db->createCommand()->delete('{{%product_filter_tmp}}')->execute();
             yii::$app->db->createCommand()->delete('{{%product_attachment_tmp}}')->execute();
             yii::$app->db->createCommand()->delete('{{%slave_product_tmp}}')->execute();
+            yii::$app->db->createCommand()->delete('{{%catalogue_product_tmp}}')->execute();
             yii::$app->db->createCommand()->delete('{{%product_tmp}}')->execute();
             yii::$app->db->createCommand()->delete('{{%filter_tmp}}')->execute();
             yii::$app->db->createCommand()->delete('{{%filter_type_tmp}}')->execute();
@@ -361,7 +362,7 @@ class LoadController extends \yii\console\Controller
                 $productId = (int)$product->product_id;
                 $valuesArr[] = [
                     $productId,
-                    (isset($productCategoryPairs[$productId]) ? $productCategoryPairs[$productId] : 1),
+//                    (isset($productCategoryPairs[$productId]) ? $productCategoryPairs[$productId] : 1),
                     (isset($product->group) ? (int)$product->group : null),
                     (isset($product->code) ? (string)$product->code : ''),
                     (isset($product->name) ? (string)$product->name : ''),
@@ -403,7 +404,7 @@ class LoadController extends \yii\console\Controller
                         '{{%product_tmp}}',
                         [
                             'id',
-                            'catalogue_id',
+//                            'catalogue_id',
                             'group_id',
                             'code',
                             'name',
@@ -441,6 +442,88 @@ class LoadController extends \yii\console\Controller
         catch (\Exception $e) {
             yii::endProfile('ProductsPrepare');
             yii::endProfile('ProductsInsertIntoDB');
+            echo $e->getMessage() . "\n";
+        }
+    }
+
+    /**
+     * Запись товаров в БД
+     *
+     * @throws \Exception
+     */
+    public function actionInsertCtgProdRel()
+    {
+        try {
+            //Формирование массива категорий
+            yii::beginProfile('CtgProductsRelPrepare');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
+                throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
+            }
+
+            $treeXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')
+            );
+
+            if ($treeXML === false) {
+                throw new \Exception('File tree.xml was not processed. Products were not inserted in DB.');
+            }
+
+            $treeArr = $this->makeArrFromTree($treeXML);
+
+            $productsXML = new \SimpleXMLElement(
+                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
+            );
+
+            if ($productsXML === false) {
+                throw new \Exception('File product.xml was not processed.');
+            }
+
+            $productsArr = [];
+            foreach ($productsXML->product as $key => $product) {
+                $productsArr[] = (int) $product->product_id;
+            }
+
+            $valuesArr = [];
+            if (count($treeArr) > 0) {
+                foreach ($treeArr as $row) {
+                    //Формирование массива из пар 'id товара' => 'id родительской категории'
+                    if (isset($row['product']) && is_array($row['product'])) {
+                        foreach ($row['product'] as $prod) {
+                            if (! in_array([$prod['parent_id'], $prod['product_id'], 0], $valuesArr) && in_array($prod['product_id'], $productsArr)) {
+                                $valuesArr[] = [$prod['parent_id'], $prod['product_id'], 0];
+                            }
+                        }
+                    }
+                }
+            }
+            yii::endProfile('CtgProductsRelPrepare');
+
+            //Запись информации о товарах в БД
+            if (count($valuesArr) > 0) {
+                yii::beginProfile('CtgProductsRelInsertIntoDB');
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($valuesArr);
+                do {
+                    $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%catalogue_product_tmp}}',
+                        [
+                            'catalogue_id',
+                            'product_id',
+                            'user_row'
+                        ],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+                yii::endProfile('CtgProductsRelInsertIntoDB');
+            }
+        }
+        catch (\Exception $e) {
+            yii::endProfile('CtgProductsRelPrepare');
+            yii::endProfile('CtgProductsRelInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
     }

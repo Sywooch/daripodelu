@@ -45,9 +45,9 @@ return [
             'password' => '',
             'charset' => 'utf8',
             'tablePrefix' => 'dpd_',
-//            'enableSchemaCache' => true,
-//            'schemaCacheDuration' => YII_DEBUG ? 0 : 3600,
-//            'schemaCache' => 'cache',
+            'enableSchemaCache' => true,
+            'schemaCacheDuration' => YII_DEBUG ? 60 : 3600,
+            'schemaCache' => 'cache',
         ],
         'formatter' => [
             'dateFormat' => 'dd.MM.yyyy',
