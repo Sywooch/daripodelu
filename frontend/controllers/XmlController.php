@@ -7,7 +7,8 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use rkdev\giftsruxml\ProductXMLReader;
+use rkdev\xmlreader\SimpleXMLReader;
+use rkdev\xmlreader\NodeObject;
 
 class XmlController extends Controller
 {
@@ -44,9 +45,13 @@ class XmlController extends Controller
 
     public function actionIndex()
     {
-        $xmlReader = new ProductXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+        $xmlReader = new SimpleXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
         $xmlReader->parse();
         $products = $xmlReader->getResult();
+
+        echo '<pre>';
+        print_r($products);
+        echo '</pre>';
 
         return ;
     }

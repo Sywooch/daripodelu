@@ -6,6 +6,7 @@ use yii;
 use backend\models\Product;
 use common\models\UpdateGiftsDBLog;
 use rkdev\loadgifts\LoadGiftsXML;
+use rkdev\xmlreader\SimpleXMLReader;
 
 class LoadController extends \yii\console\Controller
 {
