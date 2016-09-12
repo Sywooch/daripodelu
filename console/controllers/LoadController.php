@@ -6,8 +6,9 @@ use yii;
 use backend\models\Product;
 use common\models\UpdateGiftsDBLog;
 use rkdev\loadgifts\LoadGiftsXML;
-use rkdev\xmlreader\NodeObject;
-use rkdev\xmlreader\SimpleXMLReader;
+use \XMLReader;
+use rkdev\giftsruxml\TreeXMLParse;
+use rkdev\giftsruxml\CtgProductPairsXMLParse;
 
 class LoadController extends \yii\console\Controller
 {
@@ -153,10 +154,51 @@ class LoadController extends \yii\console\Controller
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
                 throw new \Exception('File tree.xml not found.');
             }
+
+            $treeXMLParser = new TreeXMLParse(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml');
+            $treeXMLParser->parse();
+            $results = $treeXMLParser->getResult();
+            $treeXMLParser->clearResult();
+            $treeXMLParser->close();
+
+            $valuesArr = [];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    $valuesArr[] = [
+                        $value['page_id'],
+                        $value['parent_page_id'],
+                        $value['name'],
+                        $value['uri'],
+                        0,
+                    ];
+                }
+            }
+            unset($results);
+
+            /*if (count($valuesArr) > 0) {
+                yii::beginProfile('CatalogueInsertIntoDB');
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($valuesArr);
+                do {
+                    $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%catalogue_tmp}}',
+                        ['id', 'parent_id', 'name', 'uri', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+                yii::endProfile('CatalogueInsertIntoDB');
+            }*/
         }
         catch (\Exception $e) {
+            $treeXMLParser->close();
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     /**
@@ -192,11 +234,9 @@ class LoadController extends \yii\console\Controller
     {
         try {
             //Формирование массива категорий
-            yii::beginProfile('CtgProductsRelPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
                 throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
             }
-            yii::endProfile('CtgProductsRelPrepare');
         }
         catch (\Exception $e) {
             yii::endProfile('CtgProductsRelPrepare');
@@ -357,5 +397,20 @@ class LoadController extends \yii\console\Controller
         echo memory_get_usage(), "\n";
         echo ini_get('memory_limit'), "\n";
         echo ini_get('mysqlnd.net_read_buffer_size'), "\n";
+    }
+
+    protected function insertCtg(XMLReader $reader, array $tree = [])
+    {
+        while ($reader->read()) {
+            if ($reader->nodeType == XMLReader::ELEMENT && $reader->localName == 'page') {}
+
+            /*
+            yii::$app->db->createCommand()->batchInsert(
+                '{{%catalogue_tmp}}',
+                ['id', 'parent_id', 'name', 'uri', 'user_row'],
+                $valuesArrTmp
+            )->execute();
+            */
+        }
     }
 }

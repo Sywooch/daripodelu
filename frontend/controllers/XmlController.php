@@ -7,8 +7,6 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use rkdev\xmlreader\SimpleXMLReader;
-use rkdev\xmlreader\NodeObject;
 
 class XmlController extends Controller
 {
@@ -45,13 +43,11 @@ class XmlController extends Controller
 
     public function actionIndex()
     {
-//        $xmlReader = new SimpleXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml');
-//        $xmlReader = new SimpleXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
-        $xmlReader = new SimpleXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml');
-//        $xmlReader = new SimpleXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml');
-        $xmlReader->parse();
-        $products = $xmlReader->getResult();
 //        $products = new \SimpleXMLElement(file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml'));
+//        $products = new \SimpleXMLElement(file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml'));
+//        $products = new \SimpleXMLElement(file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml'));
+//        $products = new \SimpleXMLElement(file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml'));
+        $products = new \SimpleXMLElement(file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml'));
 
         echo '<pre>';
         print_r($products);
