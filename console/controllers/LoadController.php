@@ -235,13 +235,55 @@ class LoadController extends \yii\console\Controller
         try {
             //Формирование массива категорий
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
-                throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
+                throw new \Exception('File tree.xml not found. "Category-Product" pairs were not inserted in DB.');
             }
+
+            $treeXMLParser = new CtgProductPairsXMLParse(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml');
+            $treeXMLParser->parse();
+            $results = $treeXMLParser->getResult();
+            $treeXMLParser->clearResult();
+            $treeXMLParser->close();
+
+            $valuesArr = [];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    $valuesArr[] = [
+                        $value['page'],
+                        $value['product'],
+                        0,
+                    ];
+                }
+            }
+            unset($results);
+
+            //Запись информации о товарах в БД
+            /*if (count($valuesArr) > 0) {
+                yii::beginProfile('CtgProductsRelInsertIntoDB');
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($valuesArr);
+                do {
+                    $valuesArrTmp = array_slice($valuesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%catalogue_product_tmp}}',
+                        [
+                            'catalogue_id',
+                            'product_id',
+                            'user_row'
+                        ],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+                yii::endProfile('CtgProductsRelInsertIntoDB');
+            }*/
         }
         catch (\Exception $e) {
-            yii::endProfile('CtgProductsRelPrepare');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertslaveprod()
