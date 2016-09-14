@@ -78,9 +78,25 @@ class BaseXMLParser extends AbstractXMLReader
                         // стреляем событием по окончанию парсинга элемента
                         $this->fireEvent('afterParseElement', array('name' => $lcn));
                     } elseif ($this->reader->nodeType == \XMLReader::END_ELEMENT) {
+                        $searchPhrase = '/' . $this->reader->localName;
+                        $pos = mb_strrpos($this->path, $searchPhrase);
+                        if ($pos !== false) {
+                            $this->path = substr_replace($this->path, '', $pos, strlen($searchPhrase));
+                        }
+                        $this->level--;
+                        $this->fireEvent('afterParseContainer', array('name' => $lcn));
                         // стреляем по окончанию парсинга блока
                         $this->fireEvent('afterParseContainer', array('name' => $lcn));
                     }
+                }
+                if ($this->reader->isEmptyElement || $this->reader->nodeType == \XMLReader::END_ELEMENT) {
+                    $searchPhrase = '/' . $this->reader->localName;
+                    $pos = mb_strrpos($this->path, $searchPhrase);
+                    if ($pos !== false) {
+                        $this->path = substr_replace($this->path, '', $pos, strlen($searchPhrase));
+                    }
+                    $this->level--;
+                    $this->fireEvent('afterParseContainer', array('name' => $lcn));
                 }
             } elseif ($this->reader->nodeType == \XMLReader::END_ELEMENT) {
                 $searchPhrase = '/' . $this->reader->localName;

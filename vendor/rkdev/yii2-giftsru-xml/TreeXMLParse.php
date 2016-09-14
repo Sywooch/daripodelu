@@ -10,7 +10,7 @@ class TreeXMLParse extends BaseXMLParser
 {
     protected $pageIndex = [];
 
-    public function parsePage()
+    protected function parsePage()
     {
         if ($this->reader->nodeType == XMLReader::ELEMENT && $this->reader->localName == 'page') {
             if (mb_strpos($this->path, 'product/page') === false) {
@@ -27,7 +27,7 @@ class TreeXMLParse extends BaseXMLParser
         }
     }
 
-    public function parsePageId()
+    protected function parsePageId()
     {
         if ($this->reader->nodeType == XMLReader::ELEMENT && $this->reader->localName == 'page_id') {
             $index = $this->pageIndex[$this->level];
@@ -38,7 +38,7 @@ class TreeXMLParse extends BaseXMLParser
         }
     }
 
-    public function parseName()
+    protected function parseName()
     {
         if ($this->reader->nodeType == XMLReader::ELEMENT && $this->reader->localName == 'name') {
             $index = $this->pageIndex[$this->level];
@@ -49,7 +49,7 @@ class TreeXMLParse extends BaseXMLParser
         }
     }
 
-    public function parseUri()
+    protected function parseUri()
     {
         if ($this->reader->nodeType == XMLReader::ELEMENT && $this->reader->localName == 'uri') {
             $index = $this->pageIndex[$this->level];
