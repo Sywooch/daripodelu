@@ -10,7 +10,10 @@ use \XMLReader;
 use rkdev\giftsruxml\TreeXMLParse;
 use rkdev\giftsruxml\ProductXMLReader;
 use rkdev\giftsruxml\SlaveProductXMLReader;
+use rkdev\giftsruxml\ProductAttachmentXMLReader;
+use rkdev\giftsruxml\PrintXMLReader;
 use rkdev\giftsruxml\CtgProductPairsXMLParse;
+use rkdev\giftsruxml\FilterXMLReader;
 use rkdev\giftsruxml\StockXMLReader;
 
 class LoadController extends \yii\console\Controller
@@ -518,51 +521,225 @@ class LoadController extends \yii\console\Controller
     public function actionInsertattach()
     {
         try {
-            yii::beginProfile('ProductAttachmentsPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The product attachments were not inserted in DB.');
             }
 
-            yii::endProfile('ProductAttachmentsPrepare');
+            $attachmentXMLParser = new ProductAttachmentXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $attachmentXMLParser->parse();
+            $results = $attachmentXMLParser->getResult();
+            $attachmentXMLParser->clearResult();
+            $attachmentXMLParser->close();
+
+            $prodAttachesArr = [];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product_id'])) {
+                        $productId = (int) $value['product_id'];
+                        if (isset($value['product_attachment']) && is_array($value['product_attachment']) && count($value['product_attachment']) > 0) {
+                            while (list(, $attach) = each($value['product_attachment'])) {
+                                $prodAttachesArr[] = [
+                                    $productId,
+                                    (int) $attach['meaning'],
+                                    (isset($attach['file']) ? (string) $attach['file'] : ''),
+                                    (isset($attach['image']) ? (string) $attach['image'] : ''),
+                                    (isset($attach['name']) ? (string) $attach['name'] : ''),
+                                    0,
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+            unset($results);
+
+            //Запись информации о дополнительных файлах товара в БД
+            /*if (count($prodAttachesArr) > 0) {
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($prodAttachesArr);
+                do {
+                    $valuesArrTmp = array_slice($prodAttachesArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product_attachment_tmp}}',
+                        ['product_id', 'meaning', 'file', 'image', 'name', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+            }*/
         }
         catch (\Exception $e) {
-            yii::endProfile('ProductAttachmentsPrepare');
-            yii::endProfile('ProductAttachInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertprint()
     {
         try {
-            yii::beginProfile('ProductPrintsPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The product prints were not inserted in DB.');
             }
 
-            yii::endProfile('ProductPrintsPrepare');
+            $printXMLParser = new PrintXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $printXMLParser->parse();
+            $results = $printXMLParser->getResult();
+            $printXMLParser->clearResult();
+            $printXMLParser->close();
+
+            //Парсирование xml файла с продуктами
+            $printsArr = [];
+            $productPrintsArr = [];
+
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product'])) {
+                        $productId = (int) $value['product'];
+                        if (isset($value['name'])) {
+                            $printId = (string) $value['name'];
+                            $productPrintsArr[] = [
+                                $productId,
+                                $printId,
+                                0
+                            ];
+
+                            if (!array_key_exists($printId, $printsArr)) {
+                                $printsArr[$printId] = [
+                                    $printId,
+                                    (isset($value['description']) ? (string) $value['description'] : ''),
+                                    0
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+            unset($results);
+
+            /*if (count($printsArr) > 0) {
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($printsArr);
+                do {
+                    $valuesArrTmp = array_slice($printsArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%print_tmp}}',
+                        ['name', 'description', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+
+                if (count($productPrintsArr) > 0) {
+                    $valuesArrTmp = [];
+                    $counter = 0;
+                    $valuesArrLength = count($productPrintsArr);
+                    do {
+                        $valuesArrTmp = array_slice($productPrintsArr, $counter, $this->batchSize);
+                        yii::$app->db->createCommand()->batchInsert(
+                            '{{%product_print_tmp}}',
+                            ['product_id', 'print_id', 'user_row'],
+                            $valuesArrTmp
+                        )->execute();
+                        $counter += $this->batchSize;
+                    }
+                    while ($counter < $valuesArrLength);
+                }
+            }*/
         }
         catch (\Exception $e) {
-            yii::endProfile('ProductPrintsPrepare');
-            yii::endProfile('ProductPrintsInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertfilters()
     {
         //Формирование таблиц с типами фильтров и фильтрами
         try {
-            yii::beginProfile('FiltersPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml')) {
                 throw new \Exception('File filters.xml not found.');
             }
-            yii::endProfile('FiltersPrepare');
+
+            $filterXMLParser = new FilterXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml');
+            $filterXMLParser->parse();
+            $results = $filterXMLParser->getResult();
+            $filterXMLParser->clearResult();
+            $filterXMLParser->close();
+
+            $typesArrForInsert = [];
+            $filtersArrForInsert = [];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['filtertypeid'])) {
+                        $filterTypeId = (int) $value['filtertypeid'];
+                        $typesArrForInsert[] = [
+                            $filterTypeId,
+                            (string) $value['filtertypename'],
+                            0
+                        ];
+
+                        if (isset($value['filters']) && is_array($value['filters']) && count($value['filters']) > 0) {
+                            while (list(, $filter) = each($value['filters'])) {
+                                if (isset($filter['filterid'])) {
+                                    $filterId = (int) $filter['filterid'];
+                                    $filtersArrForInsert[] = [
+                                        $filterId,
+                                        (isset($filter['filtername']) ? (string) $filter['filtername'] : ''),
+                                        $filterTypeId,
+                                        0
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            unset($results);
+
+            /*if (count($typesArrForInsert) > 0) {
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($typesArrForInsert);
+                do {
+                    $valuesArrTmp = array_slice($typesArrForInsert, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%filter_type_tmp}}',
+                        ['id', 'name', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+            }
+
+            if (count($filtersArrForInsert) > 0) {
+                //Запись фильтров в БД
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($filtersArrForInsert);
+                do {
+                    $valuesArrTmp = array_slice($filtersArrForInsert, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%filter_tmp}}',
+                        ['id', 'name', 'type_id', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+            }*/
         }
         catch (\Exception $e) {
-            yii::endProfile('FiltersPrepare');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertprodfilters()
