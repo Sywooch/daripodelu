@@ -7,14 +7,15 @@ use backend\models\Product;
 use common\models\UpdateGiftsDBLog;
 use rkdev\loadgifts\LoadGiftsXML;
 use \XMLReader;
-use rkdev\giftsruxml\TreeXMLParse;
-use rkdev\giftsruxml\ProductXMLReader;
-use rkdev\giftsruxml\SlaveProductXMLReader;
-use rkdev\giftsruxml\ProductAttachmentXMLReader;
-use rkdev\giftsruxml\PrintXMLReader;
 use rkdev\giftsruxml\CtgProductPairsXMLParse;
 use rkdev\giftsruxml\FilterXMLReader;
+use rkdev\giftsruxml\ProductXMLReader;
+use rkdev\giftsruxml\ProductAttachmentXMLReader;
+use rkdev\giftsruxml\ProductFilterXMLReader;
+use rkdev\giftsruxml\PrintXMLReader;
+use rkdev\giftsruxml\SlaveProductXMLReader;
 use rkdev\giftsruxml\StockXMLReader;
+use rkdev\giftsruxml\TreeXMLParse;
 
 class LoadController extends \yii\console\Controller
 {
@@ -745,16 +746,60 @@ class LoadController extends \yii\console\Controller
     public function actionInsertprodfilters()
     {
         try {
-            yii::beginProfile('ProductFiltersPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The filters for product were not inserted in DB.');
             }
-            yii::endProfile('ProductFiltersPrepare');
+
+            $productFilterXMLParser = new ProductFilterXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $productFilterXMLParser->parse();
+            $results = $productFilterXMLParser->getResult();
+            $productFilterXMLParser->clearResult();
+            $productFilterXMLParser->close();
+
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product_id']) && isset($value['filters'])) {
+                        $productId = (int) $value['product_id'];
+                        if (is_array($value['filters']) && count($value['filters']) > 0) {
+                            while (list(, $filter) = each($value['filters'])) {
+                                $prodFiltersArr[] = [
+                                    $productId,
+                                    $filter['filterid'],
+                                    $filter['filtertypeid'],
+                                    0
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+            unset($results);
+
+            //Запись связей товар-фильтр в БД
+            /*if (count($prodFiltersArr) > 0) {
+                yii::beginProfile('ProductFiltersInsertIntoDB');
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($prodFiltersArr);
+                do {
+                    $valuesArrTmp = array_slice($prodFiltersArr, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%product_filter_tmp}}',
+                        ['product_id', 'filter_id', 'type_id', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
+                }
+                while ($counter < $valuesArrLength);
+                yii::endProfile('ProductFiltersInsertIntoDB');
+            }*/
         }
         catch (\Exception $e) {
             yii::endProfile('ProductFiltersPrepare');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionMakeimglist()
