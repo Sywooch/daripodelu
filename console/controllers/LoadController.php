@@ -184,7 +184,7 @@ class LoadController extends \yii\console\Controller
             }
             unset($results);
 
-            /*if (count($valuesArr) > 0) {
+            if (count($valuesArr) > 0) {
                 yii::beginProfile('CatalogueInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
@@ -200,7 +200,7 @@ class LoadController extends \yii\console\Controller
                 }
                 while ($counter < $valuesArrLength);
                 yii::endProfile('CatalogueInsertIntoDB');
-            }*/
+            }
         }
         catch (\Exception $e) {
             $treeXMLParser->close();
@@ -297,7 +297,7 @@ class LoadController extends \yii\console\Controller
             unset($results);
 
             //Запись информации о товарах в БД
-            /*if (count($valuesArr) > 0) {
+            if (count($valuesArr) > 0) {
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($valuesArr);
@@ -338,7 +338,7 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-            }*/
+            }
         }
         catch (\Exception $e) {
             $productXMLParser->close();
@@ -361,28 +361,51 @@ class LoadController extends \yii\console\Controller
                 throw new \Exception('File tree.xml not found. "Category-Product" pairs were not inserted in DB.');
             }
 
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found.');
+            }
+
             $treeXMLParser = new CtgProductPairsXMLParse(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml');
             $treeXMLParser->parse();
             $results = $treeXMLParser->getResult();
             $treeXMLParser->clearResult();
             $treeXMLParser->close();
 
+            $productXMLParser = new ProductXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $productXMLParser->parse();
+            $productResults = $productXMLParser->getResult();
+            $productXMLParser->clearResult();
+            $productXMLParser->close();
+
+            $productsArr = [];
+            if (is_array($productResults) && count($productResults) > 0) {
+                while (list(, $value) = each($productResults)) {
+                    if (isset($value['product_id'])) {
+                        $productsArr[] = (int)$value['product_id'];
+                    }
+                }
+            }
+            unset($productResults);
+            $value = null;
+
             $valuesArr = [];
             if (is_array($results) && count($results) > 0) {
                 while (list(, $value) = each($results)) {
                     if (isset($value['page']) && isset($value['product'])) {
-                        $valuesArr[] = [
-                            $value['page'],
-                            $value['product'],
-                            0,
-                        ];
+                        if (!in_array([(int)$value['page'], (int)$value['product'], 0], $valuesArr) && in_array($value['product'], $productsArr)) {
+                            $valuesArr[] = [
+                                (int)$value['page'],
+                                (int)$value['product'],
+                                0,
+                            ];
+                        }
                     }
                 }
             }
             unset($results);
 
             //Запись информации о товарах в БД
-            /*if (count($valuesArr) > 0) {
+            if (count($valuesArr) > 0) {
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($valuesArr);
@@ -400,7 +423,7 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-            }*/
+            }
         }
         catch (\Exception $e) {
             echo $e->getMessage() . "\n";
@@ -480,7 +503,7 @@ class LoadController extends \yii\console\Controller
             unset($results);
 
             //Запись информации о подчиненных товарах в БД
-            /*if (count($slaveProductsArr) > 0) {
+            if (count($slaveProductsArr) > 0) {
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($slaveProductsArr);
@@ -510,7 +533,7 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-            }*/
+            }
         }
         catch (\Exception $e) {
             echo $e->getMessage() . "\n";
@@ -555,7 +578,7 @@ class LoadController extends \yii\console\Controller
             unset($results);
 
             //Запись информации о дополнительных файлах товара в БД
-            /*if (count($prodAttachesArr) > 0) {
+            if (count($prodAttachesArr) > 0) {
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($prodAttachesArr);
@@ -569,7 +592,7 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-            }*/
+            }
         }
         catch (\Exception $e) {
             echo $e->getMessage() . "\n";
@@ -620,7 +643,7 @@ class LoadController extends \yii\console\Controller
             }
             unset($results);
 
-            /*if (count($printsArr) > 0) {
+            if (count($printsArr) > 0) {
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($printsArr);
@@ -650,7 +673,7 @@ class LoadController extends \yii\console\Controller
                     }
                     while ($counter < $valuesArrLength);
                 }
-            }*/
+            }
         }
         catch (\Exception $e) {
             echo $e->getMessage() . "\n";
@@ -681,7 +704,7 @@ class LoadController extends \yii\console\Controller
                         $filterTypeId = (int) $value['filtertypeid'];
                         $typesArrForInsert[] = [
                             $filterTypeId,
-                            (string) $value['filtertypename'],
+                            (isset($filter['filtertypename']) ? (string) $value['filtertypename'] : ''),
                             0
                         ];
 
@@ -703,7 +726,7 @@ class LoadController extends \yii\console\Controller
             }
             unset($results);
 
-            /*if (count($typesArrForInsert) > 0) {
+            if (count($typesArrForInsert) > 0) {
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($typesArrForInsert);
@@ -734,7 +757,7 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-            }*/
+            }
         }
         catch (\Exception $e) {
             echo $e->getMessage() . "\n";
@@ -762,12 +785,14 @@ class LoadController extends \yii\console\Controller
                         $productId = (int) $value['product_id'];
                         if (is_array($value['filters']) && count($value['filters']) > 0) {
                             while (list(, $filter) = each($value['filters'])) {
-                                $prodFiltersArr[] = [
-                                    $productId,
-                                    $filter['filterid'],
-                                    $filter['filtertypeid'],
-                                    0
-                                ];
+                                if (isset($filter['filterid']) && isset($filter['filtertypeid'])) {
+                                    $prodFiltersArr[] = [
+                                        $productId,
+                                        (int) $filter['filterid'],
+                                        (int) $filter['filtertypeid'],
+                                        0
+                                    ];
+                                }
                             }
                         }
                     }
@@ -776,7 +801,7 @@ class LoadController extends \yii\console\Controller
             unset($results);
 
             //Запись связей товар-фильтр в БД
-            /*if (count($prodFiltersArr) > 0) {
+            if (count($prodFiltersArr) > 0) {
                 yii::beginProfile('ProductFiltersInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
@@ -792,7 +817,7 @@ class LoadController extends \yii\console\Controller
                 }
                 while ($counter < $valuesArrLength);
                 yii::endProfile('ProductFiltersInsertIntoDB');
-            }*/
+            }
         }
         catch (\Exception $e) {
             yii::endProfile('ProductFiltersPrepare');
@@ -874,20 +899,5 @@ class LoadController extends \yii\console\Controller
         echo memory_get_usage(), "\n";
         echo ini_get('memory_limit'), "\n";
         echo ini_get('mysqlnd.net_read_buffer_size'), "\n";
-    }
-
-    protected function insertCtg(XMLReader $reader, array $tree = [])
-    {
-        while ($reader->read()) {
-            if ($reader->nodeType == XMLReader::ELEMENT && $reader->localName == 'page') {}
-
-            /*
-            yii::$app->db->createCommand()->batchInsert(
-                '{{%catalogue_tmp}}',
-                ['id', 'parent_id', 'name', 'uri', 'user_row'],
-                $valuesArrTmp
-            )->execute();
-            */
-        }
     }
 }
