@@ -6,6 +6,16 @@ use yii;
 use backend\models\Product;
 use common\models\UpdateGiftsDBLog;
 use rkdev\loadgifts\LoadGiftsXML;
+use \XMLReader;
+use rkdev\giftsruxml\CtgProductPairsXMLParse;
+use rkdev\giftsruxml\FilterXMLReader;
+use rkdev\giftsruxml\ProductXMLReader;
+use rkdev\giftsruxml\ProductAttachmentXMLReader;
+use rkdev\giftsruxml\ProductFilterXMLReader;
+use rkdev\giftsruxml\PrintXMLReader;
+use rkdev\giftsruxml\SlaveProductXMLReader;
+use rkdev\giftsruxml\StockXMLReader;
+use rkdev\giftsruxml\TreeXMLParse;
 
 class LoadController extends \yii\console\Controller
 {
@@ -13,87 +23,6 @@ class LoadController extends \yii\console\Controller
      * Количество записей в одном insert-запросе
      */
     private $batchSize = 100;
-
-    protected function makeArrFromTree(\SimpleXMLElement $tree)
-    {
-        $arr = [];
-        foreach ($tree as $key => $node) {
-            $row = [
-                'id' => (int)$node->page_id,
-                'parent_id' => isset($node['parent_page_id']) ? (int)$node['parent_page_id'] : 0,
-                'name' => (string)$node->name,
-                'uri' => (string)$node->uri,
-            ];
-
-            if (isset($node->product)) {
-                foreach ($node->product as $key => $product) {
-                    $row['product'][] = [
-                        'parent_id' => (int)$product->page,
-                        'product_id' => (int)$product->product,
-                    ];
-                }
-            }
-
-            $arr[] = $row;
-
-            if (isset($node->page)) {
-                $tmpArr = $this->makeArrFromTree($node->page);
-                $arr = array_merge($arr, $tmpArr);
-            }
-        }
-
-        return $arr;
-    }
-
-    protected function makeArrFromFilterTree(\SimpleXMLElement $tree)
-    {
-        $arr = [];
-        foreach ($tree->filtertypes->filtertype as $element) {
-            $filtersArr = [];
-            if (isset($element->filters->filter)) {
-                if (count($element->filters->filter) > 1) {
-                    foreach ($element->filters->filter as $filter) {
-                        $filtersArr[] = [
-                            'filterid' => (int)$filter->filterid,
-                            'filtername' => (string)$filter->filtername,
-                        ];
-                    }
-                } else {
-                    $filtersArr[] = [
-                        'filterid' => (int)$element->filters->filter->filterid,
-                        'filtername' => (string)$element->filters->filter->filtername,
-                    ];
-                }
-            }
-
-            $arr[] = [
-                'filtertypeid' => (int)$element->filtertypeid,
-                'filtertypename' => (string)$element->filtertypename,
-                'filters' => $filtersArr,
-            ];
-        }
-
-        return $arr;
-    }
-
-    protected function makeArrFromStockTree(\SimpleXMLElement $tree)
-    {
-        $arr = [];
-        foreach ($tree->stock as $stock) {
-            $productId = (int)$stock->product_id;
-            $arr[$productId] = [
-                'product_id' => $productId,
-                'code' => (string)$stock->code,
-                'amount' => (int)$stock->amount,
-                'free' => (int)$stock->free,
-                'inwayamount' => (int)$stock->inwayamount,
-                'inwayfree' => (int)$stock->inwayfree,
-                'enduserprice' => (float)$stock->enduserprice,
-            ];
-        }
-
-        return $arr;
-    }
 
     /**
      * Очистка таблиц от записей
@@ -233,31 +162,27 @@ class LoadController extends \yii\console\Controller
                 throw new \Exception('File tree.xml not found.');
             }
 
-            $treeXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')
-            );
-
-            if ($treeXML === false) {
-                throw new \Exception('File tree.xml was not processed.');
-            }
-
-            //Формирование массива категорий
-            yii::beginProfile('CatalogueFileAnalyze');
-            $treeArr = $this->makeArrFromTree($treeXML);
-            yii::endProfile('CatalogueFileAnalyze');
+            $treeXMLParser = new TreeXMLParse(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml');
+            $treeXMLParser->parse();
+            $results = $treeXMLParser->getResult();
+            $treeXMLParser->clearResult();
+            $treeXMLParser->close();
 
             $valuesArr = [];
-            if (count($treeArr) > 0) {
-                foreach ($treeArr as $row) {
-                    $valuesArr[] = [
-                        $row['id'],
-                        $row['parent_id'],
-                        $row['name'],
-                        $row['uri'],
-                        0,
-                    ];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['page_id']) && isset($value['parent_page_id'])) {
+                        $valuesArr[] = [
+                            (int) $value['page_id'],
+                            (int) $value['parent_page_id'],
+                            (isset($value['name']) ? $value['name']: ''),
+                            (isset($value['uri']) ? $value['uri']: ''),
+                            0,
+                        ];
+                    }
                 }
             }
+            unset($results);
 
             if (count($valuesArr) > 0) {
                 yii::beginProfile('CatalogueInsertIntoDB');
@@ -278,10 +203,11 @@ class LoadController extends \yii\console\Controller
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('CatalogueFileAnalyze');
-            yii::endProfile('CatalogueInsertIntoDB');
+            $treeXMLParser->close();
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     /**
@@ -292,109 +218,86 @@ class LoadController extends \yii\console\Controller
     public function actionInsertprod()
     {
         try {
-            //Формирование массива категорий
-            yii::beginProfile('ProductsPrepare');
-            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
-                throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
-            }
-
-            $treeXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')
-            );
-
-            if ($treeXML === false) {
-                throw new \Exception('File tree.xml was not processed. Products were not inserted in DB.');
-            }
-
-            $treeArr = $this->makeArrFromTree($treeXML);
-
-            $productCategoryPairs = [];
-            if (count($treeArr) > 0) {
-                foreach ($treeArr as $row) {
-                    //Формирование массива из пар 'id товара' => 'id родительской категории'
-                    if (isset($row['product']) && is_array($row['product'])) {
-                        foreach ($row['product'] as $prod) {
-                            $productCategoryPairs[$prod['product_id']] = $prod['parent_id'];
-                        }
-                    }
-                }
-            }
-
+            //Формирование массива товаров
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found.');
             }
 
-            $productsXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
-            );
-
-            if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed.');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')) {
+                throw new \Exception('File stock.xml not found.');
             }
+
+            $productXMLParser = new ProductXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $productXMLParser->parse();
+            $results = $productXMLParser->getResult();
+            $productXMLParser->clearResult();
+            $productXMLParser->close();
+
+            $stockXMLParse = new StockXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml');
+            $stockXMLParse->parse();
+            $stockResults = $stockXMLParse->getResult();
+            $stockXMLParse->clearResult();
+            $stockXMLParse->close();
 
             $stockArr = [];
-            try {
-                //Закгрузка файла stock.xml
-                yii::beginProfile('StockFilePrepare');
-                $stockXML = new \SimpleXMLElement(
-                    file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')
-                );
-                yii::endProfile('StockFilePrepare');
-
-                if ($stockXML === false) {
-                    throw new \Exception('File stock.xml was not processed.');
+            if (is_array($stockResults) && count($stockResults) > 0) {
+                while (list(, $value) = each($stockResults)) {
+                    if (isset($value['product_id'])) {
+                        $productId = (int)$value['product_id'];
+                        $stockArr[$productId] = [
+                            'code' => isset($value['code']) ? $value['code'] : '',
+                            'amount' => isset($value['amount']) ? (int) $value['amount'] : 0,
+                            'free' => isset($value['free']) ? (int) $value['free'] : 0,
+                            'inwayamount' => isset($value['inwayamount']) ? (int) $value['inwayamount'] : 0,
+                            'inwayfree' => isset($value['inwayfree']) ? (int) $value['inwayfree'] : 0,
+                            'dealerprice' => isset($value['dealerprice']) ? (float) $value['dealerprice'] : 0.00,
+                            'enduserprice' => isset($value['enduserprice']) ? (float) $value['enduserprice'] : 0.00,
+                        ];
+                    }
                 }
-
-                //Формирование массива с количеством товаров и их ценами
-                yii::beginProfile('StockFileAnalyze');
-                $stockArr = $this->makeArrFromStockTree($stockXML);
-                yii::endProfile('StockFileAnalyze');
             }
-            catch (Exception $e) {
-                yii::endProfile('StockFilePrepare');
-                yii::endProfile('StockFileAnalyze');
-                echo $e->getMessage() . "\n";
-            }
+            unset($stockResults);
 
-            //Парсирование xml файла с продуктами
             $valuesArr = [];
-            foreach ($productsXML->product as $key => $product) {
-                $productId = (int)$product->product_id;
-                $valuesArr[] = [
-                    $productId,
-//                    (isset($productCategoryPairs[$productId]) ? $productCategoryPairs[$productId] : 1),
-                    (isset($product->group) ? (int)$product->group : null),
-                    (isset($product->code) ? (string)$product->code : ''),
-                    (isset($product->name) ? (string)$product->name : ''),
-                    (isset($product->product_size) ? (string)$product->product_size : ''),
-                    (isset($product->matherial) ? (string)$product->matherial : ''),
-                    (isset($product->small_image) ? (string)$product->small_image['src'] : ''),
-                    (isset($product->big_image) ? (string)$product->big_image['src'] : ''),
-                    (isset($product->super_big_image) ? (string)$product->super_big_image['src'] : ''),
-                    (isset($product->content) ? (string)$product->content : ''),
-                    (isset($product->status['id']) ? (string)$product->status['id'] : null),
-                    (isset($product->status) ? (string)$product->status : ''),
-                    (isset($product->brand) ? (string)$product->brand : ''),
-                    (isset($product->weight) ? (float)$product->weight : 0.00),
-                    (isset($product->pack->amount) ? (int)$product->pack->amount : null),
-                    (isset($product->pack->weight) ? (float)$product->pack->weight : null),
-                    (isset($product->pack->volume) ? (float)$product->pack->volume : null),
-                    (isset($product->pack->sizex) ? (float)$product->pack->sizex : null),
-                    (isset($product->pack->sizey) ? (float)$product->pack->sizey : null),
-                    (isset($product->pack->sizez) ? (float)$product->pack->sizez : null),
-                    (isset($stockArr[$productId]['amount']) ? $stockArr[$productId]['amount'] : 0),
-                    (isset($stockArr[$productId]['free']) ? $stockArr[$productId]['free'] : 0),
-                    (isset($stockArr[$productId]['inwayamount']) ? $stockArr[$productId]['inwayamount'] : 0),
-                    (isset($stockArr[$productId]['inwayfree']) ? $stockArr[$productId]['inwayfree'] : 0),
-                    (isset($stockArr[$productId]['enduserprice']) ? $stockArr[$productId]['enduserprice'] : 0.00),
-                    0,
-                ];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product_id'])) {
+                        $productId = (int)$value['product_id'];
+                        $valuesArr[] = [
+                            $productId,
+                            (isset($value['group']) ? (int)$value['group'] : null),
+                            (isset($value['code']) ? (string)$value['code'] : ''),
+                            (isset($value['name']) ? (string)$value['name'] : ''),
+                            (isset($value['product_size']) ? (string)$value['product_size'] : ''),
+                            (isset($value['matherial']) ? (string)$value['matherial'] : ''),
+                            (isset($value['small_image']) && isset($value['small_image']['src']) ? (string)$value['small_image']['src'] : ''),
+                            (isset($value['big_image']) && isset($value['big_image']['src']) ? (string)$value['big_image']['src'] : ''),
+                            (isset($value['super_big_image']) && isset($value['super_big_image']['src']) ? (string)$value['super_big_image']['src'] : ''),
+                            (isset($value['content']) ? (string)$value['content'] : ''),
+                            (isset($value['status']['id']) ? (string)$value['status']['id'] : null),
+                            (isset($value['status']) ? (string)$value['status']['@value'] : ''),
+                            (isset($value['brand']) ? (string)$value['brand'] : ''),
+                            (isset($value['weight']) ? (float)$value['weight'] : 0.00),
+                            (isset($value['pack']['amount']) ? (int)$value['pack']['amount'] : null),
+                            (isset($value['pack']['weight']) ? (float)$value['pack']['weight'] : null),
+                            (isset($value['pack']['volume']) ? (float)$value['pack']['volume'] : null),
+                            (isset($value['pack']['sizex']) ? (float)$value['pack']['sizex'] : null),
+                            (isset($value['pack']['sizey']) ? (float)$value['pack']['sizey'] : null),
+                            (isset($value['pack']['sizez']) ? (float)$value['pack']['sizez'] : null),
+                            (isset($stockArr[$productId]['amount']) ? $stockArr[$productId]['amount'] : 0),
+                            (isset($stockArr[$productId]['free']) ? $stockArr[$productId]['free'] : 0),
+                            (isset($stockArr[$productId]['inwayamount']) ? $stockArr[$productId]['inwayamount'] : 0),
+                            (isset($stockArr[$productId]['inwayfree']) ? $stockArr[$productId]['inwayfree'] : 0),
+                            (isset($stockArr[$productId]['enduserprice']) ? $stockArr[$productId]['enduserprice'] : 0.00),
+                            0,
+                        ];
+                    }
+                }
             }
-            yii::endProfile('ProductsPrepare');
+            unset($results);
 
             //Запись информации о товарах в БД
             if (count($valuesArr) > 0) {
-                yii::beginProfile('ProductsInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($valuesArr);
@@ -404,7 +307,6 @@ class LoadController extends \yii\console\Controller
                         '{{%product_tmp}}',
                         [
                             'id',
-//                            'catalogue_id',
                             'group_id',
                             'code',
                             'name',
@@ -436,14 +338,14 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-                yii::endProfile('ProductsInsertIntoDB');
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('ProductsPrepare');
-            yii::endProfile('ProductsInsertIntoDB');
+            $productXMLParser->close();
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     /**
@@ -455,52 +357,55 @@ class LoadController extends \yii\console\Controller
     {
         try {
             //Формирование массива категорий
-            yii::beginProfile('CtgProductsRelPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')) {
-                throw new \Exception('File tree.xml not found. Products were not inserted in DB.');
+                throw new \Exception('File tree.xml not found. "Category-Product" pairs were not inserted in DB.');
             }
 
-            $treeXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml')
-            );
-
-            if ($treeXML === false) {
-                throw new \Exception('File tree.xml was not processed. Products were not inserted in DB.');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
+                throw new \Exception('File product.xml not found.');
             }
 
-            $treeArr = $this->makeArrFromTree($treeXML);
+            $treeXMLParser = new CtgProductPairsXMLParse(yii::$app->params['xmlUploadPath']['current'] . '/tree.xml');
+            $treeXMLParser->parse();
+            $results = $treeXMLParser->getResult();
+            $treeXMLParser->clearResult();
+            $treeXMLParser->close();
 
-            $productsXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
-            );
-
-            if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed.');
-            }
+            $productXMLParser = new ProductXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $productXMLParser->parse();
+            $productResults = $productXMLParser->getResult();
+            $productXMLParser->clearResult();
+            $productXMLParser->close();
 
             $productsArr = [];
-            foreach ($productsXML->product as $key => $product) {
-                $productsArr[] = (int) $product->product_id;
+            if (is_array($productResults) && count($productResults) > 0) {
+                while (list(, $value) = each($productResults)) {
+                    if (isset($value['product_id'])) {
+                        $productsArr[] = (int)$value['product_id'];
+                    }
+                }
             }
+            unset($productResults);
+            $value = null;
 
             $valuesArr = [];
-            if (count($treeArr) > 0) {
-                foreach ($treeArr as $row) {
-                    //Формирование массива из пар 'id товара' => 'id родительской категории'
-                    if (isset($row['product']) && is_array($row['product'])) {
-                        foreach ($row['product'] as $prod) {
-                            if (! in_array([$prod['parent_id'], $prod['product_id'], 0], $valuesArr) && in_array($prod['product_id'], $productsArr)) {
-                                $valuesArr[] = [$prod['parent_id'], $prod['product_id'], 0];
-                            }
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['page']) && isset($value['product'])) {
+                        if (!in_array([(int)$value['page'], (int)$value['product'], 0], $valuesArr) && in_array($value['product'], $productsArr)) {
+                            $valuesArr[] = [
+                                (int)$value['page'],
+                                (int)$value['product'],
+                                0,
+                            ];
                         }
                     }
                 }
             }
-            yii::endProfile('CtgProductsRelPrepare');
+            unset($results);
 
             //Запись информации о товарах в БД
             if (count($valuesArr) > 0) {
-                yii::beginProfile('CtgProductsRelInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($valuesArr);
@@ -518,113 +423,87 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-                yii::endProfile('CtgProductsRelInsertIntoDB');
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('CtgProductsRelPrepare');
-            yii::endProfile('CtgProductsRelInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertslaveprod()
     {
         try {
-            yii::beginProfile('SlaveProductsPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The slave products were not inserted in DB.');
             }
 
-            $productsXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
-            );
-
-            if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed. The slave products were not inserted in DB.');
+            if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')) {
+                throw new \Exception('File stock.xml not found. The slave products were not inserted in DB.');
             }
+
+            $slaveProductXMLParser = new SlaveProductXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $slaveProductXMLParser->parse();
+            $results = $slaveProductXMLParser->getResult();
+            $slaveProductXMLParser->clearResult();
+            $slaveProductXMLParser->close();
+
+            $stockXMLParse = new StockXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml');
+            $stockXMLParse->parse();
+            $stockResults = $stockXMLParse->getResult();
+            $stockXMLParse->clearResult();
+            $stockXMLParse->close();
 
             $stockArr = [];
-            try {
-                //Закгрузка файла stock.xml
-                yii::beginProfile('StockFilePrepare');
-                $stockXML = new \SimpleXMLElement(
-                    file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/stock.xml')
-                );
-                yii::endProfile('StockFilePrepare');
-
-                if ($stockXML === false) {
-                    throw new \Exception('File stock.xml was not processed.');
+            if (is_array($stockResults) && count($stockResults) > 0) {
+                while (list(, $value) = each($stockResults)) {
+                    if (isset($value['product_id'])) {
+                        $productId = (int)$value['product_id'];
+                        $stockArr[$productId] = [
+                            'code' => isset($value['code']) ? $value['code'] : '',
+                            'amount' => isset($value['amount']) ? (int) $value['amount'] : 0,
+                            'free' => isset($value['free']) ? (int) $value['free'] : 0,
+                            'inwayamount' => isset($value['inwayamount']) ? (int) $value['inwayamount'] : 0,
+                            'inwayfree' => isset($value['inwayfree']) ? (int) $value['inwayfree'] : 0,
+                            'dealerprice' => isset($value['dealerprice']) ? (float) $value['dealerprice'] : 0.00,
+                            'enduserprice' => isset($value['enduserprice']) ? (float) $value['enduserprice'] : 0.00,
+                        ];
+                    }
                 }
-
-                //Формирование массива с количеством товаров и их ценами
-                yii::beginProfile('StockFileAnalyze');
-                $stockArr = $this->makeArrFromStockTree($stockXML);
-                yii::endProfile('StockFileAnalyze');
             }
-            catch (Exception $e) {
-                yii::endProfile('StockFilePrepare');
-                yii::endProfile('StockFileAnalyze');
-                echo $e->getMessage() . "\n";
-            }
+            unset($stockResults);
 
-            //Парсирование xml файла с продуктами
             $slaveProductsArr = [];
-            foreach ($productsXML->product as $key => $product) {
-                $productId = (int)$product->product_id;
-
-                //Формирование массива подчиненных товаров
-                if (isset($product->product)) {
-                    if (count($product->product) > 1)  //Если у товара несколько подчиненных товаров
-                    {
-                        foreach ($product->product as $item) {
-                            $slaveProductId = (int)$item->product_id;
-                            $slaveProductsArr[] = [
-                                $slaveProductId,
-                                $productId,
-                                (isset($item->code) ? (string)$item->code : ''),
-                                (isset($item->name) ? (string)$item->name : ''),
-                                (isset($item->size_code) ? (string)$item->size_code : ''),
-                                (isset($item->weight) ? (float)$item->weight : 0.00),
-                                (isset($item->price->price) ? (float)$item->price->price : 0.00),
-                                (isset($item->price->currency) ? (string)$item->price->currency : ''),
-                                (isset($item->price->name) ? (string)$item->price->name : ''),
-                                (isset($stockArr[$slaveProductId]['amount']) ? $stockArr[$slaveProductId]['amount'] : 0),
-                                (isset($stockArr[$slaveProductId]['free']) ? $stockArr[$slaveProductId]['free'] : 0),
-                                (isset($stockArr[$slaveProductId]['inwayamount']) ? $stockArr[$slaveProductId]['inwayamount'] : 0),
-                                (isset($stockArr[$slaveProductId]['inwayfree']) ? $stockArr[$slaveProductId]['inwayfree'] : 0),
-                                (isset($stockArr[$slaveProductId]['enduserprice']) ? $stockArr[$slaveProductId]['enduserprice'] : 0.00),
-                                0,
-                            ];
-                        }
-                    } else  //Если у товара один подчиненный товар
-                    {
-                        $slaveProductId = (int)$product->product->product_id;
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product_id'])) {
+                        $productId = (int)$value['product_id'];
+                        $mainProductId = (int)$value['main_product'];
                         $slaveProductsArr[] = [
-                            $slaveProductId,
                             $productId,
-                            (isset($product->product->code) ? (string)$product->product->code : ''),
-                            (isset($product->product->name) ? (string)$product->product->name : ''),
-                            (isset($product->product->size_code) ? (string)$product->product->size_code : ''),
-                            (isset($product->product->weight) ? (float)$product->product->weight : 0.00),
-                            (isset($product->product->price->price) ? (float)$product->product->price->price : 0.00),
-                            (isset($product->product->price->currency) ? (string)$product->product->price->currency : ''),
-                            (isset($product->product->price->name) ? (string)$product->product->price->name : ''),
-                            (isset($stockArr[$slaveProductId]['amount']) ? $stockArr[$slaveProductId]['amount'] : 0),
-                            (isset($stockArr[$slaveProductId]['free']) ? $stockArr[$slaveProductId]['free'] : 0),
-                            (isset($stockArr[$slaveProductId]['inwayamount']) ? $stockArr[$slaveProductId]['inwayamount'] : 0),
-                            (isset($stockArr[$slaveProductId]['inwayfree']) ? $stockArr[$slaveProductId]['inwayfree'] : 0),
-                            (isset($stockArr[$slaveProductId]['enduserprice']) ? $stockArr[$slaveProductId]['enduserprice'] : 0.00),
+                            $mainProductId,
+                            (isset($value['code']) ? (string)$value['code'] : ''),
+                            (isset($value['name']) ? (string)$value['name'] : ''),
+                            (isset($value['size_code']) ? (string)$value['size_code'] : ''),
+                            (isset($value['weight']) ? (float)$value['weight'] : 0.00),
+                            (isset($value['price']['price']) ? (float)$value['price']['price'] : 0.00),
+                            (isset($value['price']['currency']) ? (string)$value['price']['currency'] : ''),
+                            (isset($value['price']['name']) ? (string)$value['price']['name'] : ''),
+                            (isset($stockArr[$productId]['amount']) ? $stockArr[$productId]['amount'] : 0),
+                            (isset($stockArr[$productId]['free']) ? $stockArr[$productId]['free'] : 0),
+                            (isset($stockArr[$productId]['inwayamount']) ? $stockArr[$productId]['inwayamount'] : 0),
+                            (isset($stockArr[$productId]['inwayfree']) ? $stockArr[$productId]['inwayfree'] : 0),
+                            (isset($stockArr[$productId]['enduserprice']) ? $stockArr[$productId]['enduserprice'] : 0.00),
                             0,
                         ];
                     }
                 }
             }
-            yii::endProfile('SlaveProductsPrepare');
+            unset($results);
 
             //Запись информации о подчиненных товарах в БД
             if (count($slaveProductsArr) > 0) {
-                yii::beginProfile('SlaveProductsInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($slaveProductsArr);
@@ -654,69 +533,52 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-                yii::endProfile('SlaveProductsInsertIntoDB');
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('SlaveProductsPrepare');
-            yii::endProfile('SlaveProductsInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertattach()
     {
         try {
-            yii::beginProfile('ProductAttachmentsPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The product attachments were not inserted in DB.');
             }
 
-            $productsXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
-            );
+            $attachmentXMLParser = new ProductAttachmentXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $attachmentXMLParser->parse();
+            $results = $attachmentXMLParser->getResult();
+            $attachmentXMLParser->clearResult();
+            $attachmentXMLParser->close();
 
-            if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed. The product attachments were not inserted in DB.');
-            }
-
-            //Парсирование xml файла с продуктами
             $prodAttachesArr = [];
-            foreach ($productsXML->product as $key => $product) {
-                $productId = (int)$product->product_id;
-
-                //Формирование массива с дополнительными файлами товаров
-                if (isset($product->product_attachment)) {
-                    if (count($product->product_attachment) > 1) {
-                        foreach ($product->product_attachment as $item) //Если у товара несколько дополнительных файлов
-                        {
-                            $prodAttachesArr[] = [
-                                $productId,
-                                (int)$item->meaning,
-                                (isset($item->file) ? (string)$item->file : null),
-                                (isset($item->image) ? (string)$item->image : null),
-                                (isset($item->name) ? (string)$item->name : null),
-                                0,
-                            ];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product_id'])) {
+                        $productId = (int) $value['product_id'];
+                        if (isset($value['product_attachment']) && is_array($value['product_attachment']) && count($value['product_attachment']) > 0) {
+                            while (list(, $attach) = each($value['product_attachment'])) {
+                                $prodAttachesArr[] = [
+                                    $productId,
+                                    (int) $attach['meaning'],
+                                    (isset($attach['file']) ? (string) $attach['file'] : ''),
+                                    (isset($attach['image']) ? (string) $attach['image'] : ''),
+                                    (isset($attach['name']) ? (string) $attach['name'] : ''),
+                                    0,
+                                ];
+                            }
                         }
-                    } else //Если у товара только один дополнительный файл
-                    {
-                        $prodAttachesArr[] = [
-                            $productId,
-                            (int)$product->product_attachment->meaning,
-                            (isset($product->product_attachment->file) ? (string)$product->product_attachment->file : null),
-                            (isset($product->product_attachment->image) ? (string)$product->product_attachment->image : null),
-                            (isset($product->product_attachment->name) ? (string)$product->product_attachment->name : null),
-                            0,
-                        ];
                     }
                 }
             }
-            yii::endProfile('ProductAttachmentsPrepare');
+            unset($results);
 
             //Запись информации о дополнительных файлах товара в БД
             if (count($prodAttachesArr) > 0) {
-                yii::beginProfile('ProductAttachInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($prodAttachesArr);
@@ -730,73 +592,58 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-                yii::endProfile('ProductAttachInsertIntoDB');
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('ProductAttachmentsPrepare');
-            yii::endProfile('ProductAttachInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertprint()
     {
         try {
-            yii::beginProfile('ProductPrintsPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The product prints were not inserted in DB.');
             }
 
-            $productsXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
-            );
-
-            if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed. The product prints were not inserted in DB.');
-            }
+            $printXMLParser = new PrintXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $printXMLParser->parse();
+            $results = $printXMLParser->getResult();
+            $printXMLParser->clearResult();
+            $printXMLParser->close();
 
             //Парсирование xml файла с продуктами
             $printsArr = [];
             $productPrintsArr = [];
-            foreach ($productsXML->product as $key => $product) {
-                $productId = (int)$product->product_id;
 
-                //Формирование массива с методами печати товаров и масива с парами "метод печати -  Id товара"
-                if (isset($product->print)) {
-                    if (count($product->print) > 1) //Если у товара несколько методов печати
-                    {
-                        foreach ($product->print as $print) {
-                            $printId = (string)$print->name;
-                            $printDescription = (string)$print->description;
-                            if ( !array_key_exists($printId, $printsArr)) {
-                                $printsArr[$printId] = [$printId, $printDescription, 0];
-                            }
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product'])) {
+                        $productId = (int) $value['product'];
+                        if (isset($value['name'])) {
+                            $printId = (string) $value['name'];
                             $productPrintsArr[] = [
                                 $productId,
                                 $printId,
                                 0
                             ];
+
+                            if (!array_key_exists($printId, $printsArr)) {
+                                $printsArr[$printId] = [
+                                    $printId,
+                                    (isset($value['description']) ? (string) $value['description'] : ''),
+                                    0
+                                ];
+                            }
                         }
-                    } else //Если у товара только один метод печати
-                    {
-                        $printId = (string)$product->print->name;
-                        $printDescription = (string)$product->print->description;
-                        if ( !array_key_exists($printId, $printsArr)) {
-                            $printsArr[$printId] = [$printId, $printDescription, 0];
-                        }
-                        $productPrintsArr[] = [
-                            $productId,
-                            $printId,
-                            0
-                        ];
                     }
                 }
             }
-            yii::endProfile('ProductPrintsPrepare');
+            unset($results);
 
             if (count($printsArr) > 0) {
-                yii::beginProfile('PrintsInsertIntoDB');
                 $valuesArrTmp = [];
                 $counter = 0;
                 $valuesArrLength = count($printsArr);
@@ -810,10 +657,8 @@ class LoadController extends \yii\console\Controller
                     $counter += $this->batchSize;
                 }
                 while ($counter < $valuesArrLength);
-                yii::endProfile('PrintsInsertIntoDB');
 
                 if (count($productPrintsArr) > 0) {
-                    yii::beginProfile('ProductPrintsInsertIntoDB');
                     $valuesArrTmp = [];
                     $counter = 0;
                     $valuesArrLength = count($productPrintsArr);
@@ -827,143 +672,133 @@ class LoadController extends \yii\console\Controller
                         $counter += $this->batchSize;
                     }
                     while ($counter < $valuesArrLength);
-                    yii::endProfile('ProductPrintsInsertIntoDB');
                 }
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('ProductPrintsPrepare');
-            yii::endProfile('ProductPrintsInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertfilters()
     {
         //Формирование таблиц с типами фильтров и фильтрами
         try {
-            yii::beginProfile('FiltersPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml')) {
                 throw new \Exception('File filters.xml not found.');
             }
 
-            $filtersXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml')
-            );
+            $filterXMLParser = new FilterXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/filters.xml');
+            $filterXMLParser->parse();
+            $results = $filterXMLParser->getResult();
+            $filterXMLParser->clearResult();
+            $filterXMLParser->close();
 
-            if ($filtersXML === false) {
-                throw new \Exception('File filters.xml was not processed.');
-            }
-            yii::endProfile('FiltersPrepare');
+            $typesArrForInsert = [];
+            $filtersArrForInsert = [];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['filtertypeid'])) {
+                        $filterTypeId = (int) $value['filtertypeid'];
+                        $typesArrForInsert[] = [
+                            $filterTypeId,
+                            (isset($filter['filtertypename']) ? (string) $value['filtertypename'] : ''),
+                            0
+                        ];
 
-            //Формирование массива из типов фильтров
-            yii::beginProfile('FiltersFileAnalyze');
-            $filterTypesArr = $this->makeArrFromFilterTree($filtersXML);
-            yii::endProfile('FiltersFileAnalyze');
-
-            if (count($filterTypesArr) > 0) {
-                $typesArrForInsert = [];
-                $filtersArrForInsert = [];
-                foreach ($filterTypesArr as $type) {
-                    $typesArrForInsert[] = [$type['filtertypeid'], $type['filtertypename'], 0];
-                    if (count($type['filters']) > 0) {
-                        foreach ($type['filters'] as $filter) {
-                            $filtersArrForInsert[] = [$filter['filterid'], $filter['filtername'], $type['filtertypeid'], 0];
+                        if (isset($value['filters']) && is_array($value['filters']) && count($value['filters']) > 0) {
+                            while (list(, $filter) = each($value['filters'])) {
+                                if (isset($filter['filterid'])) {
+                                    $filterId = (int) $filter['filterid'];
+                                    $filtersArrForInsert[] = [
+                                        $filterId,
+                                        (isset($filter['filtername']) ? (string) $filter['filtername'] : ''),
+                                        $filterTypeId,
+                                        0
+                                    ];
+                                }
+                            }
                         }
                     }
                 }
+            }
+            unset($results);
 
-                if (count($typesArrForInsert) > 0) {
-                    yii::beginProfile('FilterTypesInsertIntoDB');
-                    $valuesArrTmp = [];
-                    $counter = 0;
-                    $valuesArrLength = count($typesArrForInsert);
-                    do {
-                        $valuesArrTmp = array_slice($typesArrForInsert, $counter, $this->batchSize);
-                        yii::$app->db->createCommand()->batchInsert(
-                            '{{%filter_type_tmp}}',
-                            ['id', 'name', 'user_row'],
-                            $valuesArrTmp
-                        )->execute();
-                        $counter += $this->batchSize;
-                    }
-                    while ($counter < $valuesArrLength);
-                    yii::endProfile('FilterTypesInsertIntoDB');
+            if (count($typesArrForInsert) > 0) {
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($typesArrForInsert);
+                do {
+                    $valuesArrTmp = array_slice($typesArrForInsert, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%filter_type_tmp}}',
+                        ['id', 'name', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
                 }
+                while ($counter < $valuesArrLength);
+            }
 
-                if (count($filtersArrForInsert) > 0) {
-                    //Запись фильтров в БД
-                    yii::beginProfile('FiltersInsertIntoDB');
-                    $valuesArrTmp = [];
-                    $counter = 0;
-                    $valuesArrLength = count($filtersArrForInsert);
-                    do {
-                        $valuesArrTmp = array_slice($filtersArrForInsert, $counter, $this->batchSize);
-                        yii::$app->db->createCommand()->batchInsert(
-                            '{{%filter_tmp}}',
-                            ['id', 'name', 'type_id', 'user_row'],
-                            $valuesArrTmp
-                        )->execute();
-                        $counter += $this->batchSize;
-                    }
-                    while ($counter < $valuesArrLength);
-                    yii::endProfile('FiltersInsertIntoDB');
+            if (count($filtersArrForInsert) > 0) {
+                //Запись фильтров в БД
+                $valuesArrTmp = [];
+                $counter = 0;
+                $valuesArrLength = count($filtersArrForInsert);
+                do {
+                    $valuesArrTmp = array_slice($filtersArrForInsert, $counter, $this->batchSize);
+                    yii::$app->db->createCommand()->batchInsert(
+                        '{{%filter_tmp}}',
+                        ['id', 'name', 'type_id', 'user_row'],
+                        $valuesArrTmp
+                    )->execute();
+                    $counter += $this->batchSize;
                 }
+                while ($counter < $valuesArrLength);
             }
         }
         catch (\Exception $e) {
-            yii::endProfile('FiltersFileAnalyze');
-            yii::endProfile('FilterTypesInsertIntoDB');
-            yii::endProfile('FiltersInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionInsertprodfilters()
     {
         try {
-            yii::beginProfile('ProductFiltersPrepare');
             if ( !file_exists(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')) {
                 throw new \Exception('File product.xml not found. The filters for product were not inserted in DB.');
             }
 
-            $productsXML = new \SimpleXMLElement(
-                file_get_contents(yii::$app->params['xmlUploadPath']['current'] . '/product.xml')
-            );
+            $productFilterXMLParser = new ProductFilterXMLReader(yii::$app->params['xmlUploadPath']['current'] . '/product.xml');
+            $productFilterXMLParser->parse();
+            $results = $productFilterXMLParser->getResult();
+            $productFilterXMLParser->clearResult();
+            $productFilterXMLParser->close();
 
-            if ($productsXML === false) {
-                throw new \Exception('File product.xml was not processed. The filters for product were not inserted in DB.');
-            }
-
-            //Парсирование xml файла с продуктами
-            $prodFiltersArr = [];
-            foreach ($productsXML->product as $key => $product) {
-                $productId = (int)$product->product_id;
-
-                //Формирование массива с фильтрами, которые можно применять к товару
-                if (isset($product->filters->filter)) {
-                    if (count($product->filters->filter) > 1) //Если к товару можно применить только один фильтр
-                    {
-                        foreach ($product->filters->filter as $filter) {
-                            $prodFiltersArr[] = [
-                                $productId,
-                                (int)$filter->filterid,
-                                (int)$filter->filtertypeid,
-                                0,
-                            ];
+            if (is_array($results) && count($results) > 0) {
+                while (list(, $value) = each($results)) {
+                    if (isset($value['product_id']) && isset($value['filters'])) {
+                        $productId = (int) $value['product_id'];
+                        if (is_array($value['filters']) && count($value['filters']) > 0) {
+                            while (list(, $filter) = each($value['filters'])) {
+                                if (isset($filter['filterid']) && isset($filter['filtertypeid'])) {
+                                    $prodFiltersArr[] = [
+                                        $productId,
+                                        (int) $filter['filterid'],
+                                        (int) $filter['filtertypeid'],
+                                        0
+                                    ];
+                                }
+                            }
                         }
-                    } else //Если к товару можно применить несколько фильтров
-                    {
-                        $prodFiltersArr[] = [
-                            $productId,
-                            (int)$product->filters->filter->filterid,
-                            (int)$product->filters->filter->filtertypeid,
-                            0,
-                        ];
                     }
                 }
             }
-            yii::endProfile('ProductFiltersPrepare');
+            unset($results);
 
             //Запись связей товар-фильтр в БД
             if (count($prodFiltersArr) > 0) {
@@ -986,9 +821,10 @@ class LoadController extends \yii\console\Controller
         }
         catch (\Exception $e) {
             yii::endProfile('ProductFiltersPrepare');
-            yii::endProfile('ProductFiltersInsertIntoDB');
             echo $e->getMessage() . "\n";
         }
+
+        return ;
     }
 
     public function actionMakeimglist()
