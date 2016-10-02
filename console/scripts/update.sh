@@ -52,6 +52,9 @@ php -c ~/etc/php.ini $ROOT_PATH/yii load/insertctg
 # парсинг products.xml и запись товаров во временную таблицу БД
 php -c ~/etc/php.ini $ROOT_PATH/yii load/insertprod
 
+# парсинг tree.xml и запись связей категория-продуки во временную таблицу БД
+php -c ~/etc/php.ini $ROOT_PATH/yii load/insert-ctg-prod-rel
+
 # парсинг products.xml и запись подчиненных товаров во временную таблицу БД
 php -c ~/etc/php.ini $ROOT_PATH/yii load/insertslaveprod
 
@@ -169,6 +172,9 @@ php -c ~/etc/php.ini $ROOT_PATH/yii update/prints
 
 # добавление новых товаров в "основную" таблицу товаров в БД
 php -c ~/etc/php.ini $ROOT_PATH/yii update/products
+
+# добавление новых связей "категория-товар" в "основную" таблицу товаров в БД
+php -c ~/etc/php.ini $ROOT_PATH/yii update/category-product-rel
 
 # добавление новых "подчиненных товаров" в "основную" таблицу в БД
 php -c ~/etc/php.ini $ROOT_PATH/yii update/slave-products
