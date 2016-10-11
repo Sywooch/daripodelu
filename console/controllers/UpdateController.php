@@ -545,6 +545,47 @@ class UpdateController extends \yii\console\Controller
         }
     }
 
+    public function actionNewProductsList()
+    {
+        try {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_DELETE,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
+                'Начало процесса обновления списка новинок.'
+            );
+
+            $result = Yii::$app->db->createCommand('
+                DELETE FROM {{%product_filter}}
+                WHERE
+                    {{%product_filter}}.type_id = 8 AND
+                    {{%product_filter}}.filter_id = 229 AND
+                    {{%product_filter}}.user_row = 0 AND
+                    NOT EXISTS (
+                        SELECT *
+                        FROM {{%product_filter_tmp}} dpft
+                        WHERE
+                            dpft.type_id = 8 AND
+                            dpft.filter_id = 229 AND
+                            dpft.product_id = {{%product_filter}}.product_id
+                    )
+            ')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_DELETE,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
+                'Окончание процесса обновления списка новинок.'
+            );
+        }
+        catch (\Exception $e) {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_DELETE, UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_DELETE,
+                UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
+                'Окончание процесса обновления списка новинок, вызванное возникшей ошибкой.'
+            );
+        }
+    }
+
     protected function makeArrFromStockTree(\SimpleXMLElement $tree)
     {
         $arr = [];

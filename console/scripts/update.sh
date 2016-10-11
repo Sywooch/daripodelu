@@ -188,6 +188,9 @@ php -c ~/etc/php.ini $ROOT_PATH/yii update/print-product-rel
 # добавление новых связей "фильтр - продукт" в "основную" таблицу в БД
 php -c ~/etc/php.ini $ROOT_PATH/yii update/product-filter-rel
 
+# актуализация списка новинок
+php -c ~/etc/php.ini $ROOT_PATH/yii update/new-products-list
+
 # вызов функции для создания архива в каталоге dst_folder
 create_archive "$src_folder" "$dst_folder";
 # если каталог src_folder не пустой, то очищаем его
