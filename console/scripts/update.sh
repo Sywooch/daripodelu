@@ -26,12 +26,12 @@ fi
 
 # == создание бэкапа БД ================================================================================================
 
-php -c ~/etc/php.ini $ROOT_PATH/yii tools/create-db-backup
+php $ROOT_PATH/yii tools/create-db-backup
 
 # == загрузка xml-файлов, их парсинг и запись данных во временные таблицы ==============================================
 
 # загрузка xml-файлов с сайта gifs.ru
-# php -c ~/etc/php.ini $ROOT_PATH/yii load/downloadxml
+# php $ROOT_PATH/yii load/downloadxml
 
 wait="0.5s"
 
@@ -44,31 +44,31 @@ sleep 0.5
 wget --user=$login --password=$pass -w $wait -P $src_folder api2.gifts.ru/export/v2/catalogue/stock.xml
 
 # очистка временных таблиц БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/droptables
+php $ROOT_PATH/yii load/droptables
 
 # парсинг tree.xml и запись категорий во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertctg
+php $ROOT_PATH/yii load/insertctg
 
 # парсинг products.xml и запись товаров во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertprod
+php $ROOT_PATH/yii load/insertprod
 
 # парсинг tree.xml и запись связей категория-продуки во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insert-ctg-prod-rel
+php $ROOT_PATH/yii load/insert-ctg-prod-rel
 
 # парсинг products.xml и запись подчиненных товаров во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertslaveprod
+php $ROOT_PATH/yii load/insertslaveprod
 
 # парсинг products.xml и запись доп. файлов товаров во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertattach
+php $ROOT_PATH/yii load/insertattach
 
 # парсинг products.xml и запись методов печати товаров во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertprint
+php $ROOT_PATH/yii load/insertprint
 
 # парсинг filters.xml и запись фильтров во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertfilters
+php $ROOT_PATH/yii load/insertfilters
 
 # парсинг filters.xml и запись фильтров во временную таблицу БД
-php -c ~/etc/php.ini $ROOT_PATH/yii load/insertprodfilters
+php $ROOT_PATH/yii load/insertprodfilters
 
 # == загрузка изображений и файлов на хостинг ==========================================================================
 
@@ -85,7 +85,7 @@ uploadPath="$ROOT_PATH/uploads"
 file="$ROOT_PATH/downloads/current/imagesforupload.txt"
 
 # формирование файла со списком незагруженных изображений
-php -c ~/etc/php.ini $ROOT_PATH/yii load/makeimglist
+php $ROOT_PATH/yii load/makeimglist
 
 # проверка наличия файла со списком незагруженных изображений
 if ! [ -f $ROOT_PATH/downloads/current/imagesforupload.txt ];
@@ -121,7 +121,7 @@ done < $file
 file="$ROOT_PATH/downloads/current/filesforupload.txt"
 
 # формирование файла со списком незагруженных файлов
-php -c ~/etc/php.ini $ROOT_PATH/yii load/makefileslist
+php $ROOT_PATH/yii load/makefileslist
 
 # проверка наличия файла со списком незагруженных файлов
 if ! [ -f $ROOT_PATH/downloads/current/filesforupload.txt ];
@@ -154,42 +154,42 @@ done < $file
 # == создание миниатюр =================================================================================================
 
 # создание миниатюр из фотографий товаров
-php -c ~/etc/php.ini $ROOT_PATH/yii tools/createthumbs
+php $ROOT_PATH/yii tools/createthumbs
 
 # == запись данных в "основные" таблицы ================================================================================
 
 # добавление новых категорий в "основную" таблицу категорий в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/categories
+php $ROOT_PATH/yii update/categories
 
 # добавление новых типов фильтров в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/filter-types
+php $ROOT_PATH/yii update/filter-types
 
 # добавление новых фильтров в "основную" таблицу фильтров в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/filters
+php $ROOT_PATH/yii update/filters
 
 # добавление новых методов печати в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/prints
+php $ROOT_PATH/yii update/prints
 
 # добавление новых товаров в "основную" таблицу товаров в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/products
+php $ROOT_PATH/yii update/products
 
 # добавление новых связей "категория-товар" в "основную" таблицу товаров в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/category-product-rel
+php $ROOT_PATH/yii update/category-product-rel
 
 # добавление новых "подчиненных товаров" в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/slave-products
+php $ROOT_PATH/yii update/slave-products
 
 # добавление новых дополнительных файлов в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/product-attachments
+php $ROOT_PATH/yii update/product-attachments
 
 # добавление новых связей "метод нанесения - товар" в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/print-product-rel
+php $ROOT_PATH/yii update/print-product-rel
 
 # добавление новых связей "фильтр - продукт" в "основную" таблицу в БД
-php -c ~/etc/php.ini $ROOT_PATH/yii update/product-filter-rel
+php $ROOT_PATH/yii update/product-filter-rel
 
 # актуализация списка новинок
-php -c ~/etc/php.ini $ROOT_PATH/yii update/new-products-list
+php $ROOT_PATH/yii update/new-products-list
 
 # вызов функции для создания архива в каталоге dst_folder
 create_archive "$src_folder" "$dst_folder";
