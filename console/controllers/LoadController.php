@@ -704,7 +704,7 @@ class LoadController extends \yii\console\Controller
                         $filterTypeId = (int) $value['filtertypeid'];
                         $typesArrForInsert[] = [
                             $filterTypeId,
-                            (isset($filter['filtertypename']) ? (string) $value['filtertypename'] : ''),
+                            (isset($value['filtertypename']) ? (string) $value['filtertypename'] : ''),
                             0
                         ];
 

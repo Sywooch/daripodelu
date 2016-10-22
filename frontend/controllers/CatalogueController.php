@@ -123,7 +123,8 @@ class CatalogueController extends \yii\web\Controller
 
         //Get the list of products with list of group products----------------------------------------------------------
         if ( !empty($filterParams)) {
-            $productsQuery = $this->prepareFilterQuery(Product::find(), $filterParams);
+            $productsQuery = Product::find()->where(['<>', 'status_id', \backend\models\Product::STATUS_REMOVED]);
+            $productsQuery = $this->prepareFilterQuery($productsQuery, $filterParams);
             $productsQueryPart = Product::find()
                 ->from(['q' => $productsQuery])
                 ->innerJoin(CatalogueProduct::tableName(), CatalogueProduct::tableName() . '.product_id = q.id')
@@ -142,7 +143,7 @@ class CatalogueController extends \yii\web\Controller
                 ->select('*')
                 ->from(['a' => $productsQuery]);
         } else {
-            $productsQuery = Product::findByCategories($ids)->with(['groupProducts']);
+            $productsQuery = Product::findByCategories($ids)->with(['groupProducts'])->where(['<>', 'status_id', \backend\models\Product::STATUS_REMOVED]);
         }
 
         //Prepare filters for the list of products
@@ -360,6 +361,7 @@ class CatalogueController extends \yii\web\Controller
                     'COUNT({{%product}}.id) as products_count',
                 ])
                 ->where(['parent_id' => $model->id])
+                ->andWhere(['<>', '{{%product}}.status_id', \backend\models\Product::STATUS_REMOVED])
                 ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.catalogue_id = {{%catalogue}}.id')
                 ->innerJoin('{{%product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
                 ->groupBy('{{%catalogue}}.id')
@@ -372,6 +374,7 @@ class CatalogueController extends \yii\web\Controller
                     'COUNT({{%product}}.id) as products_count',
                 ])
                 ->where(['parent_id' => $model->parent_id])
+                ->andWhere(['<>', '{{%product}}.status_id', \backend\models\Product::STATUS_REMOVED])
                 ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.catalogue_id = {{%catalogue}}.id')
                 ->innerJoin('{{%product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
                 ->groupBy('{{%catalogue}}.id')

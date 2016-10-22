@@ -28,6 +28,7 @@ class UpdateGiftsDBLog extends \yii\db\ActiveRecord
     const ACTION_INSERT = 'insert';
     const ACTION_UPDATE = 'update';
     const ACTION_DELETE = 'delete';
+    const ACTION_HIDE = 'hide';
     const ACTION_LOAD = 'load';
     const ACTION_PARSING = 'parsing';
 
@@ -142,6 +143,7 @@ class UpdateGiftsDBLog extends \yii\db\ActiveRecord
             static::ACTION_INSERT => 'Добавление',
             static::ACTION_UPDATE => 'Обновление',
             static::ACTION_DELETE => 'Удаление',
+            static::ACTION_HIDE => 'Скрытие',
             static::ACTION_LOAD => 'Загрузка',
             static::ACTION_PARSING => 'Парсирование',
         ];

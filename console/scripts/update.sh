@@ -191,6 +191,12 @@ php $ROOT_PATH/yii update/product-filter-rel
 # актуализация списка новинок
 php $ROOT_PATH/yii update/new-products-list
 
+# скрытие товаров, которые удалены/отсутствуют у партнеров, например, gifts.ru
+php $ROOT_PATH/yii update/hide-deleted-products
+
+# удаление старых связей "категория-товар" из "основной" таблицы товаров в БД
+php $ROOT_PATH/yii update/remove-old-category-product-rel
+
 # вызов функции для создания архива в каталоге dst_folder
 create_archive "$src_folder" "$dst_folder";
 # если каталог src_folder не пустой, то очищаем его

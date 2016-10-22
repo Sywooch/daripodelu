@@ -59,6 +59,7 @@ class Product extends \yii\db\ActiveRecord
     const STATUS_NORMAL = 1;
     const STATUS_UNTIL_DEPLETION = 2;
     const STATUS_CLOSED = 3;
+    const STATUS_REMOVED = 9;
 
     public $prints = [];
     public $groupProductIds = [];
@@ -193,6 +194,7 @@ class Product extends \yii\db\ActiveRecord
             self::STATUS_NORMAL => 'Обычный',
             self::STATUS_UNTIL_DEPLETION => 'До исчерпания складских остатков',
             self::STATUS_CLOSED => 'Закрыт',
+            self::STATUS_REMOVED => 'Удален',
         );
     }
 

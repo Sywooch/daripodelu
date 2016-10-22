@@ -3,6 +3,7 @@
 namespace console\controllers;
 
 use yii;
+use backend\models\Product;
 use common\models\UpdateGiftsDBLog;
 use common\components\exceptions\SimpleXMLException;
 
@@ -582,6 +583,103 @@ class UpdateController extends \yii\console\Controller
                 UpdateGiftsDBLog::ACTION_DELETE,
                 UpdateGiftsDBLog::TYPE_PRODUCT_FILTER_REL,
                 'Окончание процесса обновления списка новинок, вызванное возникшей ошибкой.'
+            );
+        }
+    }
+
+    public function actionHideDeletedProducts()
+    {
+        try {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_HIDE,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
+                'Начало процесса скрытия товаров, отсутствующих у партнеров.'
+            );
+
+            $hideProducts = Yii::$app->db->createCommand('
+                SELECT [[id]]
+                FROM {{%product}}
+                WHERE
+                    `user_row` = 0 AND
+                    `status_id` <> ' . Product::STATUS_REMOVED . ' AND
+                    NOT EXISTS (
+                        SELECT 1 FROM {{%product_tmp}} WHERE {{%product_tmp}}.id = {{%product}}.id
+                    )
+            ')->queryAll();
+
+            if (count($hideProducts)) {
+                foreach ($hideProducts as $product) {
+                    $result = Yii::$app->db->createCommand('
+                        UPDATE {{%product}}
+                        SET
+                            [[status_id]] = ' . Product::STATUS_REMOVED . ',
+                            [[status_caption]] = "' . Product::getStatusName(Product::STATUS_REMOVED) . '"
+                        WHERE
+                            [[id]] = ' . $product['id']
+                    )->execute();
+
+                    if ($result > 0) {
+                        Yii::$app->updateGiftsDBLogger->success(
+                            UpdateGiftsDBLog::ACTION_HIDE,
+                            UpdateGiftsDBLog::TYPE_PRODUCT,
+                            'Скрыт товар',
+                            $product['id']
+                        );
+                    }
+                }
+            }
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_HIDE,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
+                'Окончание процесса скрытия товаров, отсутствующих у партнеров.'
+            );
+        }
+        catch (\Exception $e) {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_HIDE, UpdateGiftsDBLog::TYPE_PRODUCT, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_HIDE,
+                UpdateGiftsDBLog::TYPE_PRODUCT,
+                'Окончание процесса скрытия товаров, отсутствующих у партнеров.'
+            );
+        }
+    }
+
+    public function actionRemoveOldCategoryProductRel()
+    {
+        try {
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_DELETE,
+                UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL,
+                'Начало процесса удаления устаревших связей между категориями и товарами.'
+            );
+
+            $result = Yii::$app->db->createCommand('
+                DELETE
+                FROM {{%catalogue_product}}
+                WHERE
+                    `user_row` = 0 AND
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM {{%catalogue_product_tmp}}
+                        WHERE
+                            {{%catalogue_product_tmp}}.catalogue_id = {{%catalogue_product}}.catalogue_id AND
+                            {{%catalogue_product_tmp}}.product_id = {{%catalogue_product}}.product_id
+                    )
+            ')->execute();
+
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_DELETE,
+                UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL,
+                'Окончание процесса удаления устаревших связей между категориями и товарами.'
+            );
+        }
+        catch (\Exception $e) {
+            Yii::$app->updateGiftsDBLogger->error(UpdateGiftsDBLog::ACTION_DELETE, UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL, $e->getMessage());
+            Yii::$app->updateGiftsDBLogger->info(
+                UpdateGiftsDBLog::ACTION_DELETE,
+                UpdateGiftsDBLog::TYPE_CATEGORY_PRODUCT_REL,
+                'Окончание процесса удаления устаревших связей между категориями и товарами.'
             );
         }
     }

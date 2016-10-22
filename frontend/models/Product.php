@@ -229,7 +229,10 @@ class Product extends \yii\db\ActiveRecord
 
     public function getGroupProducts()
     {
-        return $this->hasMany(Product::className(), ['group_id' => 'group_id'])->from(['prod' => '{{%product}}'])->andWhere(['not', ['group_id' => null]]);
+        return $this->hasMany(Product::className(), ['group_id' => 'group_id'])
+            ->from(['prod' => '{{%product}}'])
+            ->andWhere(['not', ['group_id' => null]])
+            ->andWhere(['<>', 'status_id', \backend\models\Product::STATUS_REMOVED]);
     }
 
     /**

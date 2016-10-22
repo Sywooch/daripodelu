@@ -34,7 +34,7 @@ class ProductController extends \yii\web\Controller
     {
         $model = Product::find()
             ->with(['catalogue', 'productAttachments', 'productPrints', 'slaveProducts', 'groupProducts', 'productPrints'])
-            ->andWhere(['id' => $id])->one();
+            ->andWhere(['id' => $id])->andWhere(['<>', 'status_id', \backend\models\Product::STATUS_REMOVED])->one();
         /* @var $model Product */
 
         if ($model === null) {
