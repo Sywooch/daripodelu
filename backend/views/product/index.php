@@ -88,7 +88,7 @@ if (Yii::$app->session->hasFlash('success')) {
             'attribute' => 'code',
             'contentOptions' => ['style' => 'width: 80px'],
         ],
-        [
+        /*[
             'attribute' => 'catalogue_id',
             'filter' => \yii\jui\AutoComplete::widget([
                 'model' => $searchModel,
@@ -106,7 +106,7 @@ if (Yii::$app->session->hasFlash('success')) {
                 return $categoriesArr[$row->catalogue_id];
             },
             'contentOptions' => ['style' => 'width: 240px'],
-        ],
+        ],*/
 //            'group_id',
         [
             'attribute' => 'name',

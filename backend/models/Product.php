@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "{{%product}}".
  *
  * @property integer $id
- * @property integer $catalogue_id
  * @property integer $group_id
  * @property string $code
  * @property string $name
@@ -78,8 +77,8 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['catalogue_id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
-            [['catalogue_id', 'name', 'status_id', 'status_caption', 'weight'], 'required'],
+            [['group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
+            [['name', 'status_id', 'status_caption', 'weight'], 'required'],
             [['content'], 'string'],
             [['weight', 'pack_weigh', 'pack_volume', 'pack_sizex', 'pack_sizey', 'pack_sizez', 'enduserprice'], 'number'],
             [['code'], 'string', 'max' => 100],
@@ -97,7 +96,6 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID товара'),
-            'catalogue_id' => Yii::t('app', 'Категория'),
             'group_id' => Yii::t('app', 'ID группы'),
             'code' => Yii::t('app', 'Артикул'),
             'name' => Yii::t('app', 'Название'),
@@ -132,7 +130,8 @@ class Product extends \yii\db\ActiveRecord
      */
     public function getCatalogue()
     {
-        return $this->hasOne(Catalogue::className(), ['id' => 'catalogue_id']);
+//        return $this->hasOne(Catalogue::className(), ['id' => 'catalogue_id']);
+        return $this->hasOne(Catalogue::className(), ['id' => 'catalogue_id'])->viaTable('{{%catalogue_product}}', ['product_id' => 'id']);
     }
 
     /**

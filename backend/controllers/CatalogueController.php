@@ -93,7 +93,12 @@ class CatalogueController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Catalogue::find()->where(['parent_id' => $id]));
 
         $productSearchModel = new ProductSearch();
-        $productDataProvider = $productSearchModel->search(Yii::$app->request->queryParams, Product::find()->where(['catalogue_id' => $id]));
+        $productDataProvider = $productSearchModel->search(
+            Yii::$app->request->queryParams,
+            Product::find()
+                ->innerJoin('{{%catalogue_product}}', '{{%catalogue_product}}.product_id = {{%product}}.id')
+                ->where(['catalogue_id' => $id])
+        );
 
         $seoInfo = SEOInformation::findModel('catalogue', 'view', $id);
         if (is_null($seoInfo)) {

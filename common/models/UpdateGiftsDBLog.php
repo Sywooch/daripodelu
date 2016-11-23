@@ -175,6 +175,7 @@ class UpdateGiftsDBLog extends \yii\db\ActiveRecord
     {
         return [
             static::TYPE_CATEGORY => 'Категория',
+            static::TYPE_CATEGORY_PRODUCT_REL => 'Связь "Категория – Товар"',
             static::TYPE_FILTER_TYPE => 'Фильтр',
             static::TYPE_FILTER => 'Значение фильтра',
             static::TYPE_PRINT => 'Метод нанесения',

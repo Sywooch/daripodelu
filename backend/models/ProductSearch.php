@@ -22,7 +22,7 @@ class ProductSearch extends Product
     {
         return [
             [['id', 'group_id', 'status_id', 'pack_amount', 'amount', 'free', 'inwayamount', 'inwayfree', 'user_row'], 'integer'],
-            [['code', 'catalogue_id', 'name', 'product_size', 'matherial', 'small_image', 'big_image', 'super_big_image', 'content', 'status_caption', 'brand'], 'safe'],
+            [['code', 'name', 'product_size', 'matherial', 'small_image', 'big_image', 'super_big_image', 'content', 'status_caption', 'brand'], 'safe'],
             [['weight', 'pack_weigh', 'pack_volume', 'pack_sizex', 'pack_sizey', 'pack_sizez', 'enduserprice'], 'number'],
         ];
     }
@@ -45,7 +45,7 @@ class ProductSearch extends Product
      */
     public function search($params, ActiveQuery $query = null)
     {
-        $query = is_null($query) ? Product::find() : $query;
+        $query = is_null($query) ? Product::find()->with('catalogue') : $query;
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -58,13 +58,13 @@ class ProductSearch extends Product
 
         $this->load($params);
 
-        $categoryName = trim($this->catalogue_id);
+        /*$categoryName = trim($this->catalogue_id);
         if ($categoryName != '') {
             $categories = Catalogue::find()->where(['like', 'name', $categoryName])->all();
             if (count($categories) > 0) {
                 $catalogueIds = ArrayHelper::getColumn($categories, 'id');
             }
-        }
+        }*/
 
         if ( !$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -75,7 +75,7 @@ class ProductSearch extends Product
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'catalogue_id' => $catalogueIds,
+//            'catalogue_id' => $catalogueIds,
             'group_id' => $this->group_id,
             'status_id' => $this->status_id,
             'weight' => $this->weight,
@@ -104,7 +104,7 @@ class ProductSearch extends Product
             ->andFilterWhere(['like', 'status_caption', $this->status_caption])
             ->andFilterWhere(['like', 'brand', $this->brand]);
 
-        $this->catalogue_id = $categoryName;
+//        $this->catalogue_id = $categoryName;
 
         return $dataProvider;
     }
